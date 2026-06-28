@@ -1,0 +1,9 @@
+.mat-mdc-card,
+.mat-mdc-outlined-card,
+.mat-mdc-elevated-card {
+  border-radius: var(--radius-lg);
+  background: var(--surface-color);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  border: var(--border-width) solid var(--color-border);
+}

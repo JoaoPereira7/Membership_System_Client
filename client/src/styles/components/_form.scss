@@ -1,0 +1,21 @@
+input,
+textarea,
+select,
+.mat-mdc-text-field-wrapper {
+  border-radius: var(--radius-md);
+}
+
+input,
+textarea,
+select {
+  color: var(--text-primary);
+}
+
+textarea {
+  min-height: 7.5rem;
+  resize: vertical;
+}
+
+.mat-mdc-form-field {
+  width: 100%;
+}

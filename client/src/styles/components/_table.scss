@@ -1,0 +1,13 @@
+.mat-mdc-table {
+  background: var(--surface-color);
+  color: var(--text-primary);
+}
+
+.mat-mdc-header-cell {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+
+.mat-mdc-row:hover .mat-mdc-cell {
+  background: color-mix(in srgb, var(--color-primary) 4%, transparent);
+}

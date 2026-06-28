@@ -1,0 +1,22 @@
+@use '@angular/material' as mat;
+@use '../abstracts/mixins' as mixins;
+@use '../abstracts/variables' as vars;
+
+html {
+  color-scheme: light;
+  @include mat.theme(
+    (
+      color: (
+        theme-type: light,
+        primary: mat.$blue-palette,
+        tertiary: mat.$violet-palette,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
+}
+
+:root {
+  @include mixins.emit-css-variables(vars.$design-tokens);
+}

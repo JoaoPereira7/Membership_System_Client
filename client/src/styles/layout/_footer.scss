@@ -1,0 +1,10 @@
+.app-footer {
+  min-height: var(--height-footer);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--spacing-lg);
+  color: var(--text-muted);
+  background: var(--surface-alt);
+  border-top: var(--border-width) solid var(--color-border);
+}

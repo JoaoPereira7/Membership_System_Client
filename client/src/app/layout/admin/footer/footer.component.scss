@@ -1,0 +1,24 @@
+:host {
+  display: block;
+}
+
+.footer {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.92);
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  font-size: 0.875rem;
+}
+
+@media (max-width: 767.98px) {
+  .footer {
+    flex-wrap: wrap;
+    gap: var(--spacing-xs) var(--spacing-md);
+    padding-block: var(--spacing-sm);
+  }
+}

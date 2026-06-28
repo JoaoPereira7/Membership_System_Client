@@ -1,0 +1,39 @@
+<section class="home">
+  <header class="home__hero">
+    <div>
+      <p class="home__eyebrow">Membership System</p>
+      <h1>Bem-vindo ao Membership System</h1>
+      <p class="home__subtitle">Sistema de Gestão de Membresia</p>
+    </div>
+  </header>
+
+  <section class="home__stats" aria-label="Indicadores principais">
+    @for (card of stats; track card.label) {
+      <mat-card class="stat-card stat-card--{{ card.tone }}">
+        <div class="stat-card__icon">
+          <mat-icon>{{ card.icon }}</mat-icon>
+        </div>
+        <div class="stat-card__content">
+          <span class="stat-card__label">{{ card.label }}</span>
+          <strong class="stat-card__value">{{ card.value }}</strong>
+        </div>
+      </mat-card>
+    }
+  </section>
+
+  <section class="home__shortcuts">
+    <div class="home__section-heading">
+      <h2>Atalhos Rápidos</h2>
+      <p>Ações frequentes para validar a navegação do shell.</p>
+    </div>
+
+    <div class="home__shortcut-grid">
+      @for (shortcut of shortcuts; track shortcut.label) {
+        <button mat-stroked-button type="button" class="shortcut-button">
+          <mat-icon>{{ shortcut.icon }}</mat-icon>
+          <span>{{ shortcut.label }}</span>
+        </button>
+      }
+    </div>
+  </section>
+</section>

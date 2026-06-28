@@ -1,0 +1,38 @@
+<aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
+  <div class="sidebar__brand">
+    <div class="sidebar__logo" aria-hidden="true">
+      <mat-icon>layers</mat-icon>
+    </div>
+
+    @if (!collapsed()) {
+      <div class="sidebar__brand-copy">
+        <strong>Membership System</strong>
+        <span>Igreja do Evangelho Quadrangular</span>
+      </div>
+    }
+  </div>
+
+  <mat-nav-list class="sidebar__menu">
+    @for (item of items; track item.id) {
+      <button
+        mat-list-item
+        type="button"
+        class="sidebar-item"
+        [class.sidebar-item--active]="item.active"
+        [matTooltip]="collapsed() ? item.label : ''"
+        matTooltipPosition="right"
+        (click)="notifyInteraction()"
+      >
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        @if (!collapsed()) {
+          <span class="sidebar-item__copy">
+            <span matListItemTitle class="sidebar-item__label">{{ item.label }}</span>
+            @if (item.futureSubmenu) {
+              <mat-icon class="sidebar-item__chevron">expand_more</mat-icon>
+            }
+          </span>
+        }
+      </button>
+    }
+  </mat-nav-list>
+</aside>

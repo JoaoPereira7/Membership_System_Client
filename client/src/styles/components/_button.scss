@@ -1,0 +1,16 @@
+.mat-mdc-button-base,
+button {
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button {
+  box-shadow: var(--shadow-sm);
+}
+
+.mat-mdc-button-base:focus-visible,
+button:focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 18%, transparent);
+  outline: 0;
+}

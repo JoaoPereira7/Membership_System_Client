@@ -1,0 +1,7 @@
+.app-sidebar {
+  width: var(--width-sidebar);
+  min-height: 100%;
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border-right: var(--border-width) solid var(--color-border);
+}

@@ -1,0 +1,60 @@
+@mixin emit-css-variables($tokens) {
+  @each $name, $value in $tokens {
+    --#{$name}: #{$value};
+  }
+}
+
+@mixin mobile {
+  @media (max-width: 599.98px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 600px) and (max-width: 959.98px) {
+    @content;
+  }
+}
+
+@mixin notebook {
+  @media (min-width: 960px) and (max-width: 1279.98px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 1280px) and (max-width: 1919.98px) {
+    @content;
+  }
+}
+
+@mixin large-desktop {
+  @media (min-width: 1920px) {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18);
+}
+
+@mixin scrollbar($track, $thumb) {
+  scrollbar-color: #{$thumb} #{$track};
+  scrollbar-width: thin;
+
+  &::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $track;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $thumb;
+    border: 3px solid $track;
+    border-radius: 999px;
+  }
+}

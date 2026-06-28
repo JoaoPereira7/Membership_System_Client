@@ -1,0 +1,136 @@
+:host {
+  display: block;
+}
+
+.toolbar {
+  height: 80px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 480px) auto;
+  align-items: center;
+  gap: var(--spacing-lg);
+  padding: 0 var(--spacing-lg);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02);
+}
+
+.toolbar__left,
+.toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-width: 0;
+}
+
+.toolbar__titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.toolbar__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+.toolbar__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  min-width: 0;
+}
+
+.toolbar__breadcrumb mat-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+}
+
+.toolbar__breadcrumb-item--current {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.toolbar__center {
+  display: flex;
+  justify-content: center;
+}
+
+.toolbar__search {
+  width: 100%;
+}
+
+.toolbar__search :is(.mat-mdc-form-field-subscript-wrapper, .mdc-line-ripple) {
+  display: none;
+}
+
+.toolbar__search .mat-mdc-form-field-infix {
+  min-height: 44px;
+}
+
+.toolbar__search input {
+  color: var(--text-secondary);
+}
+
+.toolbar__profile {
+  border-radius: 999px;
+  padding-inline: 0.5rem 0.75rem;
+  background: rgba(25, 118, 210, 0.06);
+}
+
+.toolbar__avatar {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+  background: var(--color-primary);
+  color: var(--color-primary-contrast);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.toolbar__profile-text {
+  margin-right: 0.25rem;
+  font-weight: 500;
+}
+
+@media (max-width: 1279.98px) {
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 340px) auto;
+  }
+}
+
+@media (max-width: 959.98px) {
+  .toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    height: auto;
+    padding-block: var(--spacing-sm);
+  }
+
+  .toolbar__center {
+    display: none;
+  }
+
+  .toolbar__profile-text {
+    display: none;
+  }
+
+  .toolbar__titles {
+    display: none;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .toolbar {
+    padding-inline: var(--spacing-sm);
+  }
+}

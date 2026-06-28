@@ -1,0 +1,89 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background: var(--background-color);
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-color);
+}
+
+.admin-shell__container {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  background: transparent;
+}
+
+.admin-shell__sidenav {
+  position: relative;
+  z-index: 2;
+  width: var(--width-sidebar);
+  min-height: calc(100vh - 136px);
+  border-right: 0;
+  transition: width var(--transition-normal), transform var(--transition-normal);
+  background: transparent;
+}
+
+.admin-shell__sidenav--collapsed {
+  overflow: hidden;
+}
+
+.admin-shell__sidenav--mobile {
+  position: fixed;
+  inset: 80px auto 56px 0;
+  transform: translateX(-100%);
+  box-shadow: var(--shadow-lg);
+}
+
+.admin-shell__sidenav--mobile-open {
+  transform: translateX(0);
+}
+
+.admin-shell__backdrop {
+  position: fixed;
+  inset: 80px 0 56px 0;
+  z-index: 1;
+  background: rgba(15, 23, 42, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-normal);
+}
+
+.admin-shell__backdrop--visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.admin-shell__content {
+  min-width: 0;
+  background: var(--background-color);
+}
+
+.admin-shell__content > router-outlet {
+  display: none;
+}
+
+.admin-shell__content {
+  min-height: calc(100vh - 136px);
+  padding: var(--spacing-xl);
+}
+
+@media (max-width: 599.98px) {
+  .admin-shell__container {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-shell__content {
+    padding: var(--spacing-md);
+  }
+
+  .admin-shell__sidenav {
+    inset-block-end: 56px;
+  }
+}

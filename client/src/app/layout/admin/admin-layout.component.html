@@ -1,0 +1,123 @@
+<div class="admin-shell">
+  <header class="admin-toolbar">
+    <div class="admin-toolbar__left">
+      <button mat-icon-button type="button" class="admin-toolbar__toggle" (click)="toggleSidebar()" aria-label="Alternar sidebar">
+        <mat-icon>{{ sidebarCollapsed() && !isMobile() ? 'menu_open' : 'menu' }}</mat-icon>
+      </button>
+
+      <div class="admin-toolbar__titles">
+        <h1 class="admin-toolbar__title">{{ pageTitle() }}</h1>
+        <nav class="admin-toolbar__breadcrumb" aria-label="Breadcrumb">
+          @for (item of breadcrumb(); track item; let last = $last) {
+            <span class="admin-toolbar__breadcrumb-item" [class.admin-toolbar__breadcrumb-item--current]="last">{{ item }}</span>
+            @if (!last) {
+              <mat-icon>chevron_right</mat-icon>
+            }
+          }
+        </nav>
+      </div>
+    </div>
+
+    <div class="admin-toolbar__center">
+      <mat-form-field appearance="outline" class="admin-toolbar__search">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput type="text" placeholder="Pesquisar" disabled />
+      </mat-form-field>
+    </div>
+
+    <div class="admin-toolbar__actions">
+      <button mat-icon-button type="button" matTooltip="Notificações" aria-label="Notificações">
+        <mat-icon [matBadge]="3" matBadgeColor="warn" matBadgeSize="small">notifications</mat-icon>
+      </button>
+
+      <button mat-icon-button type="button" matTooltip="Ajuda" aria-label="Ajuda">
+        <mat-icon>help_outline</mat-icon>
+      </button>
+
+      <button mat-button [matMenuTriggerFor]="userMenu" type="button" class="admin-toolbar__profile" aria-label="Menu do usuário">
+        <span class="admin-toolbar__avatar">JP</span>
+        <span class="admin-toolbar__profile-text">{{ userName() }}</span>
+        <mat-icon>expand_more</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <div class="admin-shell__container">
+    <div
+      class="admin-shell__backdrop"
+      [class.admin-shell__backdrop--visible]="isMobile() && mobileSidebarOpen()"
+      (click)="closeMobileSidebar()"
+    ></div>
+
+    <aside
+      class="admin-shell__sidenav"
+      [class.admin-shell__sidenav--collapsed]="sidebarCollapsed()"
+      [class.admin-shell__sidenav--mobile]="isMobile()"
+      [class.admin-shell__sidenav--mobile-open]="isMobile() && mobileSidebarOpen()"
+      [style.width.px]="isMobile() ? 260 : sidebarCollapsed() ? 80 : 260"
+    >
+      <div class="admin-sidebar">
+        <div class="admin-sidebar__brand">
+          <div class="admin-sidebar__logo" aria-hidden="true">
+            <mat-icon>layers</mat-icon>
+          </div>
+
+          @if (!sidebarCollapsed()) {
+            <div class="admin-sidebar__brand-copy">
+              <strong>Membership System</strong>
+              <span>Igreja do Evangelho Quadrangular</span>
+            </div>
+          }
+        </div>
+
+        <nav class="admin-sidebar__menu" aria-label="Navegação principal">
+          @for (item of sidebarItems; track item.id) {
+            <button
+              mat-button
+              type="button"
+              class="admin-sidebar__item"
+              [class.admin-sidebar__item--active]="item.active"
+              [matTooltip]="sidebarCollapsed() ? item.label : ''"
+              matTooltipPosition="right"
+              (click)="closeMobileSidebar()"
+            >
+              <mat-icon>{{ item.icon }}</mat-icon>
+              @if (!sidebarCollapsed()) {
+                <span class="admin-sidebar__item-copy">
+                  <span class="admin-sidebar__label">{{ item.label }}</span>
+                  <mat-icon class="admin-sidebar__chevron">chevron_right</mat-icon>
+                </span>
+              }
+            </button>
+          }
+        </nav>
+      </div>
+    </aside>
+
+    <main class="admin-shell__content">
+      <router-outlet />
+    </main>
+  </div>
+
+  <footer class="admin-footer">
+    <span>Membership System</span>
+    <span>Versão 1.0.0</span>
+    <span>© Igreja do Evangelho Quadrangular</span>
+    <span>{{ year }}</span>
+  </footer>
+</div>
+
+<mat-menu #userMenu="matMenu">
+  <button mat-menu-item type="button">
+    <mat-icon>person</mat-icon>
+    <span>Perfil</span>
+  </button>
+  <button mat-menu-item type="button">
+    <mat-icon>settings</mat-icon>
+    <span>Configurações</span>
+  </button>
+  <button mat-menu-item type="button">
+    <mat-icon>logout</mat-icon>
+    <span>Sair</span>
+  </button>
+</mat-menu>

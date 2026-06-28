@@ -1,0 +1,15 @@
+@function strip-unit($value) {
+  @if type-of($value) == 'number' and not unitless($value) {
+    @return $value / ($value * 0 + 1);
+  }
+
+  @return $value;
+}
+
+@function rem($px, $base: 16px) {
+  @return strip-unit($px) / strip-unit($base) * 1rem;
+}
+
+@function em($px, $base: 16px) {
+  @return strip-unit($px) / strip-unit($base) * 1em;
+}
