@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,4 @@ export class ToolbarComponent {
   readonly collapsed = input(false);
   readonly mobile = input(false);
   readonly userName = input('João Pereira');
-
-  @Output() readonly toggleSidebar = new EventEmitter<void>();
 }

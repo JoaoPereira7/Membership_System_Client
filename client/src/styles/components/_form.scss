@@ -19,3 +19,38 @@ textarea {
 .mat-mdc-form-field {
   width: 100%;
 }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+.form-col-12 {
+  grid-column: span 12;
+}
+
+.form-col-8 {
+  grid-column: span 8;
+}
+
+.form-col-6 {
+  grid-column: span 6;
+}
+
+.form-col-4 {
+  grid-column: span 4;
+}
+
+.form-col-3 {
+  grid-column: span 3;
+}
+
+@media (max-width: 960px) {
+  .form-col-8,
+  .form-col-6,
+  .form-col-4,
+  .form-col-3 {
+    grid-column: span 12;
+  }
+}

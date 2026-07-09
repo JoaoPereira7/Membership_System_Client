@@ -1,9 +1,5 @@
 <header class="toolbar">
   <div class="toolbar__left">
-    <button mat-icon-button type="button" class="toolbar__toggle" (click)="toggleSidebar.emit()" aria-label="Alternar sidebar">
-      <mat-icon>{{ collapsed() && !mobile() ? 'menu_open' : 'menu' }}</mat-icon>
-    </button>
-
     <div class="toolbar__titles">
       <h1 class="toolbar__title">{{ pageTitle() }}</h1>
       <nav class="toolbar__breadcrumb" aria-label="Breadcrumb">

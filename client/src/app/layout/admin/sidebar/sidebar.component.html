@@ -1,32 +1,31 @@
 <aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
-  <div class="sidebar__brand">
+  <header class="sidebar__header">
     <div class="sidebar__logo" aria-hidden="true">
       <mat-icon>layers</mat-icon>
     </div>
 
     @if (!collapsed()) {
       <div class="sidebar__brand-copy">
-        <strong>Membership System</strong>
-        <span>Igreja do Evangelho Quadrangular</span>
+        <strong>Igreja do Evangelho Quadrangular</strong>
       </div>
     }
-  </div>
+  </header>
 
-  <mat-nav-list class="sidebar__menu">
+  <nav class="sidebar__nav" aria-label="Navegação principal">
     @for (item of items; track item.id) {
       <button
-        mat-list-item
         type="button"
         class="sidebar-item"
         [class.sidebar-item--active]="item.active"
         [matTooltip]="collapsed() ? item.label : ''"
         matTooltipPosition="right"
         (click)="notifyInteraction()"
+        matRipple
       >
         <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
         @if (!collapsed()) {
-          <span class="sidebar-item__copy">
-            <span matListItemTitle class="sidebar-item__label">{{ item.label }}</span>
+          <span class="sidebar-item__content">
+            <span class="sidebar-item__label">{{ item.label }}</span>
             @if (item.futureSubmenu) {
               <mat-icon class="sidebar-item__chevron">expand_more</mat-icon>
             }
@@ -34,5 +33,17 @@
         }
       </button>
     }
-  </mat-nav-list>
+  </nav>
+
+  <footer class="sidebar__footer">
+    <button
+      mat-icon-button
+      type="button"
+      class="sidebar__toggle"
+      (click)="handleToggleClick()"
+      [attr.aria-label]="mobile() ? 'Fechar sidebar' : collapsed() ? 'Expandir sidebar' : 'Recolher sidebar'"
+    >
+      <mat-icon>{{ mobile() ? 'close' : collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    </button>
+  </footer>
 </aside>

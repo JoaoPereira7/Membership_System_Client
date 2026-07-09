@@ -1,0 +1,87 @@
+@let currentForm = form();
+@let currentSubtitle = subtitle();
+@let currentIcon = icon();
+@let currentMode = modeViewModel();
+
+<section [class]="shellClasses().join(' ')" [style.max-width]="maxWidth()" [attr.aria-busy]="loading() || saving()">
+  @if (appearance() === 'card') {
+    <mat-card class="form-shell__surface">
+      <ng-container [ngTemplateOutlet]="formContent" />
+    </mat-card>
+  } @else {
+    <div class="form-shell__surface form-shell__surface--plain">
+      <ng-container [ngTemplateOutlet]="formContent" />
+    </div>
+  }
+</section>
+
+<ng-template #formContent>
+  <form [formGroup]="currentForm" (ngSubmit)="submit()" class="form-shell__form" novalidate>
+    @if (loading()) {
+      <mat-progress-bar class="form-shell__progress" mode="indeterminate" aria-label="Carregando formulário" />
+    }
+
+    <header class="form-shell__header">
+      <div class="form-shell__heading">
+        @if (currentIcon) {
+          <span class="form-shell__icon" aria-hidden="true">
+            <mat-icon>{{ currentIcon }}</mat-icon>
+          </span>
+        }
+
+        <div class="form-shell__title-group">
+          <div class="form-shell__title-row">
+            <h1 class="form-shell__title">{{ title() }}</h1>
+            <span class="form-shell__badge">
+              <mat-icon aria-hidden="true">{{ currentMode.icon }}</mat-icon>
+              {{ currentMode.label }}
+            </span>
+          </div>
+
+          @if (currentSubtitle) {
+            <p class="form-shell__subtitle">{{ currentSubtitle }}</p>
+          }
+        </div>
+      </div>
+
+      <div class="form-shell__header-actions">
+        <ng-content select="[form-header-actions]" />
+      </div>
+    </header>
+
+    <div class="form-shell__content">
+      <ng-content />
+    </div>
+
+    <footer class="form-shell__footer">
+      <div class="form-shell__footer-actions">
+        <ng-content select="[form-footer-actions]" />
+      </div>
+
+      <div class="form-shell__main-actions">
+        @if (showReset()) {
+          <button mat-button type="button" (click)="requestReset()" [disabled]="loading() || saving()">
+            {{ resetLabel() }}
+          </button>
+        }
+
+        @if (showCancel()) {
+          <button mat-button type="button" (click)="cancel()" [disabled]="saving()">
+            {{ cancelLabel() }}
+          </button>
+        }
+
+        @if (mode() !== 'view') {
+          <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitDisabled()">
+            @if (saving()) {
+              <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+              <span>Salvando</span>
+            } @else {
+              <span>{{ submitLabel() }}</span>
+            }
+          </button>
+        }
+      </div>
+    </footer>
+  </form>
+</ng-template>

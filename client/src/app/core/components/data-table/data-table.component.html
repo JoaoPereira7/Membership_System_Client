@@ -1,0 +1,168 @@
+<section class="data-table" [attr.aria-busy]="loading()" [attr.aria-label]="ariaLabel()">
+  @if (searchEnabled()) {
+    <div class="data-table__toolbar">
+      <mat-form-field class="data-table__search" appearance="outline">
+        <mat-label>{{ searchPlaceholder() }}</mat-label>
+        <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+        <input matInput type="search" [formControl]="searchControl" [attr.aria-label]="searchPlaceholder()" />
+        @if (searchControl.value) {
+          <button mat-icon-button matSuffix type="button" (click)="clearSearch()" aria-label="Limpar pesquisa">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+
+      <div class="data-table__toolbar-actions">
+        <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
+        <ng-content select="[data-table-toolbar-actions]" />
+      </div>
+    </div>
+  } @else {
+    <div class="data-table__toolbar data-table__toolbar--actions-only">
+      <div class="data-table__toolbar-actions">
+        <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
+        <ng-content select="[data-table-toolbar-actions]" />
+      </div>
+    </div>
+  }
+
+  <div class="data-table__surface">
+    @if (loading()) {
+      <mat-progress-bar mode="indeterminate" aria-label="Carregando registros" />
+    }
+
+    @if (errorMessage()) {
+      <div class="data-table__state data-table__state--error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <p>{{ errorMessage() }}</p>
+      </div>
+    } @else if (showEmptyState()) {
+      <div class="data-table__state">
+        <mat-icon aria-hidden="true">inbox</mat-icon>
+        <p>{{ emptyMessage() }}</p>
+      </div>
+    } @else {
+      <div class="data-table__scroll">
+        <table mat-table matSort [dataSource]="visibleRows()" (matSortChange)="handleSort($event)" [attr.aria-label]="ariaLabel()">
+          @if (selectionEnabled()) {
+            <ng-container [matColumnDef]="'__selection'">
+              <th mat-header-cell *matHeaderCellDef class="data-table__selection-cell">
+                <mat-checkbox
+                  [checked]="isAllVisibleSelected()"
+                  [indeterminate]="isSomeVisibleSelected()"
+                  (change)="toggleVisibleRows($event)"
+                  aria-label="Selecionar registros visíveis"
+                />
+              </th>
+              <td mat-cell *matCellDef="let row" class="data-table__selection-cell">
+                <mat-checkbox
+                  [checked]="selection.isSelected(row)"
+                  (change)="toggleRow(row, $event)"
+                  (click)="$event.stopPropagation()"
+                  aria-label="Selecionar registro"
+                />
+              </td>
+            </ng-container>
+          }
+
+          @for (column of visibleColumns(); track columnId(column)) {
+            <ng-container [matColumnDef]="columnId(column)" [sticky]="column.sticky === true" [stickyEnd]="column.stickyEnd === true">
+              <th
+                mat-header-cell
+                *matHeaderCellDef
+                [mat-sort-header]="isColumnSortable(column) ? columnId(column) : ''"
+                [disabled]="!isColumnSortable(column)"
+                [ngClass]="alignClass(column)"
+              >
+                {{ column.label }}
+              </th>
+              <td mat-cell *matCellDef="let row" [ngClass]="alignClass(column)">
+                @switch (column.type) {
+                  @case ('boolean') {
+                    <span class="data-table__boolean" [attr.aria-label]="formatCellValue(row, column)">
+                      <mat-icon aria-hidden="true">{{ getCellValue(row, column) === true ? 'check_circle' : 'cancel' }}</mat-icon>
+                      {{ formatCellValue(row, column) }}
+                    </span>
+                  }
+                  @case ('status') {
+                    <mat-chip class="data-table__status">{{ formatCellValue(row, column) }}</mat-chip>
+                  }
+                  @case ('actions') {
+                    <ng-container [ngTemplateOutlet]="actionsTemplate" [ngTemplateOutletContext]="{ row: row }" />
+                  }
+                  @default {
+                    {{ formatCellValue(row, column) }}
+                  }
+                }
+              </td>
+            </ng-container>
+          }
+
+          @if (actions().length > 0 && !hasProjectedActionsColumn()) {
+            <ng-container [matColumnDef]="'__actions'" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef class="data-table__actions-cell">Ações</th>
+              <td mat-cell *matCellDef="let row" class="data-table__actions-cell">
+                <ng-container [ngTemplateOutlet]="actionsTemplate" [ngTemplateOutletContext]="{ row: row }" />
+              </td>
+            </ng-container>
+          }
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+          <tr
+            mat-row
+            *matRowDef="let row; columns: displayedColumns()"
+            [class.data-table__row--selected]="selection.isSelected(row)"
+            (click)="emitRowClick(row)"
+          ></tr>
+        </table>
+      </div>
+
+      @if (paginatorEnabled()) {
+        <mat-paginator
+          [length]="paginatorLength()"
+          [pageIndex]="pageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="pageSizeOptions()"
+          (page)="handlePage($event)"
+          aria-label="Paginação da tabela"
+        />
+      }
+    }
+  </div>
+</section>
+
+<ng-template #actionsTemplate let-row="row">
+  @let availableActions = rowActions(row);
+
+  @if (availableActions.length === 1) {
+    @let action = availableActions[0];
+    <button
+      mat-icon-button
+      type="button"
+      [color]="action.color"
+      [disabled]="isActionDisabled(action, row)"
+      [matTooltip]="action.tooltip ?? action.label"
+      [attr.aria-label]="action.label"
+      (click)="triggerAction(action.id, row); $event.stopPropagation()"
+    >
+      <mat-icon>{{ action.icon }}</mat-icon>
+    </button>
+  } @else if (availableActions.length > 1) {
+    <button mat-icon-button type="button" [matMenuTriggerFor]="actionsMenu" aria-label="Abrir ações" (click)="$event.stopPropagation()">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #actionsMenu="matMenu">
+      @for (action of availableActions; track action.id) {
+        <button
+          mat-menu-item
+          type="button"
+          [disabled]="isActionDisabled(action, row)"
+          (click)="triggerAction(action.id, row)"
+        >
+          <mat-icon [color]="action.color">{{ action.icon }}</mat-icon>
+          <span>{{ action.label }}</span>
+        </button>
+      }
+    </mat-menu>
+  }
+</ng-template>

@@ -3,26 +3,17 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
+
+import { SidebarComponent } from './sidebar/sidebar.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
   imports: [
     RouterOutlet,
-    MatBadgeModule,
-    MatButtonModule,
-    MatFormFieldModule,
     MatIconModule,
-    MatInputModule,
-    MatMenuModule,
-    MatTooltipModule,
+    SidebarComponent,
   ],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
@@ -42,26 +33,7 @@ export class AdminLayoutComponent {
   readonly mobileSidebarOpen = signal(false);
   readonly pageTitle = signal('Home');
   readonly breadcrumb = signal<string[]>(['Home']);
-  readonly userName = signal('João Pereira');
   readonly year = new Date().getFullYear();
-
-  protected readonly sidebarItems = [
-    { id: 'home', label: 'Home', icon: 'home', active: true },
-    { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-    { id: 'members', label: 'Membros', icon: 'groups' },
-    { id: 'families', label: 'Famílias', icon: 'diversity_3' },
-    { id: 'visitors', label: 'Visitantes', icon: 'person_add' },
-    { id: 'baptisms', label: 'Batismos', icon: 'water_drop' },
-    { id: 'transfers', label: 'Transferências', icon: 'swap_horiz' },
-    { id: 'departments', label: 'Departamentos', icon: 'apartment' },
-    { id: 'ministries', label: 'Ministérios', icon: 'church' },
-    { id: 'leaderships', label: 'Lideranças', icon: 'workspace_premium' },
-    { id: 'events', label: 'Eventos', icon: 'event' },
-    { id: 'finance', label: 'Financeiro', icon: 'account_balance_wallet' },
-    { id: 'reports', label: 'Relatórios', icon: 'summarize' },
-    { id: 'users', label: 'Usuários', icon: 'manage_accounts' },
-    { id: 'settings', label: 'Configurações', icon: 'settings' },
-  ];
 
   constructor() {
     this.syncRouteContext();
