@@ -1,0 +1,21 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Membership_System_Client/config/applicationhost.config
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/CodeChunks.db
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/CodeChunks.db-shm
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/CodeChunks.db-wal
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/SemanticSymbols.db
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/SemanticSymbols.db-shm
+/.vs/Membership_System_Client/CopilotIndices/17.14.1653.19549/SemanticSymbols.db-wal
+/.vs/Membership_System_Client/FileContentIndex/8d44745f-1db5-4baf-ba1e-2973bc591f43.vsidx
+/.vs/Membership_System_Client/FileContentIndex/99d5ff87-f70f-4e4f-b607-a2620ad6689c.vsidx
+/.vs/Membership_System_Client/FileContentIndex/d61774ad-98c9-416a-a002-3fefedd7d2cf.vsidx
+/.vs/Membership_System_Client/FileContentIndex/de22f66b-8fbf-41d6-807c-edbf1abb885e.vsidx
+/.vs/Membership_System_Client/FileContentIndex/fe85e210-2575-43e5-bdf9-60de18e38927.vsidx
+/.vs/slnx.sqlite
+/.vs/Membership_System_Client/FileContentIndex/897dd3d7-10ed-4108-a6ce-95da808ec5c5.vsidx
+/.vs/Membership_System_Client/FileContentIndex/7a7c1c34-9f3c-414b-bf39-71be69176da1.vsidx
+/.vs/Membership_System_Client/FileContentIndex/f33cb427-5d2a-4338-bec6-ce64fb8ddc60.vsidx
+*.vsidx
