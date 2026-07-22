@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.auxiliary-list__new-button mat-icon {
+  margin-right: var(--spacing-xs);
+}
+
+@media (max-width: 599.98px) {
+  .auxiliary-list__new-button {
+    width: 100%;
+  }
+}

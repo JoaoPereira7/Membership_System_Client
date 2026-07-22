@@ -1,0 +1,47 @@
+<app-list-page-shell
+  title="Tipos de endereço"
+  subtitle="Gerencie os tipos utilizados na identificação dos endereços dos membros."
+  icon="home_pin"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="openCreateDialog()"
+  >
+    <mat-icon>add</mat-icon><span>Novo tipo de endereço</span>
+  </button>
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar tipo de endereço"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="onSearchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de tipos de endereço"
+    emptyMessage="Nenhum tipo de endereço encontrado."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="onQueryChanged($event)"
+    (actionTriggered)="onAction($event)"
+  />
+</app-list-page-shell>

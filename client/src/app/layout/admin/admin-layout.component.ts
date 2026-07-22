@@ -6,15 +6,12 @@ import { filter, map, startWith } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 
 import { SidebarComponent } from './sidebar/sidebar.component';
+import { FooterComponent } from './footer/footer.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    MatIconModule,
-    SidebarComponent,
-  ],
+  imports: [RouterOutlet, MatIconModule, SidebarComponent, FooterComponent],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -33,8 +30,6 @@ export class AdminLayoutComponent {
   readonly mobileSidebarOpen = signal(false);
   readonly pageTitle = signal('Home');
   readonly breadcrumb = signal<string[]>(['Home']);
-  readonly year = new Date().getFullYear();
-
   constructor() {
     this.syncRouteContext();
 
@@ -69,7 +64,9 @@ export class AdminLayoutComponent {
 
     this.pageTitle.set((data['title'] as string | undefined) ?? 'Home');
     this.breadcrumb.set(
-      (data['breadcrumb'] as string[] | undefined)?.length ? (data['breadcrumb'] as string[]) : ['Home'],
+      (data['breadcrumb'] as string[] | undefined)?.length
+        ? (data['breadcrumb'] as string[])
+        : ['Home'],
     );
   }
 

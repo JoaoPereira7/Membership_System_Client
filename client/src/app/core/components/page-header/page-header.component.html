@@ -1,0 +1,76 @@
+@let currentBreadcrumbs = breadcrumbs();
+@let currentIcon = icon();
+@let currentSubtitle = subtitle();
+
+<header [class]="headerClasses().join(' ')">
+  @if (showBreadcrumbs() && currentBreadcrumbs.length > 0) {
+    <nav class="page-header__breadcrumb" aria-label="Breadcrumb">
+      <ol class="page-header__breadcrumb-list">
+        @for (breadcrumb of currentBreadcrumbs; track $index; let isLast = $last) {
+          <li class="page-header__breadcrumb-item">
+            @if (hasRoute(breadcrumb)) {
+              <a
+                class="page-header__breadcrumb-link"
+                [routerLink]="breadcrumb.route"
+                [attr.aria-current]="isLast ? 'page' : null"
+              >
+                @if (breadcrumb.icon) {
+                  <mat-icon class="page-header__breadcrumb-icon" aria-hidden="true">
+                    {{ breadcrumb.icon }}
+                  </mat-icon>
+                }
+                <span>{{ breadcrumb.label }}</span>
+              </a>
+            } @else {
+              <span
+                class="page-header__breadcrumb-current"
+                [attr.aria-current]="isLast ? 'page' : null"
+              >
+                @if (breadcrumb.icon) {
+                  <mat-icon class="page-header__breadcrumb-icon" aria-hidden="true">
+                    {{ breadcrumb.icon }}
+                  </mat-icon>
+                }
+                <span>{{ breadcrumb.label }}</span>
+              </span>
+            }
+
+            @if (!isLast) {
+              <mat-icon class="page-header__breadcrumb-separator" aria-hidden="true">
+                chevron_right
+              </mat-icon>
+            }
+          </li>
+        }
+      </ol>
+    </nav>
+  }
+
+  <div class="page-header__main">
+    <div class="page-header__heading">
+      @if (currentIcon) {
+        <span class="page-header__icon" aria-hidden="true">
+          <mat-icon>{{ currentIcon }}</mat-icon>
+        </span>
+      }
+
+      <div class="page-header__copy">
+        <h1 class="page-header__title">{{ title() }}</h1>
+
+        @if (currentSubtitle) {
+          <p class="page-header__subtitle">{{ currentSubtitle }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="page-header__actions">
+      <div class="page-header__secondary-actions">
+        <ng-content select="[page-secondary-actions]" />
+      </div>
+
+      <div class="page-header__primary-action">
+        <ng-content select="[page-primary-action]" />
+      </div>
+    </div>
+  </div>
+</header>

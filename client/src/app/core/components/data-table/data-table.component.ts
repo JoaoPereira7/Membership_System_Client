@@ -1,6 +1,14 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import { NgClass, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, effect, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -58,6 +66,7 @@ export class AppDataTableComponent<T extends object> {
   readonly loading = input<boolean>(false);
   readonly errorMessage = input<string | null>(null);
   readonly emptyMessage = input<string>('Nenhum registro encontrado.');
+  readonly toolbarEnabled = input<boolean>(true);
   readonly searchEnabled = input<boolean>(true);
   readonly searchPlaceholder = input<string>('Pesquisar');
   readonly paginatorEnabled = input<boolean>(true);
@@ -115,7 +124,8 @@ export class AppDataTableComponent<T extends object> {
   readonly displayedColumns = computed<readonly string[]>(() => {
     const configuredColumns = this.visibleColumns().map((column) => this.columnId(column));
     const selectionColumns = this.selectionEnabled() ? [SELECTION_COLUMN] : [];
-    const actionColumns = this.actions().length > 0 && !this.hasProjectedActionsColumn() ? [ACTIONS_COLUMN] : [];
+    const actionColumns =
+      this.actions().length > 0 && !this.hasProjectedActionsColumn() ? [ACTIONS_COLUMN] : [];
 
     return [...selectionColumns, ...configuredColumns, ...actionColumns];
   });
@@ -129,7 +139,9 @@ export class AppDataTableComponent<T extends object> {
     }
 
     return rows.filter((row) =>
-      this.visibleColumns().some((column) => this.formatCellValue(row, column).toLocaleLowerCase('pt-BR').includes(search)),
+      this.visibleColumns().some((column) =>
+        this.formatCellValue(row, column).toLocaleLowerCase('pt-BR').includes(search),
+      ),
     );
   });
 
@@ -150,7 +162,10 @@ export class AppDataTableComponent<T extends object> {
     }
 
     return rows.sort((first, second) => {
-      const comparison = this.compareValues(this.getCellValue(first, column), this.getCellValue(second, column));
+      const comparison = this.compareValues(
+        this.getCellValue(first, column),
+        this.getCellValue(second, column),
+      );
       return sortDirection === 'asc' ? comparison : -comparison;
     });
   });
@@ -164,7 +179,9 @@ export class AppDataTableComponent<T extends object> {
     return this.sortedRows().slice(start, start + this.pageSize());
   });
 
-  readonly paginatorLength = computed<number>(() => (this.mode() === 'server' ? this.totalItems() : this.sortedRows().length));
+  readonly paginatorLength = computed<number>(() =>
+    this.mode() === 'server' ? this.totalItems() : this.sortedRows().length,
+  );
 
   readonly showEmptyState = computed<boolean>(
     () => !this.loading() && !this.errorMessage() && this.visibleRows().length === 0,
@@ -348,10 +365,17 @@ export class AppDataTableComponent<T extends object> {
       return first - second;
     }
 
-    return String(first).localeCompare(String(second), 'pt-BR', { numeric: true, sensitivity: 'base' });
+    return String(first).localeCompare(String(second), 'pt-BR', {
+      numeric: true,
+      sensitivity: 'base',
+    });
   }
 
-  private formatDate(value: unknown, formatter: Intl.DateTimeFormat, emptyValue: string | undefined): string {
+  private formatDate(
+    value: unknown,
+    formatter: Intl.DateTimeFormat,
+    emptyValue: string | undefined,
+  ): string {
     const date = value instanceof Date ? value : new Date(String(value));
 
     if (Number.isNaN(date.getTime())) {

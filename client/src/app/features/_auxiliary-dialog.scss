@@ -1,0 +1,92 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.auxiliary-dialog__header {
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.auxiliary-dialog__icon {
+  display: grid;
+  flex: 0 0 2.75rem;
+  height: 2.75rem;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--surface-color));
+  color: var(--color-primary);
+}
+
+.auxiliary-dialog__title {
+  min-width: 0;
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-h4);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-heading);
+}
+
+.auxiliary-dialog__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.auxiliary-dialog__error {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: flex-start;
+  padding: var(--spacing-md);
+  border: var(--border-width) solid color-mix(in srgb, var(--color-danger) 30%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-danger) 6%, var(--surface-color));
+  color: var(--color-danger);
+}
+
+.auxiliary-dialog__error mat-icon {
+  flex: 0 0 auto;
+}
+
+.auxiliary-dialog__status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.auxiliary-dialog__status-hint {
+  color: var(--text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.auxiliary-dialog__actions {
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-top: var(--border-width) solid var(--color-border);
+  background: var(--surface-alt);
+}
+
+.auxiliary-dialog__save {
+  min-width: 7.5rem;
+}
+
+.auxiliary-dialog__save mat-progress-spinner {
+  display: inline-flex;
+  margin-right: var(--spacing-xs);
+}
+
+@media (max-width: 599.98px) {
+  .auxiliary-dialog__header,
+  .auxiliary-dialog__content,
+  .auxiliary-dialog__actions {
+    padding-inline: var(--spacing-md);
+  }
+
+  .auxiliary-dialog__actions button {
+    flex: 1 1 auto;
+  }
+}

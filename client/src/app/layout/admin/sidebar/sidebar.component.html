@@ -13,25 +13,129 @@
 
   <nav class="sidebar__nav" aria-label="Navegação principal">
     @for (item of items; track item.id) {
-      <button
-        type="button"
-        class="sidebar-item"
-        [class.sidebar-item--active]="item.active"
-        [matTooltip]="collapsed() ? item.label : ''"
-        matTooltipPosition="right"
-        (click)="notifyInteraction()"
-        matRipple
-      >
-        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
-        @if (!collapsed()) {
-          <span class="sidebar-item__content">
+      @if (item.section) {
+        <div class="sidebar__section" aria-hidden="true">
+          @if (!collapsed()) {
+            <span>{{ item.section }}</span>
+          }
+        </div>
+      }
+
+      @if (item.children?.length) {
+        @if (collapsed()) {
+          <button
+            type="button"
+            class="sidebar-item sidebar-item--icon-only"
+            [class.sidebar-item--active]="isGroupActive(item.id)"
+            [matMenuTriggerFor]="submenu"
+            [matTooltip]="item.label"
+            matTooltipPosition="right"
+            [attr.aria-label]="item.label"
+            matRipple
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="sidebar-item"
+            [class.sidebar-item--active]="isGroupActive(item.id)"
+            [attr.aria-expanded]="isExpanded(item.id)"
+            [attr.aria-controls]="'submenu-' + item.id"
+            (click)="toggleGroup(item.id)"
+            matRipple
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
             <span class="sidebar-item__label">{{ item.label }}</span>
-            @if (item.futureSubmenu) {
-              <mat-icon class="sidebar-item__chevron">expand_more</mat-icon>
-            }
-          </span>
+            <mat-icon class="sidebar-item__chevron">
+              {{ isExpanded(item.id) ? 'expand_more' : 'chevron_right' }}
+            </mat-icon>
+          </button>
+
+          @if (isExpanded(item.id)) {
+            <div class="sidebar__submenu" [id]="'submenu-' + item.id">
+              @for (child of item.children; track child.id) {
+                @if (child.disabled) {
+                  <button
+                    type="button"
+                    class="sidebar-item sidebar-item--child sidebar-item--disabled"
+                    aria-disabled="true"
+                    matTooltip="Disponível em breve"
+                    matTooltipPosition="right"
+                  >
+                    <mat-icon>{{ child.icon }}</mat-icon>
+                    <span class="sidebar-item__label">{{ child.label }}</span>
+                  </button>
+                } @else {
+                  <a
+                    class="sidebar-item sidebar-item--child"
+                    [class.sidebar-item--active]="isActive(child)"
+                    [routerLink]="child.route"
+                    [attr.aria-current]="isActive(child) ? 'page' : null"
+                    (click)="onNavigate()"
+                    matRipple
+                  >
+                    <mat-icon>{{ child.icon }}</mat-icon>
+                    <span class="sidebar-item__label">{{ child.label }}</span>
+                  </a>
+                }
+              }
+            </div>
+          }
         }
-      </button>
+
+        <mat-menu #submenu="matMenu">
+          @for (child of item.children; track child.id) {
+            @if (child.disabled) {
+              <button mat-menu-item disabled aria-disabled="true" matTooltip="Disponível em breve">
+                <mat-icon>{{ child.icon }}</mat-icon>
+                <span>{{ child.label }}</span>
+              </button>
+            } @else {
+              <a
+                mat-menu-item
+                [routerLink]="child.route"
+                [attr.aria-current]="isActive(child) ? 'page' : null"
+                (click)="onNavigate()"
+              >
+                <mat-icon>{{ child.icon }}</mat-icon>
+                <span>{{ child.label }}</span>
+              </a>
+            }
+          }
+        </mat-menu>
+      } @else if (item.disabled) {
+        <button
+          type="button"
+          class="sidebar-item sidebar-item--disabled"
+          [class.sidebar-item--icon-only]="collapsed()"
+          aria-disabled="true"
+          [matTooltip]="collapsed() ? item.label + ' — Disponível em breve' : 'Disponível em breve'"
+          matTooltipPosition="right"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          @if (!collapsed()) {
+            <span class="sidebar-item__label">{{ item.label }}</span>
+          }
+        </button>
+      } @else {
+        <a
+          class="sidebar-item"
+          [class.sidebar-item--active]="isActive(item)"
+          [class.sidebar-item--icon-only]="collapsed()"
+          [routerLink]="item.route"
+          [attr.aria-current]="isActive(item) ? 'page' : null"
+          [matTooltip]="collapsed() ? item.label : ''"
+          matTooltipPosition="right"
+          (click)="onNavigate()"
+          matRipple
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          @if (!collapsed()) {
+            <span class="sidebar-item__label">{{ item.label }}</span>
+          }
+        </a>
+      }
     }
   </nav>
 
@@ -41,7 +145,9 @@
       type="button"
       class="sidebar__toggle"
       (click)="handleToggleClick()"
-      [attr.aria-label]="mobile() ? 'Fechar sidebar' : collapsed() ? 'Expandir sidebar' : 'Recolher sidebar'"
+      [attr.aria-label]="
+        mobile() ? 'Fechar sidebar' : collapsed() ? 'Expandir sidebar' : 'Recolher sidebar'
+      "
     >
       <mat-icon>{{ mobile() ? 'close' : collapsed() ? 'chevron_right' : 'chevron_left' }}</mat-icon>
     </button>

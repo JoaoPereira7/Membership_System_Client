@@ -73,6 +73,14 @@ td {
   text-align: right;
 }
 
+:host ::ng-deep .data-table__cell--center .mat-sort-header-container {
+  justify-content: center;
+}
+
+:host ::ng-deep .data-table__cell--end .mat-sort-header-container {
+  justify-content: flex-end;
+}
+
 .data-table__selection-cell {
   width: 3.5rem;
 }

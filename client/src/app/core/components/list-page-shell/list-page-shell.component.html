@@ -1,0 +1,51 @@
+<section
+  class="list-page-shell"
+  [style.max-width]="maxWidth()"
+  [attr.aria-label]="title()"
+  [attr.aria-busy]="loading()"
+>
+  @if (contentAppearance() === 'card') {
+    <mat-card [class]="surfaceClasses().join(' ')">
+      <ng-container [ngTemplateOutlet]="content" />
+    </mat-card>
+  } @else {
+    <div [class]="surfaceClasses().join(' ')">
+      <ng-container [ngTemplateOutlet]="content" />
+    </div>
+  }
+</section>
+
+<ng-template #content>
+  @if (loading()) {
+    <mat-progress-bar
+      class="list-page-shell__progress"
+      mode="indeterminate"
+      aria-label="Carregando conteúdo da página"
+    />
+  }
+
+  <div class="list-page-shell__body">
+    <div class="list-page-shell__toolbar">
+      <div class="list-page-shell__toolbar-actions">
+        <ng-content select="[page-primary-action]" />
+        <ng-content select="[page-secondary-actions]" />
+      </div>
+
+      <div class="list-page-shell__toolbar-controls">
+        <ng-content select="[list-toolbar]" />
+      </div>
+    </div>
+
+    <div class="list-page-shell__active-filters">
+      <ng-content select="[list-active-filters]" />
+    </div>
+
+    <div class="list-page-shell__content">
+      <ng-content select="[list-content]" />
+    </div>
+
+    <div class="list-page-shell__footer">
+      <ng-content select="[list-footer]" />
+    </div>
+  </div>
+</ng-template>

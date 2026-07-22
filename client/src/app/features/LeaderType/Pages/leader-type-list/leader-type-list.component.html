@@ -1,0 +1,50 @@
+<app-list-page-shell
+  title="Tipos de liderança"
+  subtitle="Gerencie os tipos de liderança disponíveis para o cadastro de membros."
+  icon="record_voice_over"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="openCreateDialog()"
+  >
+    <mat-icon>add</mat-icon>
+    <span>Novo tipo de liderança</span>
+  </button>
+
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar tipo de liderança"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="onSearchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de tipos de liderança"
+    emptyMessage="Nenhum tipo de liderança encontrado."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="onQueryChanged($event)"
+    (actionTriggered)="onAction($event)"
+  />
+</app-list-page-shell>

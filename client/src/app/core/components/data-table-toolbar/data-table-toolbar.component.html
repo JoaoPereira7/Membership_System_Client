@@ -1,0 +1,113 @@
+@let total = itemCount();
+@let filterSummary = activeFilterSummary();
+
+<section class="data-table-toolbar" aria-label="Ferramentas da tabela" [attr.aria-busy]="busy()">
+  <div class="data-table-toolbar__main">
+    @if (searchEnabled()) {
+      <mat-form-field
+        class="data-table-toolbar__search"
+        appearance="outline"
+        subscriptSizing="dynamic"
+      >
+        <mat-label>{{ searchPlaceholder() }}</mat-label>
+        <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+        <input
+          matInput
+          type="search"
+          autocomplete="off"
+          [formControl]="searchControl"
+          [attr.aria-label]="searchPlaceholder()"
+        />
+
+        @if (clearSearchEnabled() && searchControl.value.trim().length > 0) {
+          <button
+            class="data-table-toolbar__clear-button"
+            mat-icon-button
+            matSuffix
+            type="button"
+            aria-label="Limpar pesquisa"
+            [disabled]="controlsDisabled()"
+            (click)="clearSearch()"
+          >
+            <mat-icon aria-hidden="true">close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    }
+
+    <div class="data-table-toolbar__actions">
+      @if (total) {
+        <span class="data-table-toolbar__total" [attr.aria-label]="total.label">
+          {{ total.label }}
+        </span>
+      }
+
+      @if (filterEnabled()) {
+        <button
+          class="data-table-toolbar__filter-button"
+          mat-stroked-button
+          type="button"
+          [disabled]="controlsDisabled()"
+          (click)="requestFilters()"
+        >
+          <mat-icon aria-hidden="true">filter_list</mat-icon>
+          <span
+            [matBadge]="filterSummary.count"
+            [matBadgeHidden]="filterSummary.count === 0"
+            [matBadgeOverlap]="false"
+            [matBadgeDescription]="filterSummary.label"
+            matBadgeColor="primary"
+            matBadgeSize="small"
+          >
+            Filtros
+          </span>
+        </button>
+      }
+
+      @if (exportEnabled()) {
+        <button
+          class="data-table-toolbar__export-button"
+          mat-stroked-button
+          type="button"
+          [disabled]="exportDisabled()"
+          [attr.aria-busy]="exporting()"
+          (click)="requestExport()"
+        >
+          @if (exporting()) {
+            <mat-progress-spinner
+              class="data-table-toolbar__spinner"
+              diameter="18"
+              mode="indeterminate"
+              aria-label="Exportando registros"
+            />
+          } @else {
+            <mat-icon aria-hidden="true">download</mat-icon>
+          }
+          <span>{{ exporting() ? 'Exportando' : 'Exportar' }}</span>
+        </button>
+      }
+
+      @if (refreshEnabled()) {
+        <button
+          class="data-table-toolbar__refresh-button"
+          mat-icon-button
+          type="button"
+          aria-label="Atualizar registros"
+          matTooltip="Atualizar registros"
+          [disabled]="controlsDisabled()"
+          (click)="requestRefresh()"
+        >
+          <mat-icon aria-hidden="true">refresh</mat-icon>
+        </button>
+      }
+
+      <div class="data-table-toolbar__additional-actions">
+        <ng-content select="[data-table-toolbar-actions]" />
+      </div>
+    </div>
+  </div>
+
+  <div class="data-table-toolbar__active-filters" role="group" aria-label="Filtros ativos">
+    <ng-content select="[data-table-active-filters]" />
+  </div>
+</section>

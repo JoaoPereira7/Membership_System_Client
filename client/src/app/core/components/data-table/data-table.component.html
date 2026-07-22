@@ -1,29 +1,42 @@
 <section class="data-table" [attr.aria-busy]="loading()" [attr.aria-label]="ariaLabel()">
-  @if (searchEnabled()) {
-    <div class="data-table__toolbar">
-      <mat-form-field class="data-table__search" appearance="outline">
-        <mat-label>{{ searchPlaceholder() }}</mat-label>
-        <mat-icon matPrefix aria-hidden="true">search</mat-icon>
-        <input matInput type="search" [formControl]="searchControl" [attr.aria-label]="searchPlaceholder()" />
-        @if (searchControl.value) {
-          <button mat-icon-button matSuffix type="button" (click)="clearSearch()" aria-label="Limpar pesquisa">
-            <mat-icon>close</mat-icon>
-          </button>
-        }
-      </mat-form-field>
+  @if (toolbarEnabled()) {
+    @if (searchEnabled()) {
+      <div class="data-table__toolbar">
+        <mat-form-field class="data-table__search" appearance="outline">
+          <mat-label>{{ searchPlaceholder() }}</mat-label>
+          <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+          <input
+            matInput
+            type="search"
+            [formControl]="searchControl"
+            [attr.aria-label]="searchPlaceholder()"
+          />
+          @if (searchControl.value) {
+            <button
+              mat-icon-button
+              matSuffix
+              type="button"
+              (click)="clearSearch()"
+              aria-label="Limpar pesquisa"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+          }
+        </mat-form-field>
 
-      <div class="data-table__toolbar-actions">
-        <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
-        <ng-content select="[data-table-toolbar-actions]" />
+        <div class="data-table__toolbar-actions">
+          <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
+          <ng-content select="[data-table-toolbar-actions]" />
+        </div>
       </div>
-    </div>
-  } @else {
-    <div class="data-table__toolbar data-table__toolbar--actions-only">
-      <div class="data-table__toolbar-actions">
-        <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
-        <ng-content select="[data-table-toolbar-actions]" />
+    } @else {
+      <div class="data-table__toolbar data-table__toolbar--actions-only">
+        <div class="data-table__toolbar-actions">
+          <span class="data-table__counter">{{ paginatorLength() }} registro(s)</span>
+          <ng-content select="[data-table-toolbar-actions]" />
+        </div>
       </div>
-    </div>
+    }
   }
 
   <div class="data-table__surface">
@@ -43,7 +56,13 @@
       </div>
     } @else {
       <div class="data-table__scroll">
-        <table mat-table matSort [dataSource]="visibleRows()" (matSortChange)="handleSort($event)" [attr.aria-label]="ariaLabel()">
+        <table
+          mat-table
+          matSort
+          [dataSource]="visibleRows()"
+          (matSortChange)="handleSort($event)"
+          [attr.aria-label]="ariaLabel()"
+        >
           @if (selectionEnabled()) {
             <ng-container [matColumnDef]="'__selection'">
               <th mat-header-cell *matHeaderCellDef class="data-table__selection-cell">
@@ -66,29 +85,53 @@
           }
 
           @for (column of visibleColumns(); track columnId(column)) {
-            <ng-container [matColumnDef]="columnId(column)" [sticky]="column.sticky === true" [stickyEnd]="column.stickyEnd === true">
+            <ng-container
+              [matColumnDef]="columnId(column)"
+              [sticky]="column.sticky === true"
+              [stickyEnd]="column.stickyEnd === true"
+            >
               <th
                 mat-header-cell
                 *matHeaderCellDef
                 [mat-sort-header]="isColumnSortable(column) ? columnId(column) : ''"
                 [disabled]="!isColumnSortable(column)"
                 [ngClass]="alignClass(column)"
+                [style.width]="column.width ?? null"
+                [style.min-width]="column.minWidth ?? column.width ?? null"
+                [style.max-width]="column.width ?? null"
               >
                 {{ column.label }}
               </th>
-              <td mat-cell *matCellDef="let row" [ngClass]="alignClass(column)">
+              <td
+                mat-cell
+                *matCellDef="let row"
+                [ngClass]="alignClass(column)"
+                [style.width]="column.width ?? null"
+                [style.min-width]="column.minWidth ?? column.width ?? null"
+                [style.max-width]="column.width ?? null"
+              >
                 @switch (column.type) {
                   @case ('boolean') {
-                    <span class="data-table__boolean" [attr.aria-label]="formatCellValue(row, column)">
-                      <mat-icon aria-hidden="true">{{ getCellValue(row, column) === true ? 'check_circle' : 'cancel' }}</mat-icon>
+                    <span
+                      class="data-table__boolean"
+                      [attr.aria-label]="formatCellValue(row, column)"
+                    >
+                      <mat-icon aria-hidden="true">{{
+                        getCellValue(row, column) === true ? 'check_circle' : 'cancel'
+                      }}</mat-icon>
                       {{ formatCellValue(row, column) }}
                     </span>
                   }
                   @case ('status') {
-                    <mat-chip class="data-table__status">{{ formatCellValue(row, column) }}</mat-chip>
+                    <mat-chip class="data-table__status">{{
+                      formatCellValue(row, column)
+                    }}</mat-chip>
                   }
                   @case ('actions') {
-                    <ng-container [ngTemplateOutlet]="actionsTemplate" [ngTemplateOutletContext]="{ row: row }" />
+                    <ng-container
+                      [ngTemplateOutlet]="actionsTemplate"
+                      [ngTemplateOutletContext]="{ row: row }"
+                    />
                   }
                   @default {
                     {{ formatCellValue(row, column) }}
@@ -102,7 +145,10 @@
             <ng-container [matColumnDef]="'__actions'" stickyEnd>
               <th mat-header-cell *matHeaderCellDef class="data-table__actions-cell">Ações</th>
               <td mat-cell *matCellDef="let row" class="data-table__actions-cell">
-                <ng-container [ngTemplateOutlet]="actionsTemplate" [ngTemplateOutletContext]="{ row: row }" />
+                <ng-container
+                  [ngTemplateOutlet]="actionsTemplate"
+                  [ngTemplateOutletContext]="{ row: row }"
+                />
               </td>
             </ng-container>
           }
@@ -148,7 +194,13 @@
       <mat-icon>{{ action.icon }}</mat-icon>
     </button>
   } @else if (availableActions.length > 1) {
-    <button mat-icon-button type="button" [matMenuTriggerFor]="actionsMenu" aria-label="Abrir ações" (click)="$event.stopPropagation()">
+    <button
+      mat-icon-button
+      type="button"
+      [matMenuTriggerFor]="actionsMenu"
+      aria-label="Abrir ações"
+      (click)="$event.stopPropagation()"
+    >
       <mat-icon>more_vert</mat-icon>
     </button>
     <mat-menu #actionsMenu="matMenu">

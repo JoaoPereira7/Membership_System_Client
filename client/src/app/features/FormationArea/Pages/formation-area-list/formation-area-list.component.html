@@ -1,0 +1,50 @@
+<app-list-page-shell
+  title="Áreas de formação"
+  subtitle="Gerencie as áreas de formação disponíveis para o cadastro de membros."
+  icon="menu_book"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="openCreateDialog()"
+  >
+    <mat-icon>add</mat-icon>
+    <span>Nova área de formação</span>
+  </button>
+
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar área de formação"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="onSearchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de áreas de formação"
+    emptyMessage="Nenhuma área de formação encontrada."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="onQueryChanged($event)"
+    (actionTriggered)="onAction($event)"
+  />
+</app-list-page-shell>
