@@ -49,8 +49,22 @@ function extractMessage(error: unknown): string | null {
   if (error instanceof HttpErrorResponse) {
     const responseError = error.error;
 
-    if (responseError && typeof responseError === 'object' && 'message' in responseError) {
-      return typeof responseError.message === 'string' ? responseError.message : error.message;
+    if (responseError && typeof responseError === 'object') {
+      if ('message' in responseError && typeof responseError.message === 'string') {
+        return responseError.message;
+      }
+
+      if ('errors' in responseError) {
+        const validationMessage = extractValidationMessage(responseError.errors);
+
+        if (validationMessage) {
+          return validationMessage;
+        }
+      }
+
+      if ('title' in responseError && typeof responseError.title === 'string') {
+        return responseError.title;
+      }
     }
 
     return error.message;
@@ -63,6 +77,28 @@ function extractMessage(error: unknown): string | null {
   if (error && typeof error === 'object' && 'message' in error) {
     const message = error.message;
     return typeof message === 'string' ? message : null;
+  }
+
+  return null;
+}
+
+function extractValidationMessage(errors: unknown): string | null {
+  if (!errors || typeof errors !== 'object') {
+    return null;
+  }
+
+  for (const value of Object.values(errors)) {
+    if (Array.isArray(value)) {
+      const message = value.find((item): item is string => typeof item === 'string');
+
+      if (message) {
+        return message;
+      }
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
   }
 
   return null;

@@ -1,0 +1,49 @@
+<app-list-page-shell
+  title="Departamentos por Igreja"
+  subtitle="Defina quais departamentos estão disponíveis em cada igreja."
+  icon="hub"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="openCreateDialog()"
+  >
+    <mat-icon>add</mat-icon><span>Novo vínculo</span>
+  </button>
+
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar igreja ou departamento"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="onSearchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de departamentos das igrejas"
+    emptyMessage="Nenhum departamento vinculado a uma igreja."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="onQueryChanged($event)"
+    (actionTriggered)="onAction($event)"
+  />
+</app-list-page-shell>

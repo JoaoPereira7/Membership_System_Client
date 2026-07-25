@@ -4,6 +4,12 @@ export const authRoutes: Routes = [];
 
 export const adminRoutes: Routes = [
   {
+    path: 'members',
+    loadChildren: () =>
+      import('./features/Member/member.routes').then((routes) => routes.MEMBER_ROUTES),
+    data: { title: 'Membros', breadcrumb: ['Membros'] },
+  },
+  {
     path: '',
     pathMatch: 'full',
     loadComponent: () =>
@@ -11,6 +17,66 @@ export const adminRoutes: Routes = [
     data: {
       title: 'Home',
       breadcrumb: ['Home'],
+    },
+  },
+  {
+    path: 'organization/church-departments',
+    loadChildren: () =>
+      import('./features/ChurchDepartment/church-department.routes').then(
+        (routes) => routes.CHURCH_DEPARTMENT_ROUTES,
+      ),
+    data: {
+      title: 'Departamentos por Igreja',
+      breadcrumb: ['Organização', 'Departamentos por Igreja'],
+    },
+  },
+  {
+    path: 'organization/churches',
+    loadChildren: () =>
+      import('./features/Church/church.routes').then((routes) => routes.CHURCH_ROUTES),
+    data: {
+      title: 'Igrejas',
+      breadcrumb: ['Organização', 'Igrejas'],
+    },
+  },
+  {
+    path: 'organization/church-roles',
+    loadChildren: () =>
+      import('./features/ChurchRole/church-role.routes').then(
+        (routes) => routes.CHURCH_ROLE_ROUTES,
+      ),
+    data: {
+      title: 'Cargos eclesiásticos',
+      breadcrumb: ['Organização', 'Cargos eclesiásticos'],
+    },
+  },
+  {
+    path: 'organization/departments',
+    loadChildren: () =>
+      import('./features/Department/department.routes').then((routes) => routes.DEPARTMENT_ROUTES),
+    data: {
+      title: 'Departamentos',
+      breadcrumb: ['Organização', 'Departamentos'],
+    },
+  },
+  {
+    path: 'administration/accounts',
+    loadChildren: () =>
+      import('./features/Account/account.routes').then((routes) => routes.ACCOUNT_ROUTES),
+    data: {
+      title: 'Usuários',
+      breadcrumb: ['Administração', 'Usuários'],
+    },
+  },
+  {
+    path: 'administration/account-profiles',
+    loadChildren: () =>
+      import('./features/AccountProfile/account-profile.routes').then(
+        (routes) => routes.ACCOUNT_PROFILE_ROUTES,
+      ),
+    data: {
+      title: 'Perfis de acesso',
+      breadcrumb: ['Administração', 'Perfis de acesso'],
     },
   },
   {
