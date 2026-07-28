@@ -34,6 +34,7 @@ export class MemberListComponent {
   protected readonly search = signal('');
   protected readonly sortActive = signal<string | null>('name');
   protected readonly sortDirection = signal<'asc' | 'desc' | ''>('asc');
+  private loadRequestId = 0;
   protected readonly breadcrumbs = [{ label: 'Membros' }];
   protected readonly columns: readonly DataTableColumn<MemberListItem>[] = [
     { key: 'name', label: 'Nome', type: 'text', sortable: true, minWidth: '220px' },
@@ -49,10 +50,23 @@ export class MemberListComponent {
   ];
   constructor() { this.reload(); }
   protected reload(): void {
+    const requestId = ++this.loadRequestId;
     this.loading.set(true); this.errorMessage.set(null);
-    this.service.getPaged(this.query()).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: result => { this.data.set(result.items); this.totalItems.set(result.totalItems); },
-      error: error => { this.data.set([]); this.totalItems.set(0); this.errorMessage.set(getApiErrorMessage(error, 'Não foi possível carregar os membros.')); },
+    this.service.getPaged(this.query()).pipe(finalize(() => {
+      if (requestId === this.loadRequestId) this.loading.set(false);
+    })).subscribe({
+      next: result => {
+        if (requestId !== this.loadRequestId) return;
+        this.errorMessage.set(null);
+        this.data.set(result.items);
+        this.totalItems.set(result.totalItems);
+      },
+      error: error => {
+        if (requestId !== this.loadRequestId) return;
+        this.data.set([]);
+        this.totalItems.set(0);
+        this.errorMessage.set(getApiErrorMessage(error, 'Não foi possível carregar os membros.'));
+      },
     });
   }
   protected searchChanged(value: string): void { this.search.set(value); this.pageIndex.set(0); this.reload(); }
@@ -71,9 +85,10 @@ export class MemberListComponent {
     this.dialog.open<MemberDialogComponent, MemberDialogData, MemberDialogResult>(
       MemberDialogComponent,
       {
-        width: '95vw',
-        maxWidth: '1400px',
-        maxHeight: '92vh',
+        width: '80vw',
+        maxWidth: '960px',
+        maxHeight: '80vh',
+        panelClass: 'member-dialog-panel',
         autoFocus: false,
         restoreFocus: true,
         disableClose: false,

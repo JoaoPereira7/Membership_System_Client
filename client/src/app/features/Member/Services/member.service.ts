@@ -46,7 +46,7 @@ export class MemberService {
       addressTypes: 'AddressType', educationLevels: 'EducationLevel',
       formationAreas: 'FormationArea', professions: 'Profession', churches: 'Church',
       membershipStatuses: 'MembershipStatus', religiousOrigins: 'ReligiousOrigin',
-      churchRoles: 'ChurchRole', leaderTypes: 'LeaderType', pastors: 'Member',
+      churchRoles: 'ChurchRole', leaderTypes: 'LeaderType', pastors: 'Member/pastors',
     };
     const requests: Record<string, Observable<readonly LookupItem[]>> = {};
     Object.entries(endpoints).forEach(([key, endpoint]) => {

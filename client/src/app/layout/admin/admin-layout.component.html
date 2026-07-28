@@ -13,7 +13,7 @@
     [style.width.px]="isMobile() ? 260 : sidebarCollapsed() ? 72 : 232"
   >
     <app-sidebar
-      [collapsed]="sidebarCollapsed()"
+      [collapsed]="isMobile() ? false : sidebarCollapsed()"
       [mobile]="isMobile()"
       (requestClose)="closeMobileSidebar()"
       (toggleSidebar)="toggleSidebar()"
@@ -22,6 +22,19 @@
 
   <section class="admin-shell__main">
     <header class="admin-shell__header">
+      @if (isMobile()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="admin-shell__menu-button"
+          aria-label="Abrir menu principal"
+          [attr.aria-expanded]="mobileSidebarOpen()"
+          (click)="toggleSidebar()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+
       <div class="admin-shell__titles">
         <h1 class="admin-shell__title">{{ pageTitle() }}</h1>
         <nav class="admin-shell__breadcrumb" aria-label="Breadcrumb">

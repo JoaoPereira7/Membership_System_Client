@@ -4,7 +4,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
+  inject,
   input,
   output,
   signal,
@@ -24,7 +26,10 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
+import { Router } from '@angular/router';
 
+import { EntityDialogService } from '../../services/entity-dialog.service';
+import { NotificationService } from '../../services/notification.service';
 import {
   DataTableAction,
   DataTableActionEvent,
@@ -35,6 +40,33 @@ import {
 
 const SELECTION_COLUMN = '__selection';
 const ACTIONS_COLUMN = '__actions';
+
+interface CrudRouteConfig {
+  readonly route: string;
+  readonly endpoint: string;
+  readonly entityLabel: string;
+  readonly title: string;
+}
+
+const CRUD_ROUTES: readonly CrudRouteConfig[] = [
+  { route: '/organization/church-departments', endpoint: 'ChurchDepartment', entityLabel: 'vínculo entre igreja e departamento', title: 'Detalhes do departamento por igreja' },
+  { route: '/organization/churches', endpoint: 'Church', entityLabel: 'igreja', title: 'Detalhes da igreja' },
+  { route: '/organization/church-roles', endpoint: 'ChurchRole', entityLabel: 'cargo eclesiástico', title: 'Detalhes do cargo eclesiástico' },
+  { route: '/organization/departments', endpoint: 'Departments', entityLabel: 'departamento', title: 'Detalhes do departamento' },
+  { route: '/administration/account-profiles', endpoint: 'AccountProfile', entityLabel: 'perfil de acesso', title: 'Detalhes do perfil de acesso' },
+  { route: '/administration/accounts', endpoint: 'Account', entityLabel: 'usuário', title: 'Detalhes do usuário' },
+  { route: '/auxiliary-data/genders', endpoint: 'Gender', entityLabel: 'gênero', title: 'Detalhes do gênero' },
+  { route: '/auxiliary-data/marital-statuses', endpoint: 'MaritalStatus', entityLabel: 'estado civil', title: 'Detalhes do estado civil' },
+  { route: '/auxiliary-data/phone-types', endpoint: 'PhoneType', entityLabel: 'tipo de telefone', title: 'Detalhes do tipo de telefone' },
+  { route: '/auxiliary-data/address-types', endpoint: 'AddressType', entityLabel: 'tipo de endereço', title: 'Detalhes do tipo de endereço' },
+  { route: '/auxiliary-data/education-levels', endpoint: 'EducationLevel', entityLabel: 'escolaridade', title: 'Detalhes da escolaridade' },
+  { route: '/auxiliary-data/formation-areas', endpoint: 'FormationArea', entityLabel: 'área de formação', title: 'Detalhes da área de formação' },
+  { route: '/auxiliary-data/professions', endpoint: 'Profession', entityLabel: 'profissão', title: 'Detalhes da profissão' },
+  { route: '/auxiliary-data/membership-statuses', endpoint: 'MembershipStatus', entityLabel: 'situação da membresia', title: 'Detalhes da situação da membresia' },
+  { route: '/auxiliary-data/religious-origins', endpoint: 'ReligiousOrigin', entityLabel: 'origem religiosa', title: 'Detalhes da origem religiosa' },
+  { route: '/auxiliary-data/leader-types', endpoint: 'LeaderType', entityLabel: 'tipo de liderança', title: 'Detalhes do tipo de liderança' },
+  { route: '/members', endpoint: 'Member', entityLabel: 'membro', title: 'Detalhes do membro' },
+];
 
 @Component({
   selector: 'app-data-table',
@@ -60,6 +92,10 @@ const ACTIONS_COLUMN = '__actions';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppDataTableComponent<T extends object> {
+  private readonly router = inject(Router);
+  private readonly entityDialogs = inject(EntityDialogService);
+  private readonly notification = inject(NotificationService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly data = input.required<readonly T[]>();
   readonly columns = input.required<readonly DataTableColumn<T>[]>();
   readonly actions = input<readonly DataTableAction<T>[]>([]);
@@ -121,11 +157,27 @@ export class AppDataTableComponent<T extends object> {
     this.visibleColumns().some((column) => column.type === 'actions'),
   );
 
+  readonly crudConfig = computed<CrudRouteConfig | null>(() => {
+    const path = this.router.url.split('?')[0].replace(/\/+$/, '') || '/';
+    return CRUD_ROUTES.find((config) => path === config.route || path.startsWith(`${config.route}/`)) ?? null;
+  });
+
+  readonly effectiveActions = computed<readonly DataTableAction<T>[]>(() => {
+    if (!this.crudConfig()) return this.actions();
+
+    const standardActions: readonly DataTableAction<T>[] = [
+      { id: '__view', label: 'Visualizar', icon: 'visibility', tooltip: 'Visualizar detalhes', color: 'primary' },
+      { id: '__delete', label: 'Excluir', icon: 'delete_outline', tooltip: 'Excluir registro', color: 'warn' },
+    ];
+
+    return [standardActions[0], ...this.actions(), standardActions[1]];
+  });
+
   readonly displayedColumns = computed<readonly string[]>(() => {
     const configuredColumns = this.visibleColumns().map((column) => this.columnId(column));
     const selectionColumns = this.selectionEnabled() ? [SELECTION_COLUMN] : [];
     const actionColumns =
-      this.actions().length > 0 && !this.hasProjectedActionsColumn() ? [ACTIONS_COLUMN] : [];
+      this.effectiveActions().length > 0 && !this.hasProjectedActionsColumn() ? [ACTIONS_COLUMN] : [];
 
     return [...selectionColumns, ...configuredColumns, ...actionColumns];
   });
@@ -213,6 +265,11 @@ export class AppDataTableComponent<T extends object> {
       this.selection.select(...selectedRows);
       this.selectionChanged.emit([...this.selection.selected]);
     });
+
+    effect(() => {
+      const message = this.errorMessage();
+      if (message) this.notification.error(message);
+    });
   }
 
   columnId(column: DataTableColumn<T>): string {
@@ -275,7 +332,7 @@ export class AppDataTableComponent<T extends object> {
   }
 
   rowActions(row: T): readonly DataTableAction<T>[] {
-    return this.actions().filter((action) => action.visible?.(row) ?? true);
+    return this.effectiveActions().filter((action) => action.visible?.(row) ?? true);
   }
 
   isActionDisabled(action: DataTableAction<T>, row: T): boolean {
@@ -283,6 +340,11 @@ export class AppDataTableComponent<T extends object> {
   }
 
   triggerAction(actionId: string, row: T): void {
+    if (actionId === '__view' || actionId === '__delete') {
+      this.handleCrudAction(actionId, row);
+      return;
+    }
+
     this.actionTriggered.emit({ actionId, row });
   }
 
@@ -342,6 +404,35 @@ export class AppDataTableComponent<T extends object> {
       sortActive: this.currentSortActive(),
       sortDirection: this.currentSortDirection(),
     });
+  }
+
+  private handleCrudAction(actionId: '__view' | '__delete', row: T): void {
+    const config = this.crudConfig();
+    const record = row as Record<string, unknown>;
+    const id = String(record['id'] ?? '');
+    if (!config || !id) return;
+
+    const recordName = String(
+      record['name'] ??
+      record['fullName'] ??
+      record['email'] ??
+      record['username'] ??
+      record['departmentName'] ??
+      `Código ${record['code'] ?? id}`,
+    );
+    const options = { ...config, id, recordName };
+
+    if (actionId === '__view') {
+      this.entityDialogs.openDetails(options);
+      return;
+    }
+
+    this.entityDialogs
+      .openDelete(options)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((deleted) => {
+        if (deleted) this.emitQuery(this.pageIndex(), this.pageSize());
+      });
   }
 
   private compareValues(first: unknown, second: unknown): number {

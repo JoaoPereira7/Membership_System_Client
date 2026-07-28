@@ -3,4 +3,35 @@
   background: var(--surface-color);
   color: var(--text-primary);
   box-shadow: var(--shadow-lg);
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+}
+
+.cdk-overlay-pane.mat-mdc-dialog-panel {
+  max-width: calc(100vw - 2rem) !important;
+  max-height: calc(100dvh - 2rem) !important;
+}
+
+.cdk-overlay-pane.member-dialog-panel {
+  width: min(80vw, 960px) !important;
+  max-width: min(80vw, 960px) !important;
+  max-height: 80vh !important;
+}
+
+@media (max-width: 599.98px) {
+  .mat-mdc-dialog-surface {
+    border-radius: var(--radius-lg);
+    max-height: calc(100dvh - 2rem);
+  }
+
+  .cdk-overlay-pane.mat-mdc-dialog-panel {
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(100dvh - 2rem) !important;
+  }
+
+  .cdk-overlay-pane.member-dialog-panel {
+    width: calc(100vw - 2rem) !important;
+    max-width: calc(100vw - 2rem) !important;
+    max-height: calc(100dvh - 2rem) !important;
+  }
 }

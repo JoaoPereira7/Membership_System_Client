@@ -73,8 +73,14 @@
 .admin-shell__header {
   display: flex;
   align-items: center;
+  gap: var(--spacing-sm);
   min-height: 56px;
   flex: 0 0 auto;
+}
+
+.admin-shell__menu-button {
+  flex: 0 0 auto;
+  color: var(--text-primary);
 }
 
 .admin-shell__titles {
@@ -104,6 +110,7 @@
 .admin-shell__content {
   flex: 0 1 auto;
   min-width: 0;
+  max-width: 100%;
 }
 
 .admin-shell__footer {
@@ -111,7 +118,7 @@
   margin-top: auto;
 }
 
-@media (max-width: 599.98px) {
+@media (max-width: 959.98px) {
   .admin-shell {
     grid-template-columns: 1fr;
   }
@@ -125,7 +132,27 @@
 
   .admin-shell__main {
     grid-column: 1;
-    grid-row: 2;
+    grid-row: 1;
+    width: 100%;
+    min-width: 0;
     padding: var(--spacing-md);
+    gap: var(--spacing-md);
+  }
+}
+
+@media (max-width: 599.98px) {
+  .admin-shell__main {
+    padding: var(--spacing-sm);
+    gap: var(--spacing-sm);
+  }
+
+  .admin-shell__header {
+    min-height: 48px;
+  }
+
+  .admin-shell__breadcrumb {
+    max-width: calc(100vw - 5rem);
+    overflow-x: auto;
+    white-space: nowrap;
   }
 }

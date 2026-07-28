@@ -7,13 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs';
 
-import {
-  DataTableToolbarFilterSummary,
-  DataTableToolbarItemCount,
-} from './data-table-toolbar.types';
+import { DataTableToolbarFilterSummary } from './data-table-toolbar.types';
 
 const SEARCH_DEBOUNCE_TIME = 400;
 
@@ -27,7 +23,6 @@ const SEARCH_DEBOUNCE_TIME = 400;
     MatIconModule,
     MatInputModule,
     MatProgressSpinnerModule,
-    MatTooltipModule,
   ],
   templateUrl: './data-table-toolbar.component.html',
   styleUrl: './data-table-toolbar.component.scss',
@@ -62,24 +57,6 @@ export class AppDataTableToolbarComponent {
   readonly controlsDisabled = computed<boolean>(() => this.disabled() || this.loading());
   readonly exportDisabled = computed<boolean>(() => this.controlsDisabled() || this.exporting());
   readonly busy = computed<boolean>(() => this.loading() || this.exporting());
-
-  readonly itemCount = computed<DataTableToolbarItemCount | null>(() => {
-    const totalItems = this.totalItems();
-
-    if (totalItems === null) {
-      return null;
-    }
-
-    const value = Math.max(0, Math.trunc(totalItems));
-    const formattedValue = this.numberFormatter.format(value);
-    const noun = value === 1 ? 'registro' : 'registros';
-
-    return {
-      value,
-      formattedValue,
-      label: `${formattedValue} ${noun}`,
-    };
-  });
 
   readonly activeFilterSummary = computed<DataTableToolbarFilterSummary>(() => {
     const count = Math.max(0, Math.trunc(this.activeFilterCount()));

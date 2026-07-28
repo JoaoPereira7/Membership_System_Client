@@ -23,6 +23,9 @@ body {
   line-height: var(--line-height-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
   @include mixins.scrollbar(var(--scrollbar-track), var(--scrollbar-thumb));
 }
 

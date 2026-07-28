@@ -38,7 +38,7 @@
 }
 
 .auxiliary-dialog__error {
-  display: flex;
+  display: none;
   gap: var(--spacing-sm);
   align-items: flex-start;
   padding: var(--spacing-md);

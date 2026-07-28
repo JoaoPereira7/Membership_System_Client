@@ -14,6 +14,7 @@ import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { NgxMaskDirective } from 'ngx-mask';
 import { finalize } from 'rxjs';
 import { getApiErrorMessage } from '../../../../core/api/api.models';
+import { ConfirmationService } from '../../../../core/services/confirmation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { cpfValidator } from '../../../../core/validators/cpf.validator';
 import { nonBlankValidator } from '../../../../core/validators/non-blank.validator';
@@ -41,6 +42,7 @@ const nullable = (value: string): string | null => value.trim() || null;
 })
 export class MemberDialogComponent {
   private readonly service = inject(MemberService);
+  private readonly confirmation = inject(ConfirmationService);
   private readonly notification = inject(NotificationService);
   private readonly data = inject<MemberDialogData>(MAT_DIALOG_DATA);
   private readonly dialogRef =
@@ -88,6 +90,7 @@ export class MemberDialogComponent {
   });
   protected readonly rolesForm = new FormGroup({ roles: new FormArray<FormGroup>([]) });
   protected readonly departmentsForm = new FormGroup({ departments: new FormArray<FormGroup>([]) });
+  private previousChurchId = '';
   protected get phones(): FormArray<FormGroup> { return this.contactForm.controls.phones; }
   protected get addresses(): FormArray<FormGroup> { return this.contactForm.controls.addresses; }
   protected get roles(): FormArray<FormGroup> { return this.rolesForm.controls.roles; }
@@ -104,11 +107,34 @@ export class MemberDialogComponent {
     });
     this.membershipForm.controls.churchId.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.loading()) return;
-      if ((this.roles.length || this.departments.length) &&
-          !confirm('Alterar a igreja removerá cargos, departamentos e lideranças preenchidos. Deseja continuar?')) {
+      const selectedChurchId = this.membershipForm.controls.churchId.value;
+
+      if (this.roles.length || this.departments.length) {
+        this.confirmation
+          .confirm({
+            title: 'Alterar igreja?',
+            message:
+              'Ao alterar a igreja, os cargos, departamentos e lideranças preenchidos serão removidos.',
+            confirmLabel: 'Alterar igreja',
+            tone: 'warning',
+          })
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe((confirmed) => {
+            if (!confirmed) {
+              this.membershipForm.controls.churchId.setValue(this.previousChurchId, {
+                emitEvent: false,
+              });
+              return;
+            }
+
+            this.previousChurchId = selectedChurchId;
+            this.clearChurchRelations();
+          });
         return;
       }
-      this.roles.clear(); this.departments.clear(); this.membershipForm.controls.pastorId.setValue(null);
+
+      this.previousChurchId = selectedChurchId;
+      this.clearChurchRelations();
     });
     this.load();
   }
@@ -160,11 +186,30 @@ export class MemberDialogComponent {
     }));
   }
   protected remove(array: FormArray<FormGroup>, index: number): void { array.removeAt(index); }
-  protected lookup(name: string): readonly LookupItem[] { return this.lookups()[name] ?? []; }
+  protected lookup(name: string): readonly LookupItem[] {
+    const items = this.lookups()[name] ?? [];
+    return name === 'pastors' && this.memberId
+      ? items.filter((item) => item.id !== this.memberId)
+      : items;
+  }
   protected cancel(): void {
     if (this.saving()) return;
-    if (this.isDirty() && !confirm('Existem alterações não salvas. Deseja realmente fechar?')) return;
-    this.dialogRef.close({ saved: false });
+    if (!this.isDirty()) {
+      this.dialogRef.close({ saved: false });
+      return;
+    }
+
+    this.confirmation
+      .confirm({
+        title: 'Descartar alterações?',
+        message: 'Existem alterações não salvas. Se fechar agora, elas serão perdidas.',
+        confirmLabel: 'Descartar e fechar',
+        tone: 'danger',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((confirmed) => {
+        if (confirmed) this.dialogRef.close({ saved: false });
+      });
   }
   protected save(stepper: MatStepper): void {
     if (this.saving()) return;
@@ -213,12 +258,18 @@ export class MemberDialogComponent {
         data.phones.forEach(x => this.addPhone(x)); data.addresses.forEach(x => this.addAddress(x));
         if (data.professionalInformation) this.professionalForm.patchValue(data.professionalInformation);
         this.membershipForm.patchValue({ ...data.membership, dateJoinedChurch: data.membership.dateJoinedChurch.slice(0, 10) }, { emitEvent: false });
+        this.previousChurchId = data.membership.churchId;
         data.membershipRoles.forEach(x => this.addRole(x)); data.memberDepartments.forEach(x => this.addDepartment(x));
       },
       error: error => this.loadError(error),
     });
   }
   private loadError(error: unknown): void { this.loading.set(false); this.notification.error(getApiErrorMessage(error, 'Não foi possível carregar os dados da tela.')); }
+  private clearChurchRelations(): void {
+    this.roles.clear();
+    this.departments.clear();
+    this.membershipForm.controls.pastorId.setValue(null);
+  }
   private validateCrossFields(): void {
     const future = (control: FormControl<string | null> | FormControl<string>) => {
       control.setErrors(control.value && control.value > today() ? { future: true } : null);

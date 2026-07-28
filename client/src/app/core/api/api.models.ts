@@ -33,16 +33,45 @@ export function getApiErrorMessage(error: unknown, fallbackMessage: string): str
       return 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.';
     }
 
+    if (error.status === 401) {
+      return 'Sua sessão expirou. Entre novamente para continuar.';
+    }
+
+    if (error.status === 403) {
+      return 'Você não tem permissão para realizar esta ação.';
+    }
+
     if (error.status === 404) {
       return 'Registro não encontrado.';
     }
 
-    if (error.status === 400 && message) {
-      return message;
+    if (error.status === 400 || error.status === 422) {
+      return isSafeUserMessage(message)
+        ? message!
+        : 'Não foi possível processar os dados. Revise os campos e tente novamente.';
+    }
+
+    if (error.status === 409) {
+      return isSafeUserMessage(message)
+        ? message!
+        : 'Não foi possível concluir porque existe um conflito com outro registro.';
+    }
+
+    if (error.status >= 500) {
+      return 'O serviço está temporariamente indisponível. Tente novamente em alguns instantes.';
     }
   }
 
-  return message || fallbackMessage;
+  return isSafeUserMessage(message) ? message! : fallbackMessage;
+}
+
+function isSafeUserMessage(message: string | null): boolean {
+  if (!message) return false;
+
+  const technicalPattern =
+    /\b(?:http failure|status\s*(?:code)?\s*[:=]?\s*\d{3}|internal server error|bad request|exception|stack trace)\b|https?:\/\/|localhost|\/api\//i;
+
+  return !technicalPattern.test(message);
 }
 
 function extractMessage(error: unknown): string | null {

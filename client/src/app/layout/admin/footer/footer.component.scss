@@ -12,8 +12,8 @@
   gap: var(--spacing-lg);
   padding: 0 var(--spacing-lg);
   color: var(--text-muted);
-  background: rgba(255, 255, 255, 0.92);
-  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  background: color-mix(in srgb, var(--surface-color) 92%, transparent);
+  border-top: 1px solid var(--color-border);
   font-size: 0.875rem;
 }
 

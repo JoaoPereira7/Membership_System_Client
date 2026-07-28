@@ -41,20 +41,19 @@
   justify-content: flex-end;
 }
 
-.data-table-toolbar__total {
-  color: var(--text-secondary);
-  font-size: var(--font-size-caption);
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
-}
-
 .data-table-toolbar__filter-button,
-.data-table-toolbar__export-button {
-  flex: 0 0 auto;
-}
-
+.data-table-toolbar__export-button,
 .data-table-toolbar__refresh-button {
   flex: 0 0 auto;
+  min-width: 2.5rem;
+  width: 2.5rem;
+  padding-inline: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.data-table-toolbar__refresh-button .mat-icon {
+  margin: 0;
 }
 
 .data-table-toolbar__spinner {
