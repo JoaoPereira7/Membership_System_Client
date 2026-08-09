@@ -3,7 +3,7 @@ import { NavigationItem } from './navigation-item.model';
 export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   {
     id: 'dashboard',
-    label: 'Dashboard',
+    label: 'Home',
     icon: 'dashboard',
     route: '/dashboard',
     permission: 'DASHBOARD_VIEW',
@@ -28,13 +28,6 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     icon: 'hub',
     route: '/organization/church-departments',
     permission: 'DEPARTMENT_VIEW',
-  },
-  {
-    id: 'reports',
-    label: 'Relatórios',
-    icon: 'assessment',
-    route: '/reports',
-    permission: 'REPORT_VIEW',
   },
   {
     id: 'administration',

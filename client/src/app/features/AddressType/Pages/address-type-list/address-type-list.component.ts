@@ -24,6 +24,8 @@ import {
 } from '../../Components/address-type-dialog/address-type-dialog.types';
 import { AddressTypeListItem } from '../../Models/address-type.models';
 import { AddressTypeService } from '../../Services/address-type.service';
+import { AddressTypeDetailsDialogComponent } from '../../Components/address-type-details-dialog/address-type-details-dialog.component';
+import { AddressTypeDeleteDialogComponent } from '../../Components/address-type-delete-dialog/address-type-delete-dialog.component';
 
 @Component({
   selector: 'app-address-type-list',
@@ -40,6 +42,8 @@ import { AddressTypeService } from '../../Services/address-type.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddressTypeListComponent {
+  protected readonly detailsDialogComponent = AddressTypeDetailsDialogComponent;
+  protected readonly deleteDialogComponent = AddressTypeDeleteDialogComponent;
   private readonly service = inject(AddressTypeService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

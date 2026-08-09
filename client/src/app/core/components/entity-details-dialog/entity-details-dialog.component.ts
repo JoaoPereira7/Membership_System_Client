@@ -127,6 +127,14 @@ export class EntityDetailsDialogComponent {
   }
 
   private formatValue(key: string, value: unknown): string {
+    if (/^cpf$/i.test(key) && (typeof value === 'string' || typeof value === 'number')) {
+      const digits = String(value).replace(/\D/g, '');
+
+      if (digits.length === 11) {
+        return digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+      }
+    }
+
     if (typeof value === 'boolean') {
       return key === 'isActive' ? (value ? 'Ativo' : 'Inativo') : value ? 'Sim' : 'Não';
     }

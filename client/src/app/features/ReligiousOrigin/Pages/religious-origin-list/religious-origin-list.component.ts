@@ -24,6 +24,8 @@ import {
 } from '../../Components/religious-origin-dialog/religious-origin-dialog.types';
 import { ReligiousOriginListItem } from '../../Models/religious-origin.models';
 import { ReligiousOriginService } from '../../Services/religious-origin.service';
+import { ReligiousOriginDetailsDialogComponent } from '../../Components/religious-origin-details-dialog/religious-origin-details-dialog.component';
+import { ReligiousOriginDeleteDialogComponent } from '../../Components/religious-origin-delete-dialog/religious-origin-delete-dialog.component';
 
 @Component({
   selector: 'app-religious-origin-list',
@@ -40,6 +42,8 @@ import { ReligiousOriginService } from '../../Services/religious-origin.service'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReligiousOriginListComponent {
+  protected readonly detailsDialogComponent = ReligiousOriginDetailsDialogComponent;
+  protected readonly deleteDialogComponent = ReligiousOriginDeleteDialogComponent;
   private readonly service = inject(ReligiousOriginService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

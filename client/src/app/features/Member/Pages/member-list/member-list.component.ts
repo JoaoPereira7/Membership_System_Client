@@ -11,6 +11,8 @@ import { DataTableAction, DataTableActionEvent, DataTableColumn, DataTableQuery 
 import { AppListPageShellComponent } from '../../../../core/components/list-page-shell/list-page-shell.component';
 import { MemberListItem, MemberListQuery } from '../../Models/member.models';
 import { MemberService } from '../../Services/member.service';
+import { MemberDetailsDialogComponent } from '../../Components/member-details-dialog/member-details-dialog.component';
+import { MemberDeleteDialogComponent } from '../../Components/member-delete-dialog/member-delete-dialog.component';
 import { MemberDialogComponent } from '../../Components/member-dialog/member-dialog.component';
 import { MemberDialogData, MemberDialogResult } from '../../Components/member-dialog/member-dialog.types';
 
@@ -22,6 +24,8 @@ import { MemberDialogData, MemberDialogResult } from '../../Components/member-di
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemberListComponent {
+  protected readonly detailsDialogComponent = MemberDetailsDialogComponent;
+  protected readonly deleteDialogComponent = MemberDeleteDialogComponent;
   private readonly service = inject(MemberService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

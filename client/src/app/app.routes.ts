@@ -1,6 +1,15 @@
 import { Routes } from '@angular/router';
 
-export const authRoutes: Routes = [];
+export const authRoutes: Routes = [
+  {
+    path: '',
+    loadComponent: () =>
+      import('./features/Auth/Pages/login/login.component').then(
+        (component) => component.LoginComponent,
+      ),
+    data: { title: 'Login' },
+  },
+];
 
 export const adminRoutes: Routes = [
   {

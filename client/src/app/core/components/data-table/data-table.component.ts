@@ -3,6 +3,7 @@ import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  Type,
   computed,
   DestroyRef,
   effect,
@@ -115,6 +116,8 @@ export class AppDataTableComponent<T extends object> {
   readonly pageSizeOptions = input<readonly number[]>([5, 10, 25, 50]);
   readonly initialSearch = input<string>('');
   readonly ariaLabel = input<string>('Tabela de dados');
+  readonly detailsComponent = input<Type<unknown> | null>(null);
+  readonly deleteComponent = input<Type<unknown> | null>(null);
 
   readonly queryChanged = output<DataTableQuery>();
   readonly actionTriggered = output<DataTableActionEvent<T>>();
@@ -420,7 +423,13 @@ export class AppDataTableComponent<T extends object> {
       record['departmentName'] ??
       `Código ${record['code'] ?? id}`,
     );
-    const options = { ...config, id, recordName };
+    const options = {
+      ...config,
+      id,
+      recordName,
+      detailsComponent: this.detailsComponent() ?? undefined,
+      deleteComponent: this.deleteComponent() ?? undefined,
+    };
 
     if (actionId === '__view') {
       this.entityDialogs.openDetails(options);

@@ -24,6 +24,8 @@ import {
 } from '../../Components/church-role-dialog/church-role-dialog.types';
 import { ChurchRoleListItem } from '../../Models/church-role.models';
 import { ChurchRoleService } from '../../Services/church-role.service';
+import { ChurchRoleDetailsDialogComponent } from '../../Components/church-role-details-dialog/church-role-details-dialog.component';
+import { ChurchRoleDeleteDialogComponent } from '../../Components/church-role-delete-dialog/church-role-delete-dialog.component';
 
 @Component({
   selector: 'app-church-role-list',
@@ -40,6 +42,8 @@ import { ChurchRoleService } from '../../Services/church-role.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChurchRoleListComponent {
+  protected readonly detailsDialogComponent = ChurchRoleDetailsDialogComponent;
+  protected readonly deleteDialogComponent = ChurchRoleDeleteDialogComponent;
   private readonly service = inject(ChurchRoleService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

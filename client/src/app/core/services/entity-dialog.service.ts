@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Type, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -17,6 +17,8 @@ export interface EntityDialogOptions {
   readonly title: string;
   readonly entityLabel: string;
   readonly recordName: string;
+  readonly detailsComponent?: Type<unknown>;
+  readonly deleteComponent?: Type<unknown>;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -30,7 +32,7 @@ export class EntityDialogService {
       title: options.title,
     };
 
-    this.dialog.open(EntityDetailsDialogComponent, {
+    this.dialog.open(options.detailsComponent ?? EntityDetailsDialogComponent, {
       data,
       width: '680px',
       maxWidth: 'calc(100vw - 2rem)',
@@ -50,8 +52,8 @@ export class EntityDialogService {
     };
 
     return this.dialog
-      .open<EntityDeleteDialogComponent, EntityDeleteDialogData, boolean>(
-        EntityDeleteDialogComponent,
+      .open<unknown, EntityDeleteDialogData, boolean>(
+        options.deleteComponent ?? EntityDeleteDialogComponent,
         {
           data,
           width: '480px',

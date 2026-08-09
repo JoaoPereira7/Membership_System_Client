@@ -26,6 +26,8 @@ import {
   ChurchDepartmentListQuery,
 } from '../../Models/church-department.models';
 import { ChurchDepartmentService } from '../../Services/church-department.service';
+import { ChurchDepartmentDetailsDialogComponent } from '../../Components/church-department-details-dialog/church-department-details-dialog.component';
+import { ChurchDepartmentDeleteDialogComponent } from '../../Components/church-department-delete-dialog/church-department-delete-dialog.component';
 
 @Component({
   selector: 'app-church-department-list',
@@ -42,6 +44,8 @@ import { ChurchDepartmentService } from '../../Services/church-department.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChurchDepartmentListComponent {
+  protected readonly detailsDialogComponent = ChurchDepartmentDetailsDialogComponent;
+  protected readonly deleteDialogComponent = ChurchDepartmentDeleteDialogComponent;
   private readonly service = inject(ChurchDepartmentService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

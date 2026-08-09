@@ -24,6 +24,8 @@ import {
 } from '../../Components/gender-dialog/gender-dialog.types';
 import { GenderListItem } from '../../Models/gender.models';
 import { GenderService } from '../../Services/gender.service';
+import { GenderDetailsDialogComponent } from '../../Components/gender-details-dialog/gender-details-dialog.component';
+import { GenderDeleteDialogComponent } from '../../Components/gender-delete-dialog/gender-delete-dialog.component';
 
 @Component({
   selector: 'app-gender-list',
@@ -40,6 +42,8 @@ import { GenderService } from '../../Services/gender.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenderListComponent {
+  protected readonly detailsDialogComponent = GenderDetailsDialogComponent;
+  protected readonly deleteDialogComponent = GenderDeleteDialogComponent;
   private readonly service = inject(GenderService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

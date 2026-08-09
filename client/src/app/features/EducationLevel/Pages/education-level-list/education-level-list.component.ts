@@ -24,6 +24,8 @@ import {
 } from '../../Components/education-level-dialog/education-level-dialog.types';
 import { EducationLevelListItem } from '../../Models/education-level.models';
 import { EducationLevelService } from '../../Services/education-level.service';
+import { EducationLevelDetailsDialogComponent } from '../../Components/education-level-details-dialog/education-level-details-dialog.component';
+import { EducationLevelDeleteDialogComponent } from '../../Components/education-level-delete-dialog/education-level-delete-dialog.component';
 
 @Component({
   selector: 'app-education-level-list',
@@ -40,6 +42,8 @@ import { EducationLevelService } from '../../Services/education-level.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EducationLevelListComponent {
+  protected readonly detailsDialogComponent = EducationLevelDetailsDialogComponent;
+  protected readonly deleteDialogComponent = EducationLevelDeleteDialogComponent;
   private readonly service = inject(EducationLevelService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

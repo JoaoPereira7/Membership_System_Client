@@ -23,6 +23,8 @@ import {
 } from '../../Components/account-dialog/account-dialog.types';
 import { AccountListItem, AccountListQuery } from '../../Models/account.models';
 import { AccountService } from '../../Services/account.service';
+import { AccountDetailsDialogComponent } from '../../Components/account-details-dialog/account-details-dialog.component';
+import { AccountDeleteDialogComponent } from '../../Components/account-delete-dialog/account-delete-dialog.component';
 
 @Component({
   selector: 'app-account-list',
@@ -39,6 +41,8 @@ import { AccountService } from '../../Services/account.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountListComponent {
+  protected readonly detailsDialogComponent = AccountDetailsDialogComponent;
+  protected readonly deleteDialogComponent = AccountDeleteDialogComponent;
   private readonly service = inject(AccountService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

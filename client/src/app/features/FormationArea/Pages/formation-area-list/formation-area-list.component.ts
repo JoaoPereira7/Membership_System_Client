@@ -24,6 +24,8 @@ import {
 } from '../../Components/formation-area-dialog/formation-area-dialog.types';
 import { FormationAreaListItem } from '../../Models/formation-area.models';
 import { FormationAreaService } from '../../Services/formation-area.service';
+import { FormationAreaDetailsDialogComponent } from '../../Components/formation-area-details-dialog/formation-area-details-dialog.component';
+import { FormationAreaDeleteDialogComponent } from '../../Components/formation-area-delete-dialog/formation-area-delete-dialog.component';
 
 @Component({
   selector: 'app-formation-area-list',
@@ -40,6 +42,8 @@ import { FormationAreaService } from '../../Services/formation-area.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormationAreaListComponent {
+  protected readonly detailsDialogComponent = FormationAreaDetailsDialogComponent;
+  protected readonly deleteDialogComponent = FormationAreaDeleteDialogComponent;
   private readonly service = inject(FormationAreaService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

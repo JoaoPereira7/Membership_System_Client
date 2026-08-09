@@ -26,6 +26,8 @@ import {
   AccountProfileListQuery,
 } from '../../Models/account-profile.models';
 import { AccountProfileService } from '../../Services/account-profile.service';
+import { AccountProfileDetailsDialogComponent } from '../../Components/account-profile-details-dialog/account-profile-details-dialog.component';
+import { AccountProfileDeleteDialogComponent } from '../../Components/account-profile-delete-dialog/account-profile-delete-dialog.component';
 
 @Component({
   selector: 'app-account-profile-list',
@@ -42,6 +44,8 @@ import { AccountProfileService } from '../../Services/account-profile.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AccountProfileListComponent {
+  protected readonly detailsDialogComponent = AccountProfileDetailsDialogComponent;
+  protected readonly deleteDialogComponent = AccountProfileDeleteDialogComponent;
   private readonly service = inject(AccountProfileService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

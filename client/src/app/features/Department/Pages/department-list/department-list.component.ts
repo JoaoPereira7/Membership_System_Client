@@ -24,6 +24,8 @@ import {
 } from '../../Components/department-dialog/department-dialog.types';
 import { DepartmentListItem } from '../../Models/department.models';
 import { DepartmentService } from '../../Services/department.service';
+import { DepartmentDetailsDialogComponent } from '../../Components/department-details-dialog/department-details-dialog.component';
+import { DepartmentDeleteDialogComponent } from '../../Components/department-delete-dialog/department-delete-dialog.component';
 
 @Component({
   selector: 'app-department-list',
@@ -40,6 +42,8 @@ import { DepartmentService } from '../../Services/department.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DepartmentListComponent {
+  protected readonly detailsDialogComponent = DepartmentDetailsDialogComponent;
+  protected readonly deleteDialogComponent = DepartmentDeleteDialogComponent;
   private readonly service = inject(DepartmentService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
