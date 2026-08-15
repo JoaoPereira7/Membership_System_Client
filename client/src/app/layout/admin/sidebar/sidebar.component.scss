@@ -1,10 +1,12 @@
 :host {
   display: block;
   height: 100%;
+  min-height: 0;
 }
 
 .sidebar {
   height: 100%;
+  min-height: 0;
   padding: var(--spacing-lg) var(--spacing-md) var(--spacing-md);
   display: flex;
   flex-direction: column;
@@ -57,6 +59,7 @@
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+  overscroll-behavior: contain;
 }
 
 .sidebar__section {
@@ -215,5 +218,20 @@
 @media (max-width: 959.98px) {
   .sidebar {
     border-right: 0;
+  }
+}
+
+@media (max-height: 699.98px) {
+  .sidebar {
+    gap: var(--spacing-md);
+    padding-block: var(--spacing-md) var(--spacing-sm);
+  }
+
+  .sidebar__header {
+    padding-block: var(--spacing-xs);
+  }
+
+  .sidebar__footer {
+    padding-top: var(--spacing-sm);
   }
 }

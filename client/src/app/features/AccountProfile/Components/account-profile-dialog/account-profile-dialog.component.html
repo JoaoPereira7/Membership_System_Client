@@ -22,27 +22,6 @@
       }
     </mat-form-field>
 
-    <fieldset class="permission-fieldset" [disabled]="loadingPermissions() || saving()">
-      <legend>Permissões</legend>
-      @if (loadingPermissions()) {
-        <div class="permission-loading">
-          <mat-progress-spinner diameter="20" mode="indeterminate" />
-          <span>Carregando permissões...</span>
-        </div>
-      } @else {
-        <div class="permission-grid">
-          @for (permission of permissions(); track permission.id) {
-            <mat-checkbox
-              [checked]="selectedPermissionIds().has(permission.id)"
-              (change)="togglePermission(permission.id, $event.checked)"
-            >
-              {{ permissionLabel(permission) }}
-            </mat-checkbox>
-          }
-        </div>
-      }
-    </fieldset>
-
     <mat-form-field appearance="outline">
       <mat-label>Descrição</mat-label>
       <textarea matInput formControlName="description" maxlength="300" rows="4"></textarea>
@@ -69,7 +48,7 @@
       mat-flat-button
       color="primary"
       type="submit"
-      [disabled]="saving() || loadingPermissions()"
+      [disabled]="saving()"
     >
       @if (saving()) {
         <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />

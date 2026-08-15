@@ -79,7 +79,14 @@ export class AccountProfileService {
   getPermissions(): Observable<readonly PermissionApiDto[]> {
     return this.http
       .get<ApiResponse<readonly PermissionApiDto[]>>(this.permissionEndpoint)
-      .pipe(map((response) => (response.data ?? []).filter((permission) => permission.isActive)));
+      .pipe(
+        map((response) =>
+          (response.data ?? []).filter(
+            (permission) =>
+              permission.isActive && permission.normalizedName.toUpperCase().endsWith('_VIEW'),
+          ),
+        ),
+      );
   }
 
   getProfilePermissionIds(accountProfileId: string): Observable<readonly string[]> {

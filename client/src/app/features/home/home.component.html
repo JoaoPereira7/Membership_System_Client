@@ -1,7 +1,154 @@
-<section class="home">
-  <header class="home__hero">
-    <div>
-      <h1 class="center">Bem-vindo ao Sistema de Gestão de Membresia</h1>
+<div class="home">
+  <section class="home-hero" aria-labelledby="home-hero-title">
+    <div class="home-hero__content">
+      <span class="home-hero__eyebrow"><mat-icon>auto_awesome</mat-icon>Bem-vindo à nossa história</span>
+      <h2 id="home-hero-title">Uma história que<br /><span>continua sendo escrita.</span></h2>
+      <strong>Gestão de Membresia</strong>
+      <p class="home-hero__church">Igreja do Evangelho Quadrangular <span>•</span> Morada Nova – CE</p>
+      <p class="home-hero__description">
+        Tecnologia a serviço da igreja, da comunhão e do cuidado com os membros.
+      </p>
     </div>
-  </header>
-</section>
+
+    <div class="home-hero__visual" aria-hidden="true">
+      <div class="home-hero__orbit home-hero__orbit--outer"></div>
+      <div class="home-hero__orbit home-hero__orbit--inner"></div>
+      <span class="home-hero__particle home-hero__particle--one"></span>
+      <span class="home-hero__particle home-hero__particle--two"></span>
+      <span class="home-hero__particle home-hero__particle--three"></span>
+      <div class="home-hero__logo-glow">
+        <img src="/icon_ieq_tecnologico.png" alt="" />
+      </div>
+    </div>
+  </section>
+
+  <div class="home-story-grid">
+    <section class="home-panel" aria-labelledby="history-title">
+      <header class="home-section-heading">
+        <span><mat-icon>menu_book</mat-icon></span>
+        <div><p>Nossa essência</p><h2 id="history-title">Nossa História</h2></div>
+      </header>
+      <p class="home-section-copy">
+        A Igreja do Evangelho Quadrangular nasceu com o propósito de anunciar Jesus Cristo como
+        Salvador, Santificador, Batizador com o Espírito Santo e Rei que voltará. Ao longo das
+        décadas, temos impactado vidas, famílias e comunidades com amor, fé e o poder transformador
+        do Evangelho.
+      </p>
+
+      <app-horizontal-carousel
+        [itemCount]="historyItems.length"
+        ariaLabel="Acontecimentos da história da Igreja do Evangelho Quadrangular"
+      >
+        @for (item of historyItems; track item.title) {
+          <article class="moment-card" [class]="'moment-card moment-card--' + item.tone">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.description }}</p>
+          </article>
+        }
+      </app-horizontal-carousel>
+    </section>
+
+    <section class="home-panel" aria-labelledby="morada-nova-title">
+      <header class="home-section-heading">
+        <span><mat-icon>location_on</mat-icon></span>
+        <div><p>Nossa comunidade</p><h2 id="morada-nova-title">Quadrangular em Morada Nova</h2></div>
+      </header>
+      <p class="home-section-copy">
+        Presente em Morada Nova – CE, nossa igreja tem sido um farol de esperança, acolhimento e
+        transformação. Uma comunidade unida para amar a Deus e servir pessoas, fazendo a diferença
+        na cidade e na região.
+      </p>
+
+      <app-horizontal-carousel
+        [itemCount]="moradaNovaItems.length"
+        ariaLabel="Etapas da Igreja Quadrangular em Morada Nova"
+      >
+        @for (item of moradaNovaItems; track item.title) {
+          <article class="moment-card moment-card--local" [class]="'moment-card moment-card--local moment-card--' + item.tone">
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <strong>{{ item.title }}</strong>
+            <p>{{ item.description }}</p>
+          </article>
+        }
+      </app-horizontal-carousel>
+    </section>
+  </div>
+
+  <section class="pillars" aria-labelledby="pillars-title">
+    <div class="pillars__heading">
+      <span class="pillars__mark"><img src="/icon_ieq_tecnologico.png" alt="" /></span>
+      <div>
+        <p>A mensagem completa do Evangelho</p>
+        <h2 id="pillars-title">Os quatros evangelhos da mensagem Quadrangular</h2>
+      </div>
+    </div>
+
+    <div class="pillars__grid" aria-label="Quatro evangelhos da mensagem Quadrangular" role="list">
+      @for (pillar of pillars; track pillar.title) {
+        <article
+          class="pillar-card"
+          [class]="'pillar-card pillar-card--' + pillar.tone"
+          role="listitem"
+        >
+          <img [src]="pillar.image" [alt]="pillar.imageAlt" loading="lazy" decoding="async" />
+        </article>
+      }
+    </div>
+  </section>
+
+  <div class="home-bottom-grid">
+    <section class="family" aria-labelledby="family-title">
+      <div class="family__content">
+        <span class="family__eyebrow"><mat-icon>favorite</mat-icon>Você pertence aqui</span>
+        <h2 id="family-title">Uma Igreja <strong>100% Família</strong></h2>
+        <p>
+          Aqui, você encontra amor, pertencimento e propósito. Somos uma família que caminha junta,
+          cuidando uns dos outros e celebrando as bênçãos de Deus.
+        </p>
+
+        <div class="family__values">
+          @for (value of familyValues; track value.title) {
+            <div>
+              <span><mat-icon>{{ value.icon }}</mat-icon></span>
+              <p><strong>{{ value.title }}</strong>{{ value.description }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="family__visual" aria-hidden="true">
+        <div class="family__sun"></div>
+        <mat-icon>diversity_1</mat-icon>
+        <span>Juntos em cada caminho</span>
+      </div>
+    </section>
+
+    <section class="system-overview" aria-labelledby="system-title">
+      <header class="home-section-heading">
+        <span><mat-icon>hub</mat-icon></span>
+        <div><p>Tecnologia com propósito</p><h2 id="system-title">Sobre o sistema</h2></div>
+      </header>
+      <p class="home-section-copy">
+        Uma plataforma moderna e segura para gerir informações, fortalecer relacionamentos e apoiar
+        a missão da nossa igreja.
+      </p>
+
+      <nav class="system-overview__shortcuts" aria-label="Atalhos do sistema">
+        @for (shortcut of shortcuts(); track shortcut.title) {
+          <a
+            class="shortcut-card"
+            [class]="'shortcut-card shortcut-card--' + shortcut.tone"
+            [routerLink]="shortcut.route"
+          >
+            <span><mat-icon>{{ shortcut.icon }}</mat-icon></span>
+            <div><strong>{{ shortcut.title }}</strong><p>{{ shortcut.description }}</p></div>
+            <mat-icon class="shortcut-card__arrow">arrow_forward</mat-icon>
+          </a>
+        } @empty {
+          <p class="system-overview__empty">Não há outros módulos liberados para este perfil.</p>
+        }
+      </nav>
+    </section>
+  </div>
+</div>

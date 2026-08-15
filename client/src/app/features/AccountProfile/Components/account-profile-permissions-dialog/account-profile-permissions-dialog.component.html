@@ -1,0 +1,82 @@
+<section class="permissions-dialog">
+  <header class="auxiliary-dialog__header">
+    <span class="auxiliary-dialog__icon" aria-hidden="true">
+      <mat-icon>admin_panel_settings</mat-icon>
+    </span>
+    <div class="permissions-dialog__heading">
+      <h2 class="auxiliary-dialog__title" mat-dialog-title>Permissões do perfil</h2>
+      <span>{{ profile.name }}</span>
+    </div>
+  </header>
+
+  <mat-dialog-content class="auxiliary-dialog__content permissions-dialog__content">
+    @if (errorMessage()) {
+      <div class="auxiliary-dialog__error permissions-dialog__error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    @if (loading()) {
+      <div class="permissions-dialog__loading">
+        <mat-progress-spinner diameter="30" mode="indeterminate" />
+        <span>Carregando telas disponíveis...</span>
+      </div>
+    } @else {
+      <div class="permissions-dialog__toolbar">
+        <div>
+          <strong>Telas disponíveis</strong>
+          <span>{{ selectedCount() }} de {{ permissions().length }} selecionadas</span>
+        </div>
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          [disabled]="saving() || permissions().length === 0"
+          (click)="toggleAll()"
+        >
+          <mat-icon>{{ allSelected() ? 'deselect' : 'select_all' }}</mat-icon>
+          <span>{{ allSelected() ? 'Desmarcar tudo' : 'Selecionar tudo' }}</span>
+        </button>
+      </div>
+
+      <div class="permissions-dialog__grid">
+        @for (permission of permissions(); track permission.id) {
+          <mat-checkbox
+            class="permissions-dialog__option"
+            [checked]="selectedPermissionIds().has(permission.id)"
+            [disabled]="saving()"
+            (change)="togglePermission(permission.id, $event.checked)"
+          >
+            {{ permissionLabel(permission) }}
+          </mat-checkbox>
+        } @empty {
+          <p class="permissions-dialog__empty">Nenhuma tela disponível para configuração.</p>
+        }
+      </div>
+
+      <p class="permissions-dialog__hint">
+        Ao permitir uma tela, o perfil poderá visualizar e executar todas as ações disponíveis nela.
+      </p>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="auxiliary-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving()" (click)="cancel()">Cancelar</button>
+    <button
+      class="auxiliary-dialog__save"
+      mat-flat-button
+      color="primary"
+      type="button"
+      [disabled]="loading() || saving() || !!errorMessage()"
+      (click)="save()"
+    >
+      @if (saving()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+        <span>Salvando</span>
+      } @else {
+        <span>Salvar permissões</span>
+      }
+    </button>
+  </mat-dialog-actions>
+</section>

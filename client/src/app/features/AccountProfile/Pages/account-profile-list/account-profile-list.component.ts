@@ -28,6 +28,11 @@ import {
 import { AccountProfileService } from '../../Services/account-profile.service';
 import { AccountProfileDetailsDialogComponent } from '../../Components/account-profile-details-dialog/account-profile-details-dialog.component';
 import { AccountProfileDeleteDialogComponent } from '../../Components/account-profile-delete-dialog/account-profile-delete-dialog.component';
+import { AccountProfilePermissionsDialogComponent } from '../../Components/account-profile-permissions-dialog/account-profile-permissions-dialog.component';
+import {
+  AccountProfilePermissionsDialogData,
+  AccountProfilePermissionsDialogResult,
+} from '../../Components/account-profile-permissions-dialog/account-profile-permissions-dialog.types';
 
 @Component({
   selector: 'app-account-profile-list',
@@ -86,6 +91,13 @@ export class AccountProfileListComponent {
   ];
   protected readonly actions: readonly DataTableAction<AccountProfileListItem>[] = [
     {
+      id: 'permissions',
+      label: 'Permissões',
+      icon: 'admin_panel_settings',
+      tooltip: 'Gerenciar permissões do perfil',
+      color: 'primary',
+    },
+    {
       id: 'edit',
       label: 'Editar',
       icon: 'edit',
@@ -141,6 +153,11 @@ export class AccountProfileListComponent {
   }
 
   protected onAction(event: DataTableActionEvent<AccountProfileListItem>): void {
+    if (event.actionId === 'permissions') {
+      this.openPermissionsDialog(event.row);
+      return;
+    }
+
     if (event.actionId === 'edit') {
       this.openDialog({ mode: 'edit', item: { ...event.row } });
     }
@@ -176,6 +193,22 @@ export class AccountProfileListComponent {
         }
         this.reload();
       });
+  }
+
+  private openPermissionsDialog(profile: AccountProfileListItem): void {
+    const data: AccountProfilePermissionsDialogData = { profile: { ...profile } };
+
+    this.dialog.open<
+      AccountProfilePermissionsDialogComponent,
+      AccountProfilePermissionsDialogData,
+      AccountProfilePermissionsDialogResult
+    >(AccountProfilePermissionsDialogComponent, {
+      width: '760px',
+      maxWidth: '95vw',
+      autoFocus: false,
+      restoreFocus: true,
+      data,
+    });
   }
 
   private currentQuery(): AccountProfileListQuery {

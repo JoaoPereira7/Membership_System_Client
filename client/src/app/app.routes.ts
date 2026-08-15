@@ -41,7 +41,7 @@ export const adminRoutes: Routes = [
     data: {
       title: 'Departamentos por Igreja',
       breadcrumb: ['Organização', 'Departamentos por Igreja'],
-      permission: 'DEPARTMENT_VIEW',
+      permission: 'CHURCH_DEPARTMENT_VIEW',
     },
   },
   {

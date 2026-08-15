@@ -5,6 +5,7 @@ import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/ro
 import { filter, finalize, map, startWith } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FooterComponent } from './footer/footer.component';
@@ -13,7 +14,14 @@ import { AuthService } from '../../core/auth/auth.service';
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, MatButtonModule, MatIconModule, SidebarComponent, FooterComponent],
+  imports: [
+    RouterOutlet,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    SidebarComponent,
+    FooterComponent,
+  ],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -26,6 +26,26 @@
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 20px 55px rgba(16, 38, 72, 0.12);
+  color-scheme: light;
+
+  // Mantém os controles legíveis mesmo quando o sistema operacional está no tema escuro.
+  --mat-sys-primary: #164f86;
+  --mat-sys-on-surface: #123b67;
+  --mat-sys-on-surface-variant: #315b83;
+  --mat-form-field-outlined-input-text-color: #123b67;
+  --mat-form-field-outlined-input-text-placeholder-color: #51749a;
+  --mat-form-field-outlined-label-text-color: #315b83;
+  --mat-form-field-outlined-hover-label-text-color: #164f86;
+  --mat-form-field-outlined-focus-label-text-color: #164f86;
+  --mat-form-field-outlined-outline-color: #7892ad;
+  --mat-form-field-outlined-hover-outline-color: #315b83;
+  --mat-form-field-outlined-focus-outline-color: #164f86;
+  --mat-form-field-leading-icon-color: #315b83;
+  --mat-form-field-trailing-icon-color: #315b83;
+  --mat-checkbox-label-text-color: #164f86;
+  --mat-checkbox-unselected-icon-color: #51749a;
+  --mat-checkbox-selected-icon-color: #164f86;
+  --mat-checkbox-selected-checkmark-color: #fff;
 }
 
 .login-logo {
@@ -64,6 +84,22 @@ mat-form-field {
   width: 100%;
 }
 
+input[matInput] {
+  color: #123b67;
+  caret-color: #164f86;
+
+  &::placeholder {
+    color: #51749a;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: #123b67;
+    caret-color: #164f86;
+  }
+}
+
 mat-icon[matPrefix] {
   margin-right: 10px;
   color: #51749a;
@@ -77,6 +113,10 @@ mat-icon[matPrefix] {
   margin-top: -6px;
   color: #475569;
   font-size: 0.88rem;
+
+  mat-checkbox {
+    color: #164f86;
+  }
 }
 
 .forgot-password {

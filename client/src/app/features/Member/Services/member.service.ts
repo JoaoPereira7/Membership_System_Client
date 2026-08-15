@@ -4,7 +4,7 @@ import { forkJoin, map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { ApiResponse, unwrapApiData } from '../../../core/api/api.models';
 import {
-  ChurchDepartmentLookup, CompleteMember, LookupItem, MemberListItem,
+  ChurchDepartmentLookup, CompleteMember, FullMember, LookupItem, MemberListItem,
   MemberListQuery, MemberPagedResult,
 } from '../Models/member.models';
 
@@ -33,6 +33,11 @@ export class MemberService {
   getById(id: string): Observable<CompleteMember> {
     return this.http.get<ApiResponse<CompleteMember>>(`${this.endpoint}/${id}/complete`)
       .pipe(map((response) => unwrapApiData(response, 'Membro não encontrado.')));
+  }
+  getFullById(id: string): Observable<FullMember> {
+    return this.http.get<ApiResponse<FullMember>>(
+      `${this.endpoint}/${encodeURIComponent(id)}/full`,
+    ).pipe(map((response) => unwrapApiData(response, 'Membro não encontrado.')));
   }
   create(payload: CompleteMember): Observable<unknown> {
     return this.http.post<ApiResponse<unknown>>(`${this.endpoint}/complete`, payload);

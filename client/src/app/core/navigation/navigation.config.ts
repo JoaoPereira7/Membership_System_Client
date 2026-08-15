@@ -27,7 +27,7 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     label: 'Departamentos por Igreja',
     icon: 'hub',
     route: '/organization/church-departments',
-    permission: 'DEPARTMENT_VIEW',
+    permission: 'CHURCH_DEPARTMENT_VIEW',
   },
   {
     id: 'administration',

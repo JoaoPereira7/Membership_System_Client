@@ -52,5 +52,85 @@ export interface CompleteMember {
 export interface ChurchDepartmentLookup {
   readonly id: string; readonly churchId: string; readonly departmentName: string; readonly isActive: boolean;
 }
+
+export interface FullMemberGeneral {
+  readonly name: string;
+  readonly cpf: string;
+  readonly rg: string | null;
+  readonly birthDate: string | null;
+  readonly gender: string | null;
+  readonly maritalStatus: string | null;
+  readonly nationality: string | null;
+  readonly motherName: string | null;
+  readonly fatherName: string | null;
+  readonly email: string | null;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberPhone {
+  readonly phoneType: string;
+  readonly number: string;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberAddress {
+  readonly addressType: string;
+  readonly zipCode: string;
+  readonly street: string;
+  readonly number: string;
+  readonly complement: string | null;
+  readonly neighborhood: string;
+  readonly city: string;
+  readonly state: string;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberProfessional {
+  readonly educationLevel: string | null;
+  readonly formationArea: string | null;
+  readonly profession: string | null;
+}
+
+export interface FullMemberMembership {
+  readonly church: string;
+  readonly dateJoinedChurch: string;
+  readonly membershipStatus: string;
+  readonly religiousOrigin: string | null;
+  readonly pastor: string | null;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberRole {
+  readonly churchRole: string;
+  readonly startDate: string;
+  readonly endDate: string | null;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberLeadership {
+  readonly leaderType: string;
+  readonly startDate: string;
+  readonly endDate: string | null;
+  readonly isActive: boolean;
+}
+
+export interface FullMemberDepartment {
+  readonly department: string;
+  readonly startDate: string;
+  readonly endDate: string | null;
+  readonly isActive: boolean;
+  readonly leaderships: readonly FullMemberLeadership[];
+}
+
+export interface FullMember {
+  readonly member: FullMemberGeneral;
+  readonly phones: readonly FullMemberPhone[];
+  readonly addresses: readonly FullMemberAddress[];
+  readonly professionalInformation: FullMemberProfessional | null;
+  readonly membership: FullMemberMembership | null;
+  readonly membershipRoles: readonly FullMemberRole[];
+  readonly memberDepartments: readonly FullMemberDepartment[];
+}
+
 export type MemberListQuery = AuxiliaryListQuery;
 export type MemberPagedResult = PagedResult<MemberListItem>;

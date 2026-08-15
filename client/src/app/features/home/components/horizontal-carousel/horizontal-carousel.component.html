@@ -1,0 +1,47 @@
+<div class="horizontal-carousel">
+  <button
+    class="horizontal-carousel__arrow horizontal-carousel__arrow--previous"
+    mat-icon-button
+    type="button"
+    aria-label="Voltar no carrossel"
+    [disabled]="!canGoBack()"
+    (click)="previous()"
+  >
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+
+  <div
+    #viewport
+    class="horizontal-carousel__viewport"
+    role="region"
+    tabindex="0"
+    [attr.aria-label]="ariaLabel()"
+    (scroll)="syncPosition($event)"
+    (keydown)="handleKeyboard($event)"
+  >
+    <ng-content />
+  </div>
+
+  <button
+    class="horizontal-carousel__arrow horizontal-carousel__arrow--next"
+    mat-icon-button
+    type="button"
+    aria-label="Avançar no carrossel"
+    [disabled]="!canGoForward()"
+    (click)="next()"
+  >
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <div class="horizontal-carousel__indicators" aria-label="Posição no carrossel">
+    @for (index of indicators(); track index) {
+      <button
+        type="button"
+        [class.horizontal-carousel__indicator--active]="activeIndex() === index"
+        [attr.aria-label]="'Ir para o item ' + (index + 1)"
+        [attr.aria-current]="activeIndex() === index ? 'true' : null"
+        (click)="goTo(index)"
+      ></button>
+    }
+  </div>
+</div>
