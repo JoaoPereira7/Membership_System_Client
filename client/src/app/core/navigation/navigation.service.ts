@@ -1,14 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 
 import { NAVIGATION_ITEMS } from './navigation.config';
 import { NavigationItem } from './navigation-item.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  // A autenticação ainda não está disponível; por enquanto, todos os itens são expostos.
-  readonly items: readonly NavigationItem[] = NAVIGATION_ITEMS;
+  private readonly auth = inject(AuthService);
+
+  readonly items = computed(() =>
+    this.filterByPermissions(NAVIGATION_ITEMS, this.auth.permissionSet()),
+  );
 
   filterByPermissions(
     items: readonly NavigationItem[],

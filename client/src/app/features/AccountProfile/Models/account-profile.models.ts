@@ -31,3 +31,18 @@ export interface UpdateAccountProfileRequest {
 
 export type AccountProfileListQuery = AuxiliaryListQuery;
 export type AccountProfilePagedResult = PagedResult<AccountProfileListItem>;
+
+export interface PermissionApiDto {
+  readonly id: string;
+  readonly name: string;
+  readonly normalizedName: string;
+  readonly description?: string | null;
+  readonly isActive: boolean;
+}
+
+export interface AccountProfilePermissionApiDto {
+  readonly id: string;
+  readonly accountProfileId: string;
+  readonly permissionId: string;
+  readonly isActive: boolean;
+}

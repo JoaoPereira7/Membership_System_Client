@@ -46,6 +46,20 @@
           }
         </nav>
       </div>
+
+      <div class="admin-shell__session">
+        <span>{{ userName()?.name }}</span>
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Sair do sistema"
+          title="Sair"
+          [disabled]="loggingOut()"
+          (click)="logout()"
+        >
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
     </header>
 
     <main class="admin-shell__content">

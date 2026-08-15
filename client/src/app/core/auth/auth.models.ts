@@ -1,6 +1,7 @@
 export interface LoginRequest {
   readonly email: string;
   readonly password: string;
+  readonly rememberMe: boolean;
 }
 
 export interface AuthenticatedUser {
@@ -14,6 +15,7 @@ export interface LoginResponse {
   readonly accessToken: string;
   readonly expiresIn: number;
   readonly user: AuthenticatedUser;
+  readonly permissions: readonly string[];
 }
 
 export interface AuthSession extends LoginResponse {

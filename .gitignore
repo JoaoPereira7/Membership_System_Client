@@ -25,3 +25,7 @@
 /.vs/VSWorkspaceState.json
 /.vs/Membership_System_Client/v17/DocumentLayout.backup.json
 /.vs/Membership_System_Client/v17/workspaceFileList.bin
+/.vs/slnx.sqlite-journal
+/client/.vs/client/CopilotIndices/17.14.1653.19549/CodeChunks.db
+/client/.vs/client/CopilotIndices/17.14.1653.19549/SemanticSymbols.db
+/client/.vs

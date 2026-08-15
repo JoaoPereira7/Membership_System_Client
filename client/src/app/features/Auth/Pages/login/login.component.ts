@@ -61,7 +61,7 @@ export class LoginComponent {
     this.loading.set(true);
 
     this.authService
-      .login({ email, password: values.password }, values.rememberMe)
+      .login({ email, password: values.password, rememberMe: values.rememberMe })
       .pipe(
         finalize(() => {
           this.loading.set(false);
@@ -71,7 +71,12 @@ export class LoginComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: () => void this.router.navigateByUrl('/'),
+        next: () => {
+          const returnUrl = this.router.parseUrl(this.router.url).queryParams['returnUrl'];
+          void this.router.navigateByUrl(
+            typeof returnUrl === 'string' && returnUrl.startsWith('/') ? returnUrl : '/',
+          );
+        },
         error: (error: unknown) => this.errorMessage.set(this.loginErrorMessage(error)),
       });
   }

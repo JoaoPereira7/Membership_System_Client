@@ -3,13 +3,14 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
 
 import { getApiErrorMessage } from '../../../../core/api/api.models';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -17,6 +18,7 @@ import { nonBlankValidator } from '../../../../core/validators/non-blank.validat
 import {
   CreateAccountProfileRequest,
   UpdateAccountProfileRequest,
+  PermissionApiDto,
 } from '../../Models/account-profile.models';
 import { AccountProfileService } from '../../Services/account-profile.service';
 import {
@@ -30,6 +32,7 @@ import {
     A11yModule,
     ReactiveFormsModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
@@ -54,6 +57,9 @@ export class AccountProfileDialogComponent {
   protected readonly isEdit = this.data.mode === 'edit';
   protected readonly title = this.isEdit ? 'Editar perfil de acesso' : 'Novo perfil de acesso';
   protected readonly saving = signal(false);
+  protected readonly loadingPermissions = signal(true);
+  protected readonly permissions = signal<readonly PermissionApiDto[]>([]);
+  protected readonly selectedPermissionIds = signal<ReadonlySet<string>>(new Set());
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly form = this.formBuilder.group({
     name: [
@@ -64,10 +70,50 @@ export class AccountProfileDialogComponent {
     isActive: this.item?.isActive ?? true,
   });
 
+  constructor() {
+    forkJoin({
+      permissions: this.service.getPermissions(),
+      selectedIds: this.isEdit
+        ? this.service.getProfilePermissionIds(this.item!.id)
+        : of<readonly string[]>([]),
+    })
+      .pipe(
+        finalize(() => this.loadingPermissions.set(false)),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: ({ permissions, selectedIds }) => {
+          this.permissions.set(
+            [...permissions].sort((left, right) =>
+              left.normalizedName.localeCompare(right.normalizedName),
+            ),
+          );
+          this.selectedPermissionIds.set(new Set(selectedIds));
+        },
+        error: (error: unknown) => {
+          this.errorMessage.set(
+            getApiErrorMessage(error, 'Não foi possível carregar as permissões.'),
+          );
+        },
+      });
+  }
+
   protected cancel(): void {
     if (!this.saving()) {
       this.dialogRef.close({ saved: false });
     }
+  }
+
+  protected togglePermission(permissionId: string, checked: boolean): void {
+    this.selectedPermissionIds.update((current) => {
+      const next = new Set(current);
+      checked ? next.add(permissionId) : next.delete(permissionId);
+      return next;
+    });
+  }
+
+  protected permissionLabel(permission: PermissionApiDto): string {
+    return permission.normalizedName.replaceAll('_', ' ');
   }
 
   protected save(): void {
@@ -102,6 +148,11 @@ export class AccountProfileDialogComponent {
 
     operation
       .pipe(
+        switchMap((item) =>
+          this.service
+            .replacePermissions(item.id, [...this.selectedPermissionIds()])
+            .pipe(map(() => item)),
+        ),
         finalize(() => {
           this.saving.set(false);
           this.dialogRef.disableClose = false;

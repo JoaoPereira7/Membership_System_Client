@@ -12,12 +12,16 @@ import {
   AccountProfilePagedResult,
   CreateAccountProfileRequest,
   UpdateAccountProfileRequest,
+  PermissionApiDto,
+  AccountProfilePermissionApiDto,
 } from '../Models/account-profile.models';
 
 @Injectable({ providedIn: 'root' })
 export class AccountProfileService {
   private readonly http = inject(HttpClient);
   private readonly endpoint = `${environment.apiBaseUrl}/AccountProfile`;
+  private readonly permissionEndpoint = `${environment.apiBaseUrl}/Permission`;
+  private readonly profilePermissionEndpoint = `${environment.apiBaseUrl}/AccountProfilePermission`;
 
   getAll(activeOnly = false): Observable<readonly AccountProfileListItem[]> {
     return this.http
@@ -69,6 +73,40 @@ export class AccountProfileService {
             unwrapApiData(response, 'Não foi possível atualizar o perfil de acesso.'),
           ),
         ),
+      );
+  }
+
+  getPermissions(): Observable<readonly PermissionApiDto[]> {
+    return this.http
+      .get<ApiResponse<readonly PermissionApiDto[]>>(this.permissionEndpoint)
+      .pipe(map((response) => (response.data ?? []).filter((permission) => permission.isActive)));
+  }
+
+  getProfilePermissionIds(accountProfileId: string): Observable<readonly string[]> {
+    return this.http
+      .get<ApiResponse<readonly AccountProfilePermissionApiDto[]>>(
+        `${this.profilePermissionEndpoint}/profile/${encodeURIComponent(accountProfileId)}`,
+      )
+      .pipe(
+        map((response) =>
+          (response.data ?? []).filter((item) => item.isActive).map((item) => item.permissionId),
+        ),
+      );
+  }
+
+  replacePermissions(
+    accountProfileId: string,
+    permissionIds: readonly string[],
+  ): Observable<void> {
+    return this.http
+      .put<ApiResponse<boolean>>(
+        `${this.profilePermissionEndpoint}/profile/${encodeURIComponent(accountProfileId)}`,
+        { permissionIds },
+      )
+      .pipe(
+        map((response) => {
+          unwrapApiData(response, 'Não foi possível atualizar as permissões do perfil.');
+        }),
       );
   }
 
