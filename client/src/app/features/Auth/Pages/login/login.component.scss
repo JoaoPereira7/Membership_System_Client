@@ -1,0 +1,203 @@
+:host {
+  display: block;
+}
+
+.login-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: url('/login-background.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.login-container {
+  position: absolute;
+  top: 50%;
+  right: clamp(4%, 7vw, 10%);
+  width: min(440px, calc(50vw - 4rem));
+  box-sizing: border-box;
+  padding: 34px 38px 38px;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 20px 55px rgba(16, 38, 72, 0.12);
+  color-scheme: light;
+
+  // Mantém os controles legíveis mesmo quando o sistema operacional está no tema escuro.
+  --mat-sys-primary: #164f86;
+  --mat-sys-on-surface: #123b67;
+  --mat-sys-on-surface-variant: #315b83;
+  --mat-form-field-outlined-input-text-color: #123b67;
+  --mat-form-field-outlined-input-text-placeholder-color: #51749a;
+  --mat-form-field-outlined-label-text-color: #315b83;
+  --mat-form-field-outlined-hover-label-text-color: #164f86;
+  --mat-form-field-outlined-focus-label-text-color: #164f86;
+  --mat-form-field-outlined-outline-color: #7892ad;
+  --mat-form-field-outlined-hover-outline-color: #315b83;
+  --mat-form-field-outlined-focus-outline-color: #164f86;
+  --mat-form-field-leading-icon-color: #315b83;
+  --mat-form-field-trailing-icon-color: #315b83;
+  --mat-checkbox-label-text-color: #164f86;
+  --mat-checkbox-unselected-icon-color: #51749a;
+  --mat-checkbox-selected-icon-color: #164f86;
+  --mat-checkbox-selected-checkmark-color: #fff;
+}
+
+.login-logo {
+  display: block;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 12px;
+  object-fit: contain;
+}
+
+.login-heading {
+  margin-bottom: 28px;
+  text-align: center;
+
+  h1 {
+    margin: 0 0 8px;
+    color: #123b67;
+    font-size: clamp(1.65rem, 2.2vw, 1.85rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.92rem;
+  }
+}
+
+form {
+  display: grid;
+  gap: 18px;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+input[matInput] {
+  color: #123b67;
+  caret-color: #164f86;
+
+  &::placeholder {
+    color: #51749a;
+  }
+
+  &:-webkit-autofill,
+  &:-webkit-autofill:hover,
+  &:-webkit-autofill:focus {
+    -webkit-text-fill-color: #123b67;
+    caret-color: #164f86;
+  }
+}
+
+mat-icon[matPrefix] {
+  margin-right: 10px;
+  color: #51749a;
+}
+
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -6px;
+  color: #475569;
+  font-size: 0.88rem;
+
+  mat-checkbox {
+    color: #164f86;
+  }
+}
+
+.forgot-password {
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  color: #1d5b96;
+  font: inherit;
+  cursor: default;
+}
+
+.login-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 13px;
+  border: 1px solid #fecaca;
+  border-radius: 9px;
+  background: #fff1f2;
+  color: #b42318;
+  font-size: 0.87rem;
+  line-height: 1.35;
+
+  mat-icon {
+    flex: 0 0 auto;
+    width: 19px;
+    height: 19px;
+    font-size: 19px;
+  }
+}
+
+.login-submit {
+  width: 100%;
+  height: 50px;
+  border-radius: 9px;
+  background: #164f86 !important;
+  color: #fff !important;
+  font-size: 1rem;
+  font-weight: 600;
+
+  mat-spinner {
+    display: inline-block;
+    margin-right: 10px;
+    vertical-align: middle;
+    --mat-progress-spinner-active-indicator-color: #fff;
+  }
+}
+
+@media (max-width: 1100px) {
+  .login-container {
+    right: 3.5%;
+    width: min(410px, calc(52vw - 2rem));
+    padding: 28px 30px 32px;
+  }
+}
+
+@media (max-width: 760px) {
+  .login-page {
+    display: grid;
+    place-items: center;
+    height: auto;
+    padding: 24px 0;
+    background-position: 68% center;
+  }
+
+  .login-container {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: calc(100% - 32px);
+    max-width: 440px;
+    padding: 28px 24px 30px;
+    transform: none;
+    background: rgba(255, 255, 255, 0.94);
+  }
+}
+
+@media (max-width: 420px) {
+  .login-options {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+}

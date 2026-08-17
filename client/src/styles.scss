@@ -1,12 +1,15 @@
 @use './styles/themes/ieq-theme';
 @use './styles/base/reset';
 @use './styles/base/typography';
+@use './styles/base/transitions';
 @use './styles/layout/sidebar';
 @use './styles/layout/toolbar';
 @use './styles/layout/footer';
+@use './styles/pages/home';
 @use './styles/components/button';
 @use './styles/components/card';
 @use './styles/components/dialog';
+@use './styles/components/notification';
 @use './styles/components/table';
 @use './styles/components/form';
 @use './styles/utilities/display';

@@ -1,0 +1,45 @@
+.entity-delete {
+  width: min(28rem, calc(100vw - 3rem));
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: var(--spacing-md);
+  padding: var(--spacing-lg);
+}
+
+.entity-delete__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-danger) 14%, transparent);
+  color: var(--color-danger);
+}
+
+.entity-delete h2,
+.entity-delete p {
+  margin: 0;
+}
+
+.entity-delete h2 {
+  font-size: var(--font-size-h5);
+}
+
+.entity-delete p {
+  margin-top: var(--spacing-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-normal);
+}
+
+.entity-delete__actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+  padding-top: var(--spacing-sm);
+}
+
+.entity-delete__actions mat-spinner {
+  display: inline-block;
+  margin-right: var(--spacing-xs);
+}

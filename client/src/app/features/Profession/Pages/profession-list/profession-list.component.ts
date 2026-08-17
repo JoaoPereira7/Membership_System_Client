@@ -24,6 +24,8 @@ import {
 } from '../../Components/profession-dialog/profession-dialog.types';
 import { ProfessionListItem } from '../../Models/profession.models';
 import { ProfessionService } from '../../Services/profession.service';
+import { ProfessionDetailsDialogComponent } from '../../Components/profession-details-dialog/profession-details-dialog.component';
+import { ProfessionDeleteDialogComponent } from '../../Components/profession-delete-dialog/profession-delete-dialog.component';
 
 @Component({
   selector: 'app-profession-list',
@@ -40,6 +42,8 @@ import { ProfessionService } from '../../Services/profession.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProfessionListComponent {
+  protected readonly detailsDialogComponent = ProfessionDetailsDialogComponent;
+  protected readonly deleteDialogComponent = ProfessionDeleteDialogComponent;
   private readonly service = inject(ProfessionService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

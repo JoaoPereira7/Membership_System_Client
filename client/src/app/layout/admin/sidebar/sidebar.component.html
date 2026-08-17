@@ -1,7 +1,10 @@
 <aside class="sidebar" [class.sidebar--collapsed]="collapsed()">
   <header class="sidebar__header">
-    <div class="sidebar__logo" aria-hidden="true">
-      <mat-icon>layers</mat-icon>
+    <div class="sidebar__logo">
+      <img
+        src="membership-ieq-logo-transparent.png"
+        alt="Logo da Igreja do Evangelho Quadrangular"
+      />
     </div>
 
     @if (!collapsed()) {
@@ -12,7 +15,7 @@
   </header>
 
   <nav class="sidebar__nav" aria-label="Navegação principal">
-    @for (item of items; track item.id) {
+    @for (item of items(); track item.id) {
       @if (item.section) {
         <div class="sidebar__section" aria-hidden="true">
           @if (!collapsed()) {

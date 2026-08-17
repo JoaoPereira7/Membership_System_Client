@@ -1,0 +1,17 @@
+<section class="confirmation" role="alertdialog" [attr.aria-labelledby]="'confirmation-title'">
+  <div class="confirmation__icon" [class.confirmation__icon--danger]="data.tone === 'danger'">
+    <mat-icon>{{ data.tone === 'danger' ? 'error_outline' : 'warning_amber' }}</mat-icon>
+  </div>
+
+  <div class="confirmation__content">
+    <h2 id="confirmation-title">{{ data.title }}</h2>
+    <p>{{ data.message }}</p>
+  </div>
+
+  <div class="confirmation__actions">
+    <button mat-button type="button" (click)="close(false)">{{ data.cancelLabel }}</button>
+    <button mat-flat-button type="button" color="primary" (click)="close(true)">
+      {{ data.confirmLabel }}
+    </button>
+  </div>
+</section>

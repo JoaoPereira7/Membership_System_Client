@@ -1,0 +1,114 @@
+<section class="member-dialog">
+  <header class="dialog-header"><mat-icon>person</mat-icon><div><h1>{{ editing ? 'Editar membro' : 'Novo membro' }}</h1><p>Preencha os dados do membro nas seis etapas.</p></div><span></span><button mat-icon-button type="button" aria-label="Fechar" [disabled]="saving()" (click)="cancel()"><mat-icon>close</mat-icon></button></header>
+  @if (loading()) {
+    <div class="loading"><mat-spinner diameter="44" /></div>
+  } @else {
+    <mat-card class="dialog-content">
+      <mat-stepper #stepper linear>
+        <mat-step [stepControl]="generalForm" label="Dados gerais">
+          <form [formGroup]="generalForm" class="grid">
+            <mat-form-field class="span-2"><mat-label>Nome</mat-label><input matInput formControlName="name" maxlength="200" /><mat-error>Informe o nome.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>CPF</mat-label><input matInput formControlName="cpf" mask="000.000.000-00" /><mat-error>Informe um CPF válido.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>RG</mat-label><input matInput formControlName="rg" maxlength="20" /></mat-form-field>
+            <mat-form-field><mat-label>Data de nascimento</mat-label><input matInput type="date" formControlName="birthDate" [max]="maxDate" /><mat-error>Não pode ser futura.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>Gênero</mat-label><mat-select formControlName="genderId"><mat-option [value]="null">Não informado</mat-option>@for (item of lookup('genders'); track item.id) {<mat-option [value]="item.id">{{ item.name }}</mat-option>}</mat-select></mat-form-field>
+            <mat-form-field><mat-label>Estado civil</mat-label><mat-select formControlName="maritalStatusId"><mat-option [value]="null">Não informado</mat-option>@for (item of lookup('maritalStatuses'); track item.id) {<mat-option [value]="item.id">{{ item.name }}</mat-option>}</mat-select></mat-form-field>
+            <mat-form-field><mat-label>Nacionalidade</mat-label><input matInput formControlName="nationality" maxlength="100" /></mat-form-field>
+            <mat-form-field class="span-2"><mat-label>Nome da mãe</mat-label><input matInput formControlName="motherName" maxlength="200" /></mat-form-field>
+            <mat-form-field class="span-2"><mat-label>Nome do pai</mat-label><input matInput formControlName="fatherName" maxlength="200" /></mat-form-field>
+            <mat-form-field class="span-2"><mat-label>E-mail</mat-label><input matInput type="email" formControlName="email" /><mat-error>Informe um e-mail válido.</mat-error></mat-form-field>
+            @if (editing) { <mat-checkbox formControlName="isActive">Membro ativo</mat-checkbox> }
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><button mat-flat-button color="primary" matStepperNext type="button">Próximo</button></div>
+        </mat-step>
+
+        <mat-step [stepControl]="contactForm" label="Telefones e endereços">
+          <form [formGroup]="contactForm">
+            <div class="section-title"><h2>Telefones</h2><button mat-stroked-button type="button" (click)="addPhone()"><mat-icon>add</mat-icon>Adicionar</button></div>
+            <div formArrayName="phones">@for (phone of phones.controls; track phone; let i = $index) {
+              <div class="row-card grid" [formGroupName]="i">
+                <mat-form-field><mat-label>Tipo</mat-label><mat-select formControlName="phoneTypeId">@for(item of lookup('phoneTypes'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Número</mat-label><input matInput formControlName="number" mask="(00) 0000-0000||(00) 00000-0000" /><mat-error>Número inválido ou duplicado.</mat-error></mat-form-field>
+                @if (editing) {<mat-checkbox formControlName="isActive">Ativo</mat-checkbox>}
+                <button mat-icon-button type="button" aria-label="Remover telefone" (click)="remove(phones, i)"><mat-icon>delete</mat-icon></button>
+              </div>
+            }</div>
+            <div class="section-title"><h2>Endereços</h2><button mat-stroked-button type="button" (click)="addAddress()"><mat-icon>add</mat-icon>Adicionar</button></div>
+            <div formArrayName="addresses">@for (address of addresses.controls; track address; let i = $index) {
+              <div class="row-card grid" [formGroupName]="i">
+                <mat-form-field><mat-label>Tipo</mat-label><mat-select formControlName="addressTypeId">@for(item of lookup('addressTypes'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>CEP</mat-label><input matInput formControlName="zipCode" mask="00000-000" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field class="span-2"><mat-label>Logradouro</mat-label><input matInput formControlName="street" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Número</mat-label><input matInput formControlName="number" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Complemento</mat-label><input matInput formControlName="complement" /></mat-form-field>
+                <mat-form-field><mat-label>Bairro</mat-label><input matInput formControlName="neighborhood" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Cidade</mat-label><input matInput formControlName="city" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Estado</mat-label><mat-select formControlName="state">@for(state of states; track state){<mat-option [value]="state">{{state}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+                @if (editing) {<mat-checkbox formControlName="isActive">Ativo</mat-checkbox>}
+                <button mat-icon-button type="button" aria-label="Remover endereço" (click)="remove(addresses, i)"><mat-icon>delete</mat-icon></button>
+              </div>
+            }</div>
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><span></span><button mat-button matStepperPrevious type="button">Voltar</button><button mat-flat-button color="primary" matStepperNext type="button">Próximo</button></div>
+        </mat-step>
+
+        <mat-step [stepControl]="professionalForm" label="Dados profissionais">
+          <form [formGroup]="professionalForm" class="grid">
+            <mat-form-field><mat-label>Nível de escolaridade</mat-label><mat-select formControlName="educationLevelId"><mat-option [value]="null">Não informado</mat-option>@for(item of lookup('educationLevels'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
+            <mat-form-field><mat-label>Área de formação</mat-label><mat-select formControlName="formationAreaId"><mat-option [value]="null">Não informado</mat-option>@for(item of lookup('formationAreas'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
+            <mat-form-field><mat-label>Profissão</mat-label><mat-select formControlName="professionId"><mat-option [value]="null">Não informado</mat-option>@for(item of lookup('professions'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><span></span><button mat-button matStepperPrevious type="button">Voltar</button><button mat-flat-button color="primary" matStepperNext type="button">Próximo</button></div>
+        </mat-step>
+
+        <mat-step [stepControl]="membershipForm" label="Membresia">
+          <form [formGroup]="membershipForm" class="grid">
+            <mat-form-field class="span-2"><mat-label>Igreja</mat-label><mat-select formControlName="churchId">@for(item of lookup('churches'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>Data de ingresso</mat-label><input matInput type="date" formControlName="dateJoinedChurch" [max]="maxDate" /><mat-error>Informe uma data válida.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>Situação da membresia</mat-label><mat-select formControlName="membershipStatusId">@for(item of lookup('membershipStatuses'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+            <mat-form-field><mat-label>Origem religiosa</mat-label><mat-select formControlName="religiousOriginId"><mat-option [value]="null">Não informada</mat-option>@for(item of lookup('religiousOrigins'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
+            <mat-form-field><mat-label>Pastor responsável</mat-label><mat-select formControlName="pastorId"><mat-option [value]="null">Não informado</mat-option>@for(item of lookup('pastors'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
+            @if(editing){<mat-checkbox formControlName="isActive">Membresia ativa</mat-checkbox>}
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><span></span><button mat-button matStepperPrevious type="button">Voltar</button><button mat-flat-button color="primary" matStepperNext type="button">Próximo</button></div>
+        </mat-step>
+
+        <mat-step [stepControl]="rolesForm" label="Cargos eclesiásticos">
+          <form [formGroup]="rolesForm">
+            <div class="section-title"><h2>Cargos eclesiásticos</h2><button mat-stroked-button type="button" (click)="addRole()"><mat-icon>add</mat-icon>Adicionar cargo</button></div>
+            <div formArrayName="roles">@for(role of roles.controls; track role; let i = $index){
+              <div class="row-card grid" [formGroupName]="i">
+                <mat-form-field><mat-label>Cargo</mat-label><mat-select formControlName="churchRoleId">@for(item of lookup('churchRoles'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório ou duplicado.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Data de início</mat-label><input matInput type="date" formControlName="startDate" /></mat-form-field>
+                @if(editing){<mat-form-field><mat-label>Data de término</mat-label><input matInput type="date" formControlName="endDate" /><mat-error>Anterior à data inicial.</mat-error></mat-form-field><mat-checkbox formControlName="isActive">Ativo</mat-checkbox>}
+                <button mat-icon-button type="button" aria-label="Remover cargo" (click)="remove(roles, i)"><mat-icon>delete</mat-icon></button>
+              </div>
+            }</div>
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><span></span><button mat-button matStepperPrevious type="button">Voltar</button><button mat-flat-button color="primary" matStepperNext type="button">Próximo</button></div>
+        </mat-step>
+
+        <mat-step [stepControl]="departmentsForm" label="Departamentos e liderança">
+          <form [formGroup]="departmentsForm">
+            <div class="section-title"><h2>Departamentos e liderança</h2><button mat-stroked-button type="button" [disabled]="!membershipForm.controls.churchId.value" (click)="addDepartment()"><mat-icon>add</mat-icon>Adicionar departamento</button></div>
+            <div formArrayName="departments">@for(department of departments.controls; track department; let i = $index){
+              <div class="row-card grid" [formGroupName]="i">
+                <mat-form-field class="span-2"><mat-label>Departamento da igreja</mat-label><mat-select formControlName="churchDepartmentId">@for(item of availableChurchDepartments; track item.id){<mat-option [value]="item.id">{{item.departmentName}}</mat-option>}</mat-select><mat-error>Obrigatório ou duplicado.</mat-error></mat-form-field>
+                <mat-form-field><mat-label>Data de início</mat-label><input matInput type="date" formControlName="startDate" /></mat-form-field>
+                @if(editing){<mat-form-field><mat-label>Data de término</mat-label><input matInput type="date" formControlName="endDate" /></mat-form-field><mat-checkbox formControlName="isActive">Participação ativa</mat-checkbox>}
+                <mat-checkbox class="span-2" formControlName="isLeader">Exerce liderança neste departamento?</mat-checkbox>
+                @if(department.controls['isLeader'].value){
+                  <mat-form-field><mat-label>Tipo de liderança</mat-label><mat-select formControlName="leaderTypeId">@for(item of lookup('leaderTypes'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
+                  <mat-form-field><mat-label>Início da liderança</mat-label><input matInput type="date" formControlName="leadershipStartDate" /><mat-error>Obrigatório.</mat-error></mat-form-field>
+                  @if(editing){<mat-form-field><mat-label>Término da liderança</mat-label><input matInput type="date" formControlName="leadershipEndDate" /></mat-form-field><mat-checkbox formControlName="leadershipIsActive">Liderança ativa</mat-checkbox>}
+                }
+                <button mat-icon-button type="button" aria-label="Remover departamento" (click)="remove(departments, i)"><mat-icon>delete</mat-icon></button>
+              </div>
+            }</div>
+          </form>
+          <div class="actions"><button mat-button type="button" (click)="cancel()">Cancelar</button><span></span><button mat-button matStepperPrevious type="button">Voltar</button><button mat-flat-button color="primary" type="button" [disabled]="saving()" (click)="save(stepper)">@if(saving()){<mat-spinner diameter="20" />}@else{<mat-icon>save</mat-icon>} {{ editing ? 'Salvar alterações' : 'Salvar membro' }}</button></div>
+        </mat-step>
+      </mat-stepper>
+    </mat-card>
+  }
+</section>

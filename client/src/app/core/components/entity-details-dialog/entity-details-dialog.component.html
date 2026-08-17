@@ -1,0 +1,31 @@
+<header class="entity-details__header">
+  <div class="entity-details__icon"><mat-icon>visibility</mat-icon></div>
+  <div>
+    <h2>{{ data.title }}</h2>
+    <p>Informações do registro</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content class="entity-details__content">
+  @if (loading()) {
+    <div class="entity-details__loading"><mat-spinner diameter="36" /></div>
+  } @else if (items().length) {
+    <dl class="entity-details__grid">
+      @for (item of items(); track item.label) {
+        <div class="entity-details__item">
+          <dt>{{ item.label }}</dt>
+          <dd>{{ item.value }}</dd>
+        </div>
+      }
+    </dl>
+  } @else {
+    <div class="entity-details__empty">Não há informações disponíveis.</div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" color="primary" mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

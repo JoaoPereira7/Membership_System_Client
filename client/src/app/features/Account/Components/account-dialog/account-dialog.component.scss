@@ -1,0 +1,21 @@
+@use '../../../auxiliary-dialog';
+
+.account-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-md);
+}
+
+.account-dialog__full-width {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 599.98px) {
+  .account-dialog__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .account-dialog__full-width {
+    grid-column: auto;
+  }
+}

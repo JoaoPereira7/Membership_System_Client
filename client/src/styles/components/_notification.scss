@@ -1,0 +1,67 @@
+.mat-mdc-snack-bar-container {
+  margin: var(--spacing-md) !important;
+}
+
+.app-notification {
+  --app-notification-color: var(--color-primary);
+  --app-notification-background: var(--surface-elevated);
+  --mat-snack-bar-container-color: var(--app-notification-background);
+  --mat-snack-bar-supporting-text-color: var(--text-primary);
+  --mat-snack-bar-button-color: var(--app-notification-color);
+
+  width: auto;
+  min-width: min(20rem, calc(100vw - 2rem));
+  max-width: min(26rem, calc(100vw - 2rem));
+  border: var(--border-width) solid var(--color-border);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.cdk-global-overlay-wrapper:has(.app-notification) {
+  align-items: flex-start !important;
+  justify-content: flex-end !important;
+}
+
+.app-notification .mdc-snackbar__surface {
+  min-width: 0 !important;
+  background-color: var(--app-notification-background) !important;
+  color: var(--text-primary) !important;
+  border-radius: var(--radius-lg) !important;
+}
+
+.app-notification .mat-mdc-snack-bar-label {
+  color: var(--text-primary) !important;
+}
+
+.app-notification .mat-mdc-snack-bar-action {
+  color: var(--app-notification-color) !important;
+}
+
+.app-notification--success {
+  --app-notification-color: var(--color-success);
+}
+
+.app-notification--error {
+  --app-notification-color: var(--color-primary);
+}
+
+.app-notification--warning {
+  --app-notification-color: var(--color-warning);
+}
+
+.app-notification--info {
+  --app-notification-color: var(--color-primary);
+}
+
+@media (max-width: 599.98px) {
+  .mat-mdc-snack-bar-container {
+    margin: var(--spacing-sm) !important;
+  }
+
+  .app-notification {
+    width: calc(100vw - 1rem);
+    min-width: 0;
+    max-width: calc(100vw - 1rem);
+  }
+}

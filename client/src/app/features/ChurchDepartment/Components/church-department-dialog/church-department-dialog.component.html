@@ -1,0 +1,73 @@
+<form class="auxiliary-dialog" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <header class="auxiliary-dialog__header">
+    <span class="auxiliary-dialog__icon" aria-hidden="true"><mat-icon>hub</mat-icon></span>
+    <h2 class="auxiliary-dialog__title" mat-dialog-title>{{ title }}</h2>
+  </header>
+
+  <mat-dialog-content class="auxiliary-dialog__content">
+    @if (errorMessage()) {
+      <div class="auxiliary-dialog__error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon><span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Igreja</mat-label>
+      <mat-select formControlName="churchId" cdkFocusInitial>
+        @for (church of churches(); track church.id) {
+          <mat-option [value]="church.id">{{ church.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.churchId.hasError('required')) {
+        <mat-error>Selecione uma igreja.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Departamento</mat-label>
+      <mat-select formControlName="departmentId">
+        @for (department of departments(); track department.id) {
+          <mat-option [value]="department.id">{{ department.name }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.departmentId.hasError('required')) {
+        <mat-error>Selecione um departamento.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Data de início</mat-label>
+      <input matInput type="date" formControlName="startDate" />
+      @if (form.controls.startDate.hasError('required')) {
+        <mat-error>Informe a data de início.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (isEdit) {
+      <div class="auxiliary-dialog__status">
+        <mat-slide-toggle formControlName="isActive">Ativo</mat-slide-toggle>
+        <span class="auxiliary-dialog__status-hint">
+          Reative este registro quando o vínculo já existir e estiver inativo.
+        </span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="auxiliary-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving()" (click)="cancel()">Cancelar</button>
+    <button
+      class="auxiliary-dialog__save"
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="saving() || loadingOptions()"
+    >
+      @if (saving()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+        <span>Salvando</span>
+      } @else {
+        <span>Salvar</span>
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

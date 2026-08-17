@@ -2,16 +2,26 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { filter, map, startWith } from 'rxjs';
+import { filter, finalize, map, startWith } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { FooterComponent } from './footer/footer.component';
+import { AuthService } from '../../core/auth/auth.service';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterOutlet, MatIconModule, SidebarComponent, FooterComponent],
+  imports: [
+    RouterOutlet,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    SidebarComponent,
+    FooterComponent,
+  ],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +30,7 @@ export class AdminLayoutComponent {
   private readonly router = inject(Router);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly breakpointObserver = inject(BreakpointObserver);
+  private readonly auth = inject(AuthService);
 
   readonly isMobile = toSignal(
     this.breakpointObserver.observe('(max-width: 959.98px)').pipe(map((state) => state.matches)),
@@ -30,6 +41,8 @@ export class AdminLayoutComponent {
   readonly mobileSidebarOpen = signal(false);
   readonly pageTitle = signal('Home');
   readonly breadcrumb = signal<string[]>(['Home']);
+  readonly userName = this.auth.user;
+  readonly loggingOut = signal(false);
   constructor() {
     this.syncRouteContext();
 
@@ -56,6 +69,18 @@ export class AdminLayoutComponent {
     }
 
     this.mobileSidebarOpen.set(false);
+  }
+
+  logout(): void {
+    if (this.loggingOut()) return;
+    this.loggingOut.set(true);
+    this.auth
+      .logout()
+      .pipe(finalize(() => this.loggingOut.set(false)))
+      .subscribe({
+        next: () => void this.router.navigateByUrl('/login'),
+        error: () => void this.router.navigateByUrl('/login'),
+      });
   }
 
   private syncRouteContext(): void {

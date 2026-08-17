@@ -1,0 +1,77 @@
+@keyframes app-route-leave {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.992);
+  }
+}
+
+@keyframes app-route-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(1.006);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+::view-transition-group(root) {
+  animation-duration: 420ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-old(root) {
+  animation: app-route-leave 220ms ease-in both;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: app-route-enter 380ms 40ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  mix-blend-mode: normal;
+}
+
+html[data-route-transition='login-to-app']::view-transition-group(root) {
+  animation-duration: 480ms;
+}
+
+html[data-route-transition='login-to-app']::view-transition-old(root) {
+  animation-duration: 420ms;
+}
+
+html[data-route-transition='login-to-app']::view-transition-new(root) {
+  animation-duration: 720ms;
+  animation-delay: 180ms;
+}
+
+html[data-route-transition='app-to-login']::view-transition-group(root) {
+  animation-duration: 2000ms;
+}
+
+html[data-route-transition='app-to-login']::view-transition-old(root) {
+  animation-duration: 320ms;
+}
+
+html[data-route-transition='app-to-login']::view-transition-new(root) {
+  animation-duration: 580ms;
+  animation-delay: 120ms;
+}
+
+html:active-view-transition {
+  background: var(--background-color, #f4f7fb);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(root),
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}

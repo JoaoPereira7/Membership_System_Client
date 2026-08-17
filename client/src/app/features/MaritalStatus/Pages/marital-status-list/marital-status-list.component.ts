@@ -24,6 +24,8 @@ import {
 } from '../../Components/marital-status-dialog/marital-status-dialog.types';
 import { MaritalStatusListItem } from '../../Models/marital-status.models';
 import { MaritalStatusService } from '../../Services/marital-status.service';
+import { MaritalStatusDetailsDialogComponent } from '../../Components/marital-status-details-dialog/marital-status-details-dialog.component';
+import { MaritalStatusDeleteDialogComponent } from '../../Components/marital-status-delete-dialog/marital-status-delete-dialog.component';
 
 @Component({
   selector: 'app-marital-status-list',
@@ -40,6 +42,8 @@ import { MaritalStatusService } from '../../Services/marital-status.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MaritalStatusListComponent {
+  protected readonly detailsDialogComponent = MaritalStatusDetailsDialogComponent;
+  protected readonly deleteDialogComponent = MaritalStatusDeleteDialogComponent;
   private readonly service = inject(MaritalStatusService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

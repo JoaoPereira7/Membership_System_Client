@@ -1,0 +1,51 @@
+<app-list-page-shell
+  title="Departamentos"
+  subtitle="Gerencie os departamentos disponíveis na organização."
+  icon="diversity_3"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="openCreateDialog()"
+  >
+    <mat-icon>add</mat-icon><span>Novo departamento</span>
+  </button>
+
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar departamento"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="onSearchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de departamentos"
+    emptyMessage="Nenhum departamento encontrado."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [detailsComponent]="detailsDialogComponent"
+    [deleteComponent]="deleteDialogComponent"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="onQueryChanged($event)"
+    (actionTriggered)="onAction($event)"
+  />
+</app-list-page-shell>

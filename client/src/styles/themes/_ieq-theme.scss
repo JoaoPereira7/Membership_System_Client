@@ -20,3 +20,45 @@ html {
 :root {
   @include mixins.emit-css-variables(vars.$design-tokens);
 }
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+    @include mat.theme(
+      (
+        color: (
+          theme-type: dark,
+          primary: mat.$blue-palette,
+          tertiary: mat.$violet-palette,
+        ),
+      )
+    );
+    @include mat.theme-overrides(
+      (
+        primary: #1976d2,
+        on-primary: #ffffff,
+        primary-container: #0d47a1,
+        on-primary-container: #ffffff,
+        inverse-primary: #1565c0,
+        surface: #1e1e1e,
+        surface-dim: #121212,
+        surface-bright: #343434,
+        surface-container-lowest: #101010,
+        surface-container-low: #191919,
+        surface-container: #1e1e1e,
+        surface-container-high: #252525,
+        surface-container-highest: #2c2c2c,
+        on-surface: #f5f5f5,
+        on-surface-variant: #d4d4d4,
+        outline: #737373,
+        outline-variant: #3a3a3a,
+        inverse-surface: #eeeeee,
+        inverse-on-surface: #262626,
+      )
+    );
+  }
+
+  :root {
+    @include mixins.emit-css-variables(vars.$dark-design-tokens);
+  }
+}

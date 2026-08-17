@@ -1,4 +1,22 @@
 <div class="admin-shell">
+  @if (loggingOut()) {
+    <div class="session-transition" role="status" aria-live="polite" aria-label="Encerrando sessão">
+      <div class="session-transition__card">
+        <img
+          class="session-transition__logo"
+          src="/membership-ieq-logo-transparent.png"
+          alt=""
+          aria-hidden="true"
+        />
+        <mat-progress-spinner diameter="30" mode="indeterminate" />
+        <div>
+          <strong>Encerrando sua sessão</strong>
+          <span>Aguarde um instante...</span>
+        </div>
+      </div>
+    </div>
+  }
+
   <div
     class="admin-shell__backdrop"
     [class.admin-shell__backdrop--visible]="isMobile() && mobileSidebarOpen()"
@@ -13,7 +31,7 @@
     [style.width.px]="isMobile() ? 260 : sidebarCollapsed() ? 72 : 232"
   >
     <app-sidebar
-      [collapsed]="sidebarCollapsed()"
+      [collapsed]="isMobile() ? false : sidebarCollapsed()"
       [mobile]="isMobile()"
       (requestClose)="closeMobileSidebar()"
       (toggleSidebar)="toggleSidebar()"
@@ -22,6 +40,19 @@
 
   <section class="admin-shell__main">
     <header class="admin-shell__header">
+      @if (isMobile()) {
+        <button
+          mat-icon-button
+          type="button"
+          class="admin-shell__menu-button"
+          aria-label="Abrir menu principal"
+          [attr.aria-expanded]="mobileSidebarOpen()"
+          (click)="toggleSidebar()"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+
       <div class="admin-shell__titles">
         <h1 class="admin-shell__title">{{ pageTitle() }}</h1>
         <nav class="admin-shell__breadcrumb" aria-label="Breadcrumb">
@@ -32,6 +63,20 @@
             }
           }
         </nav>
+      </div>
+
+      <div class="admin-shell__session">
+        <span>{{ userName()?.name }}</span>
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Sair do sistema"
+          title="Sair"
+          [disabled]="loggingOut()"
+          (click)="logout()"
+        >
+          <mat-icon>logout</mat-icon>
+        </button>
       </div>
     </header>
 

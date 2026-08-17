@@ -24,6 +24,8 @@ import {
 } from '../../Components/membership-status-dialog/membership-status-dialog.types';
 import { MembershipStatusListItem } from '../../Models/membership-status.models';
 import { MembershipStatusService } from '../../Services/membership-status.service';
+import { MembershipStatusDetailsDialogComponent } from '../../Components/membership-status-details-dialog/membership-status-details-dialog.component';
+import { MembershipStatusDeleteDialogComponent } from '../../Components/membership-status-delete-dialog/membership-status-delete-dialog.component';
 
 @Component({
   selector: 'app-membership-status-list',
@@ -40,6 +42,8 @@ import { MembershipStatusService } from '../../Services/membership-status.servic
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MembershipStatusListComponent {
+  protected readonly detailsDialogComponent = MembershipStatusDetailsDialogComponent;
+  protected readonly deleteDialogComponent = MembershipStatusDeleteDialogComponent;
   private readonly service = inject(MembershipStatusService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

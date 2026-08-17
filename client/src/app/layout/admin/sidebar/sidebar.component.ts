@@ -57,13 +57,13 @@ export class SidebarComponent {
   );
   private readonly activeItemId = computed(() => {
     this.currentUrl();
-    return this.findActiveItemId(this.items);
+    return this.findActiveItemId(this.items());
   });
   private readonly activeGroupId = computed(() => {
     const activeItemId = this.activeItemId();
 
     return (
-      this.items.find((item) => item.children?.some((child) => child.id === activeItemId))?.id ??
+      this.items().find((item) => item.children?.some((child) => child.id === activeItemId))?.id ??
       null
     );
   });

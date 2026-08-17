@@ -1,4 +1,3 @@
-@let total = itemCount();
 @let filterSummary = activeFilterSummary();
 
 <section class="data-table-toolbar" aria-label="Ferramentas da tabela" [attr.aria-busy]="busy()">
@@ -36,12 +35,6 @@
     }
 
     <div class="data-table-toolbar__actions">
-      @if (total) {
-        <span class="data-table-toolbar__total" [attr.aria-label]="total.label">
-          {{ total.label }}
-        </span>
-      }
-
       @if (filterEnabled()) {
         <button
           class="data-table-toolbar__filter-button"
@@ -90,10 +83,10 @@
       @if (refreshEnabled()) {
         <button
           class="data-table-toolbar__refresh-button"
-          mat-icon-button
+          mat-flat-button
+          color="primary"
           type="button"
           aria-label="Atualizar registros"
-          matTooltip="Atualizar registros"
           [disabled]="controlsDisabled()"
           (click)="requestRefresh()"
         >

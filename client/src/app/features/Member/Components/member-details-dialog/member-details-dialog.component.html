@@ -1,0 +1,194 @@
+<section class="member-details">
+  <header class="member-details__header">
+    <span class="member-details__icon" aria-hidden="true"><mat-icon>person_search</mat-icon></span>
+    <div>
+      <h2 mat-dialog-title>{{ data.title }}</h2>
+      <p>{{ details()?.member?.name ?? 'Cadastro completo do membro' }}</p>
+    </div>
+    <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </header>
+
+  <mat-dialog-content class="member-details__content">
+    @if (loading()) {
+      <div class="member-details__loading" role="status">
+        <mat-progress-spinner diameter="38" mode="indeterminate" />
+        <span>Carregando todas as informações...</span>
+      </div>
+    } @else if (errorMessage()) {
+      <div class="member-details__error" role="alert">
+        <mat-icon>error_outline</mat-icon>
+        <div><strong>Não foi possível carregar o membro</strong><span>{{ errorMessage() }}</span></div>
+        <button mat-stroked-button type="button" (click)="load()">Tentar novamente</button>
+      </div>
+    } @else if (details(); as full) {
+      <mat-stepper
+        #stepper
+        class="member-details__stepper"
+        [linear]="false"
+        (selectionChange)="stepIndex.set($event.selectedIndex)"
+      >
+        <mat-step label="Dados gerais">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>badge</mat-icon><div><h3>Dados gerais</h3><p>Identificação e dados pessoais</p></div>
+            </div>
+            <dl class="member-details__grid">
+              <div class="member-details__field member-details__field--wide"><dt>Nome completo</dt><dd>{{ full.member.name }}</dd></div>
+              <div class="member-details__field"><dt>CPF</dt><dd>{{ formatCpf(full.member.cpf) }}</dd></div>
+              <div class="member-details__field"><dt>RG</dt><dd>{{ display(full.member.rg) }}</dd></div>
+              <div class="member-details__field"><dt>Data de nascimento</dt><dd>{{ formatDate(full.member.birthDate) }}</dd></div>
+              <div class="member-details__field"><dt>Gênero</dt><dd>{{ display(full.member.gender) }}</dd></div>
+              <div class="member-details__field"><dt>Estado civil</dt><dd>{{ display(full.member.maritalStatus) }}</dd></div>
+              <div class="member-details__field"><dt>Nacionalidade</dt><dd>{{ display(full.member.nationality) }}</dd></div>
+              <div class="member-details__field member-details__field--wide"><dt>Nome da mãe</dt><dd>{{ display(full.member.motherName) }}</dd></div>
+              <div class="member-details__field member-details__field--wide"><dt>Nome do pai</dt><dd>{{ display(full.member.fatherName) }}</dd></div>
+              <div class="member-details__field member-details__field--wide"><dt>E-mail</dt><dd>{{ display(full.member.email) }}</dd></div>
+              <div class="member-details__field"><dt>Situação</dt><dd><span class="status" [class.status--inactive]="!full.member.isActive">{{ status(full.member.isActive) }}</span></dd></div>
+            </dl>
+          </section>
+        </mat-step>
+
+        <mat-step label="Contatos e endereços">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>contact_phone</mat-icon><div><h3>Contatos e endereços</h3><p>Telefones e locais cadastrados</p></div>
+            </div>
+
+            <h4>Telefones <span>{{ full.phones.length }}</span></h4>
+            <div class="member-details__cards member-details__cards--two">
+              @for (phone of full.phones; track $index) {
+                <article class="member-details__card">
+                  <div class="member-details__card-title"><mat-icon>phone</mat-icon><strong>{{ display(phone.phoneType) }}</strong><span class="status" [class.status--inactive]="!phone.isActive">{{ status(phone.isActive) }}</span></div>
+                  <dl class="member-details__grid member-details__grid--compact"><div class="member-details__field member-details__field--wide"><dt>Número</dt><dd>{{ formatPhone(phone.number) }}</dd></div></dl>
+                </article>
+              } @empty {
+                <div class="member-details__empty"><mat-icon>phone_disabled</mat-icon><span>Nenhum telefone cadastrado.</span></div>
+              }
+            </div>
+
+            <h4>Endereços <span>{{ full.addresses.length }}</span></h4>
+            <div class="member-details__cards">
+              @for (address of full.addresses; track $index) {
+                <article class="member-details__card">
+                  <div class="member-details__card-title"><mat-icon>location_on</mat-icon><strong>{{ display(address.addressType) }}</strong><span class="status" [class.status--inactive]="!address.isActive">{{ status(address.isActive) }}</span></div>
+                  <dl class="member-details__grid member-details__grid--compact">
+                    <div class="member-details__field"><dt>CEP</dt><dd>{{ formatZipCode(address.zipCode) }}</dd></div>
+                    <div class="member-details__field"><dt>Estado</dt><dd>{{ address.state }}</dd></div>
+                    <div class="member-details__field member-details__field--wide"><dt>Logradouro</dt><dd>{{ address.street }}, {{ address.number }}</dd></div>
+                    <div class="member-details__field"><dt>Bairro</dt><dd>{{ address.neighborhood }}</dd></div>
+                    <div class="member-details__field"><dt>Cidade</dt><dd>{{ address.city }}</dd></div>
+                    <div class="member-details__field member-details__field--wide"><dt>Complemento</dt><dd>{{ display(address.complement) }}</dd></div>
+                  </dl>
+                </article>
+              } @empty {
+                <div class="member-details__empty"><mat-icon>location_off</mat-icon><span>Nenhum endereço cadastrado.</span></div>
+              }
+            </div>
+          </section>
+        </mat-step>
+
+        <mat-step label="Profissional">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>work</mat-icon><div><h3>Informações profissionais</h3><p>Escolaridade, formação e profissão</p></div>
+            </div>
+            <dl class="member-details__grid">
+              <div class="member-details__field"><dt>Nível de escolaridade</dt><dd>{{ display(full.professionalInformation?.educationLevel) }}</dd></div>
+              <div class="member-details__field"><dt>Área de formação</dt><dd>{{ display(full.professionalInformation?.formationArea) }}</dd></div>
+              <div class="member-details__field member-details__field--wide"><dt>Profissão</dt><dd>{{ display(full.professionalInformation?.profession) }}</dd></div>
+            </dl>
+          </section>
+        </mat-step>
+
+        <mat-step label="Membresia">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>church</mat-icon><div><h3>Membresia</h3><p>Vínculo atual com a igreja</p></div>
+            </div>
+            @if (full.membership; as membership) {
+              <dl class="member-details__grid">
+                <div class="member-details__field member-details__field--wide"><dt>Igreja</dt><dd>{{ membership.church }}</dd></div>
+                <div class="member-details__field"><dt>Data de ingresso</dt><dd>{{ formatDate(membership.dateJoinedChurch) }}</dd></div>
+                <div class="member-details__field"><dt>Situação da membresia</dt><dd>{{ membership.membershipStatus }}</dd></div>
+                <div class="member-details__field"><dt>Origem religiosa</dt><dd>{{ display(membership.religiousOrigin) }}</dd></div>
+                <div class="member-details__field"><dt>Pastor responsável</dt><dd>{{ display(membership.pastor) }}</dd></div>
+                <div class="member-details__field"><dt>Situação do vínculo</dt><dd><span class="status" [class.status--inactive]="!membership.isActive">{{ status(membership.isActive) }}</span></dd></div>
+              </dl>
+            } @else {
+              <div class="member-details__empty"><mat-icon>church</mat-icon><span>Nenhuma membresia cadastrada.</span></div>
+            }
+          </section>
+        </mat-step>
+
+        <mat-step label="Cargos eclesiásticos">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>workspace_premium</mat-icon><div><h3>Cargos eclesiásticos</h3><p>Funções exercidas pelo membro</p></div>
+            </div>
+            <div class="member-details__cards member-details__cards--two">
+              @for (role of full.membershipRoles; track $index) {
+                <article class="member-details__card">
+                  <div class="member-details__card-title"><mat-icon>verified</mat-icon><strong>{{ role.churchRole }}</strong><span class="status" [class.status--inactive]="!role.isActive">{{ status(role.isActive) }}</span></div>
+                  <dl class="member-details__grid member-details__grid--compact">
+                    <div class="member-details__field"><dt>Data de início</dt><dd>{{ formatDate(role.startDate) }}</dd></div>
+                    <div class="member-details__field"><dt>Data de término</dt><dd>{{ formatDate(role.endDate) }}</dd></div>
+                  </dl>
+                </article>
+              } @empty {
+                <div class="member-details__empty"><mat-icon>workspace_premium</mat-icon><span>Nenhum cargo eclesiástico cadastrado.</span></div>
+              }
+            </div>
+          </section>
+        </mat-step>
+
+        <mat-step label="Departamentos e liderança">
+          <section class="member-details__step">
+            <div class="member-details__section-title">
+              <mat-icon>diversity_3</mat-icon><div><h3>Departamentos e liderança</h3><p>Participações e responsabilidades</p></div>
+            </div>
+            <div class="member-details__cards">
+              @for (department of full.memberDepartments; track $index) {
+                <article class="member-details__card">
+                  <div class="member-details__card-title"><mat-icon>groups</mat-icon><strong>{{ department.department }}</strong><span class="status" [class.status--inactive]="!department.isActive">{{ status(department.isActive) }}</span></div>
+                  <dl class="member-details__grid member-details__grid--compact">
+                    <div class="member-details__field"><dt>Data de início</dt><dd>{{ formatDate(department.startDate) }}</dd></div>
+                    <div class="member-details__field"><dt>Data de término</dt><dd>{{ formatDate(department.endDate) }}</dd></div>
+                  </dl>
+                  @if (department.leaderships.length) {
+                    <div class="member-details__leaderships">
+                      <h5><mat-icon>record_voice_over</mat-icon>Liderança</h5>
+                      @for (leadership of department.leaderships; track $index) {
+                        <div class="member-details__leadership">
+                          <strong>{{ leadership.leaderType }}</strong>
+                          <span>{{ formatDate(leadership.startDate) }} — {{ formatDate(leadership.endDate) }}</span>
+                          <span class="status" [class.status--inactive]="!leadership.isActive">{{ status(leadership.isActive) }}</span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </article>
+              } @empty {
+                <div class="member-details__empty"><mat-icon>group_off</mat-icon><span>Nenhum departamento cadastrado.</span></div>
+              }
+            </div>
+          </section>
+        </mat-step>
+      </mat-stepper>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="member-details__actions" align="end">
+    <button mat-button type="button" mat-dialog-close>Fechar</button>
+    <span></span>
+    @if (!loading() && !errorMessage() && details()) {
+      <button mat-stroked-button type="button" [disabled]="stepIndex() === 0" (click)="previous()">
+        <mat-icon>arrow_back</mat-icon>Voltar
+      </button>
+      <button mat-flat-button color="primary" type="button" [disabled]="stepIndex() === lastStepIndex" (click)="next()">
+        Próxima<mat-icon>arrow_forward</mat-icon>
+      </button>
+    }
+  </mat-dialog-actions>
+</section>

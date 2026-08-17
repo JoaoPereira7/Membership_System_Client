@@ -1,0 +1,22 @@
+<section class="entity-delete">
+  <div class="entity-delete__icon"><mat-icon>delete_outline</mat-icon></div>
+  <div>
+    <h2>Excluir {{ data.entityLabel }}?</h2>
+    <p>
+      O registro <strong>{{ data.recordName }}</strong> será desativado e deixará de aparecer nas
+      listagens ativas.
+    </p>
+  </div>
+
+  <div class="entity-delete__actions">
+    <button mat-button type="button" [disabled]="deleting()" mat-dialog-close>Cancelar</button>
+    <button mat-flat-button type="button" color="warn" [disabled]="deleting()" (click)="delete()">
+      @if (deleting()) {
+        <mat-spinner diameter="18" />
+      } @else {
+        <mat-icon>delete</mat-icon>
+      }
+      Excluir
+    </button>
+  </div>
+</section>

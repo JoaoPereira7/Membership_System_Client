@@ -24,6 +24,8 @@ import {
 } from '../../Components/leader-type-dialog/leader-type-dialog.types';
 import { LeaderTypeListItem } from '../../Models/leader-type.models';
 import { LeaderTypeService } from '../../Services/leader-type.service';
+import { LeaderTypeDetailsDialogComponent } from '../../Components/leader-type-details-dialog/leader-type-details-dialog.component';
+import { LeaderTypeDeleteDialogComponent } from '../../Components/leader-type-delete-dialog/leader-type-delete-dialog.component';
 
 @Component({
   selector: 'app-leader-type-list',
@@ -40,6 +42,8 @@ import { LeaderTypeService } from '../../Services/leader-type.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LeaderTypeListComponent {
+  protected readonly detailsDialogComponent = LeaderTypeDetailsDialogComponent;
+  protected readonly deleteDialogComponent = LeaderTypeDeleteDialogComponent;
   private readonly service = inject(LeaderTypeService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

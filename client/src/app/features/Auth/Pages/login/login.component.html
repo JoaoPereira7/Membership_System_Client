@@ -1,0 +1,81 @@
+<main class="login-page">
+  <section class="login-container" aria-labelledby="login-title">
+    <img
+      class="login-logo"
+      src="/membership-ieq-logo-transparent.png"
+      alt="Igreja do Evangelho Quadrangular"
+    />
+
+    <div class="login-heading">
+      <h1 id="login-title">Acesse sua conta</h1>
+      <p>Entre com suas credenciais para continuar</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <mat-form-field>
+        <mat-label>E-mail</mat-label>
+        <mat-icon matPrefix>mail</mat-icon>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          placeholder="seu@email.com"
+          autocomplete="username"
+          maxlength="150"
+        />
+        @if (form.controls.email.hasError('required')) {
+          <mat-error>Informe o e-mail.</mat-error>
+        } @else if (form.controls.email.hasError('email')) {
+          <mat-error>Informe um e-mail válido.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Senha</mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input
+          matInput
+          [type]="passwordVisible() ? 'text' : 'password'"
+          formControlName="password"
+          placeholder="Sua senha"
+          autocomplete="current-password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          [attr.aria-label]="passwordVisible() ? 'Ocultar senha' : 'Mostrar senha'"
+          (click)="togglePasswordVisibility()"
+        >
+          <mat-icon>{{ passwordVisible() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.controls.password.hasError('required')) {
+          <mat-error>Informe a senha.</mat-error>
+        }
+      </mat-form-field>
+
+      <div class="login-options">
+        <mat-checkbox formControlName="rememberMe">Lembrar-me</mat-checkbox>
+        <button class="forgot-password" type="button" aria-disabled="true">
+          Esqueci minha senha
+        </button>
+      </div>
+
+      @if (errorMessage()) {
+        <div class="login-error" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <button class="login-submit" mat-flat-button type="submit" [disabled]="loading()">
+        @if (loading()) {
+          <mat-spinner diameter="22" />
+          <span>Entrando...</span>
+        } @else {
+          <span>Entrar</span>
+        }
+      </button>
+    </form>
+  </section>
+</main>

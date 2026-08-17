@@ -24,6 +24,8 @@ import {
 } from '../../Components/phone-type-dialog/phone-type-dialog.types';
 import { PhoneTypeListItem } from '../../Models/phone-type.models';
 import { PhoneTypeService } from '../../Services/phone-type.service';
+import { PhoneTypeDetailsDialogComponent } from '../../Components/phone-type-details-dialog/phone-type-details-dialog.component';
+import { PhoneTypeDeleteDialogComponent } from '../../Components/phone-type-delete-dialog/phone-type-delete-dialog.component';
 
 @Component({
   selector: 'app-phone-type-list',
@@ -40,6 +42,8 @@ import { PhoneTypeService } from '../../Services/phone-type.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PhoneTypeListComponent {
+  protected readonly detailsDialogComponent = PhoneTypeDetailsDialogComponent;
+  protected readonly deleteDialogComponent = PhoneTypeDeleteDialogComponent;
   private readonly service = inject(PhoneTypeService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);

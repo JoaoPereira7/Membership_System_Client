@@ -1,0 +1,7 @@
+<app-list-page-shell title="Membros" subtitle="Gerencie os membros, suas membresias e participações." icon="groups" [breadcrumbs]="breadcrumbs" contentPadding="compact">
+  <button page-primary-action mat-flat-button color="primary" type="button" (click)="create()"><mat-icon>add</mat-icon><span>Novo membro</span></button>
+  <app-data-table-toolbar list-toolbar searchPlaceholder="Pesquisar membros" [searchValue]="search()" [filterEnabled]="false" [exportEnabled]="false" [refreshEnabled]="true" [loading]="loading()" [totalItems]="totalItems()" (searchChanged)="searchChanged($event)" (refreshRequested)="reload()" />
+  <app-data-table list-content mode="server" ariaLabel="Lista de membros" emptyMessage="Nenhum membro encontrado." [data]="data()" [columns]="columns" [actions]="actions"
+    [detailsComponent]="detailsDialogComponent"
+    [deleteComponent]="deleteDialogComponent" [loading]="loading()" [errorMessage]="errorMessage()" [toolbarEnabled]="false" [totalItems]="totalItems()" [pageIndex]="pageIndex()" [pageSize]="pageSize()" (queryChanged)="queryChanged($event)" (actionTriggered)="action($event)" />
+</app-list-page-shell>

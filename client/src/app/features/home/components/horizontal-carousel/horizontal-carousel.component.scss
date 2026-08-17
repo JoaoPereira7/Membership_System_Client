@@ -1,0 +1,116 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.horizontal-carousel {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+  grid-template-rows: auto auto;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.horizontal-carousel__viewport {
+  display: flex;
+  min-width: 0;
+  grid-column: 2;
+  gap: var(--spacing-md);
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
+}
+
+.horizontal-carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.horizontal-carousel__viewport:focus-visible {
+  border-radius: var(--radius-md);
+  outline: 2px solid #2f92ff;
+  outline-offset: 3px;
+}
+
+.horizontal-carousel__arrow {
+  border: 1px solid rgba(72, 153, 255, 0.35);
+  background: rgba(10, 28, 48, 0.88);
+  color: #8fc5ff;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.horizontal-carousel__arrow:not(:disabled):hover {
+  transform: translateY(-1px);
+  border-color: rgba(72, 153, 255, 0.75);
+  background: rgba(16, 56, 96, 0.94);
+}
+
+.horizontal-carousel__arrow:disabled {
+  opacity: 0.34;
+}
+
+.horizontal-carousel__arrow--previous {
+  grid-column: 1;
+}
+
+.horizontal-carousel__arrow--next {
+  grid-column: 3;
+}
+
+.horizontal-carousel__indicators {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: center;
+  gap: 0.4rem;
+  padding-top: var(--spacing-xs);
+}
+
+.horizontal-carousel__indicators button {
+  width: 0.45rem;
+  height: 0.45rem;
+  padding: 0;
+  border-radius: 999px;
+  background: rgba(174, 195, 220, 0.32);
+  cursor: pointer;
+  transition:
+    width 180ms ease,
+    background-color 180ms ease;
+}
+
+.horizontal-carousel__indicators button:focus-visible {
+  outline: 2px solid #7ebaff;
+  outline-offset: 3px;
+}
+
+.horizontal-carousel__indicators .horizontal-carousel__indicator--active {
+  width: 1.25rem;
+  background: #2f92ff;
+}
+
+@media (max-width: 599.98px) {
+  .horizontal-carousel {
+    grid-template-columns: 2.25rem minmax(0, 1fr) 2.25rem;
+    gap: var(--spacing-xs);
+  }
+
+  .horizontal-carousel__viewport {
+    gap: var(--spacing-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .horizontal-carousel__viewport {
+    scroll-behavior: auto;
+  }
+
+  .horizontal-carousel__arrow,
+  .horizontal-carousel__indicators button {
+    transition: none;
+  }
+}

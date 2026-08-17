@@ -1,0 +1,70 @@
+<form class="auxiliary-dialog" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <header class="auxiliary-dialog__header">
+    <span class="auxiliary-dialog__icon" aria-hidden="true"><mat-icon>church</mat-icon></span>
+    <h2 class="auxiliary-dialog__title" mat-dialog-title>{{ title }}</h2>
+  </header>
+
+  <mat-dialog-content class="auxiliary-dialog__content">
+    @if (errorMessage()) {
+      <div class="auxiliary-dialog__error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon><span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" maxlength="150" autocomplete="off" cdkFocusInitial />
+      <mat-hint align="end">{{ form.controls.name.value.length }}/150</mat-hint>
+      @if (form.controls.name.hasError('required') || form.controls.name.hasError('blank')) {
+        <mat-error>Informe um nome válido.</mat-error>
+      } @else if (form.controls.name.hasError('maxlength')) {
+        <mat-error>O nome deve possuir no máximo 150 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Congregação</mat-label>
+      <mat-select formControlName="parentChurchId">
+        <mat-option [value]="null">Sede</mat-option>
+        @for (church of availableChurches(); track church.id) {
+          <mat-option [value]="church.id">{{ church.name }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingChurches()) {
+        <mat-hint>Carregando igrejas...</mat-hint>
+      } @else {
+        <mat-hint>Selecione somente se esta igreja estiver subordinada a outra.</mat-hint>
+      }
+      @if (form.controls.parentChurchId.hasError('selfReference')) {
+        <mat-error>Uma igreja não pode ser vinculada a ela mesma.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (isEdit) {
+      <div class="auxiliary-dialog__status">
+        <mat-slide-toggle formControlName="isActive">Ativo</mat-slide-toggle>
+        <span class="auxiliary-dialog__status-hint">
+          Define se a igreja está disponível para utilização.
+        </span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="auxiliary-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving()" (click)="cancel()">Cancelar</button>
+    <button
+      class="auxiliary-dialog__save"
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="saving() || loadingChurches()"
+    >
+      @if (saving()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+        <span>Salvando</span>
+      } @else {
+        <span>Salvar</span>
+      }
+    </button>
+  </mat-dialog-actions>
+</form>
