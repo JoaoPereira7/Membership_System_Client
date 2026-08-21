@@ -1,0 +1,13 @@
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.date-picker-field {
+  width: 100%;
+}
+
+.date-picker-field input[matInput] {
+  cursor: pointer;
+}

@@ -1,0 +1,92 @@
+<section class="global-actions-result" [attr.aria-labelledby]="'global-actions-result-title'">
+  <header class="global-actions-result__header">
+    <mat-icon aria-hidden="true">assignment_turned_in</mat-icon>
+    <h2 id="global-actions-result-title">{{ data.commandLabel }}</h2>
+  </header>
+
+  <mat-dialog-content class="global-actions-result__content">
+    <div class="global-actions-result__summary" role="group" aria-label="Resumo do processamento">
+      <button
+        class="global-actions-result__summary-card global-actions-result__summary-card--total"
+        type="button"
+        [class.global-actions-result__summary-card--active]="selectedType() === 'all'"
+        [attr.aria-pressed]="selectedType() === 'all'"
+        (click)="changeType('all')"
+      >
+        <span>Todos</span>
+        <strong>{{ total }}</strong>
+      </button>
+
+      <button
+        class="global-actions-result__summary-card global-actions-result__summary-card--success"
+        type="button"
+        [class.global-actions-result__summary-card--active]="selectedType() === 'success'"
+        [attr.aria-pressed]="selectedType() === 'success'"
+        (click)="changeType('success')"
+      >
+        <span>Sucessos</span>
+        <strong>{{ successCount }}</strong>
+      </button>
+
+      <button
+        class="global-actions-result__summary-card global-actions-result__summary-card--failure"
+        type="button"
+        [class.global-actions-result__summary-card--active]="selectedType() === 'failure'"
+        [attr.aria-pressed]="selectedType() === 'failure'"
+        (click)="changeType('failure')"
+      >
+        <span>Falhas</span>
+        <strong>{{ failureCount }}</strong>
+      </button>
+
+      <button
+        class="global-actions-result__summary-card global-actions-result__summary-card--ignored"
+        type="button"
+        [class.global-actions-result__summary-card--active]="selectedType() === 'ignored'"
+        [attr.aria-pressed]="selectedType() === 'ignored'"
+        (click)="changeType('ignored')"
+      >
+        <span>Ignorados</span>
+        <strong>{{ ignoredCount }}</strong>
+      </button>
+    </div>
+
+    <div class="global-actions-result__selected-title">
+      <mat-icon aria-hidden="true">filter_alt</mat-icon>
+      @switch (selectedType()) {
+        @case ('success') {
+          <span>Ações realizadas com sucesso</span>
+        }
+        @case ('failure') {
+          <span>Ações com falha</span>
+        }
+        @case ('ignored') {
+          <span>Ações ignoradas</span>
+        }
+        @default {
+          <span>Todos os resultados</span>
+        }
+      }
+    </div>
+
+    <app-data-table
+      mode="client"
+      ariaLabel="Resultados das ações em lote"
+      searchPlaceholder="Pesquisar resultado"
+      emptyMessage="Nenhum resultado encontrado."
+      [data]="filteredRows()"
+      [columns]="columns"
+      [actions]="[]"
+      [crudActionsEnabled]="false"
+      [selectionEnabled]="false"
+      [pageIndex]="pageIndex()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (queryChanged)="tableChange($event)"
+    />
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="global-actions-result__footer" align="end">
+    <button mat-button type="button" (click)="close()">Fechar</button>
+  </mat-dialog-actions>
+</section>

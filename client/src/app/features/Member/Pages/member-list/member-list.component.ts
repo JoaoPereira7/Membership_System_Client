@@ -15,6 +15,10 @@ import { MemberDetailsDialogComponent } from '../../Components/member-details-di
 import { MemberDeleteDialogComponent } from '../../Components/member-delete-dialog/member-delete-dialog.component';
 import { MemberDialogComponent } from '../../Components/member-dialog/member-dialog.component';
 import { MemberDialogData, MemberDialogResult } from '../../Components/member-dialog/member-dialog.types';
+import { MemberRolesDialogComponent } from '../../Components/member-roles-dialog/member-roles-dialog.component';
+import { MemberRolesDialogData, MemberRolesDialogResult } from '../../Components/member-roles-dialog/member-roles-dialog.types';
+import { MemberDepartmentsDialogComponent } from '../../Components/member-departments-dialog/member-departments-dialog.component';
+import { MemberDepartmentsDialogData, MemberDepartmentsDialogResult } from '../../Components/member-departments-dialog/member-departments-dialog.types';
 
 @Component({
   selector: 'app-member-list',
@@ -51,6 +55,8 @@ export class MemberListComponent {
   ];
   protected readonly actions: readonly DataTableAction<MemberListItem>[] = [
     { id: 'edit', label: 'Editar', icon: 'edit', tooltip: 'Editar membro', color: 'primary' },
+    { id: 'manage-roles', label: 'Cargos eclesiásticos', icon: 'workspace_premium', tooltip: 'Adicionar ou remover cargos eclesiásticos', color: 'primary' },
+    { id: 'manage-departments', label: 'Departamentos', icon: 'diversity_3', tooltip: 'Adicionar ou remover departamentos', color: 'primary' },
   ];
   constructor() { this.reload(); }
   protected reload(): void {
@@ -80,6 +86,14 @@ export class MemberListComponent {
     this.reload();
   }
   protected action(event: DataTableActionEvent<MemberListItem>): void {
+    if (event.actionId === 'manage-roles') {
+      this.openRolesDialog(event.row);
+      return;
+    }
+    if (event.actionId === 'manage-departments') {
+      this.openDepartmentsDialog(event.row);
+      return;
+    }
     if (event.actionId === 'edit') this.openDialog({ mode: 'edit', memberId: event.row.id });
   }
   protected create(): void { this.openDialog({ mode: 'create' }); }
@@ -101,5 +115,46 @@ export class MemberListComponent {
     ).afterClosed().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(result => {
       if (result?.saved) this.reload();
     });
+  }
+
+  private openRolesDialog(member: MemberListItem): void {
+    this.dialog
+      .open<MemberRolesDialogComponent, MemberRolesDialogData, MemberRolesDialogResult>(
+        MemberRolesDialogComponent,
+        {
+          width: '736px',
+          maxWidth: 'calc(100vw - 2rem)',
+          maxHeight: 'calc(100dvh - 2rem)',
+          autoFocus: false,
+          restoreFocus: true,
+          data: { memberId: member.id, memberName: member.name },
+        },
+      )
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result?.changed) this.reload();
+      });
+  }
+
+  private openDepartmentsDialog(member: MemberListItem): void {
+    this.dialog
+      .open<
+        MemberDepartmentsDialogComponent,
+        MemberDepartmentsDialogData,
+        MemberDepartmentsDialogResult
+      >(MemberDepartmentsDialogComponent, {
+        width: '736px',
+        maxWidth: 'calc(100vw - 2rem)',
+        maxHeight: 'calc(100dvh - 2rem)',
+        autoFocus: false,
+        restoreFocus: true,
+        data: { memberId: member.id, memberName: member.name },
+      })
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((result) => {
+        if (result?.changed) this.reload();
+      });
   }
 }

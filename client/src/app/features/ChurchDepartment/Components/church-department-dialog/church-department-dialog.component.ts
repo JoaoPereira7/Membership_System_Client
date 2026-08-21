@@ -13,6 +13,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { finalize, forkJoin } from 'rxjs';
 
 import { getApiErrorMessage } from '../../../../core/api/api.models';
+import { AppDatePickerComponent } from '../../../../core/components/date-picker/date-picker.component';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ChurchListItem } from '../../../Church/Models/church.models';
 import { ChurchService } from '../../../Church/Services/church.service';
@@ -34,6 +35,7 @@ import {
   imports: [
     A11yModule,
     ReactiveFormsModule,
+    AppDatePickerComponent,
     MatButtonModule,
     MatDialogModule,
     MatFormFieldModule,

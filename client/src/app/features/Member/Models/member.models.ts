@@ -53,6 +53,17 @@ export interface ChurchDepartmentLookup {
   readonly id: string; readonly churchId: string; readonly departmentName: string; readonly isActive: boolean;
 }
 
+export interface CreateMembershipRoleRequest {
+  readonly churchRoleId: string;
+  readonly startDate: string;
+}
+
+export interface CreateMemberDepartmentRequest {
+  readonly churchDepartmentId: string;
+  readonly leaderTypeId: string;
+  readonly startDate: string;
+}
+
 export interface FullMemberGeneral {
   readonly name: string;
   readonly cpf: string;

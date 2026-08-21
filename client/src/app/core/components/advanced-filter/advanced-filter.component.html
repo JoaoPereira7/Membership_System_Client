@@ -1,0 +1,114 @@
+<section class="advanced-filter" aria-label="Filtros avançados">
+  <nav class="advanced-filter__sidebar" aria-label="Grupos de filtros">
+    @for (group of groups(); track group.id) {
+      <button
+        class="advanced-filter__group"
+        type="button"
+        [class.advanced-filter__group--active]="activeGroupId() === group.id"
+        [attr.aria-pressed]="activeGroupId() === group.id"
+        (click)="selectGroup(group.id)"
+      >
+        <mat-icon aria-hidden="true">{{ group.icon }}</mat-icon>
+        <span>{{ group.label }}</span>
+
+        @if (selectedCount(group.id) > 0) {
+          <span
+            class="advanced-filter__badge"
+            [attr.aria-label]="selectedCount(group.id) + ' selecionado(s)'"
+          >
+            {{ selectedCount(group.id) }}
+          </span>
+        }
+      </button>
+    }
+  </nav>
+
+  <div class="advanced-filter__content">
+    @if (activeGroup(); as group) {
+      @if (group.searchType === 'scalar') {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>{{ group.label }}</mat-label>
+          <input
+            matInput
+            autocomplete="off"
+            [type]="scalarInputType(group)"
+            [ngModel]="stateFor(group.id)?.scalarValue"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onScalarChange(group.id, $event)"
+          />
+        </mat-form-field>
+      } @else {
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
+          <mat-label>Pesquisar {{ group.label.toLocaleLowerCase('pt-BR') }}</mat-label>
+          <mat-icon matPrefix aria-hidden="true">search</mat-icon>
+          <input
+            matInput
+            type="search"
+            autocomplete="off"
+            [ngModel]="stateFor(group.id)?.search"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="onSearchChange(group, $event)"
+          />
+
+          @if (stateFor(group.id)?.loading) {
+            <mat-progress-spinner
+              matSuffix
+              diameter="18"
+              mode="indeterminate"
+              aria-label="Carregando opções"
+            />
+          }
+        </mat-form-field>
+
+        <div
+          #itemList
+          class="advanced-filter__options"
+          role="listbox"
+          [attr.aria-label]="group.label"
+        >
+          @for (item of stateFor(group.id)?.options ?? []; track item) {
+            <button
+              class="advanced-filter__option"
+              type="button"
+              role="option"
+              [class.advanced-filter__option--selected]="isSelected(group, item)"
+              [attr.aria-selected]="isSelected(group, item)"
+              (click)="toggle(group, item)"
+            >
+              <span>{{ group.getItemLabel(item) }}</span>
+              @if (isSelected(group, item)) {
+                <mat-icon aria-hidden="true">check</mat-icon>
+              }
+            </button>
+          } @empty {
+            @if (!stateFor(group.id)?.loading) {
+              <p class="advanced-filter__empty">{{ emptyMessage() }}</p>
+            }
+          }
+        </div>
+
+        @if ((stateFor(group.id)?.selected?.length ?? 0) > 0) {
+          <mat-chip-set class="advanced-filter__chips" aria-label="Filtros selecionados">
+            @for (item of stateFor(group.id)?.selected ?? []; track item) {
+              <mat-chip (removed)="removeItem(group, item)">
+                {{ chipLabel(group, item) }}
+                <button
+                  matChipRemove
+                  type="button"
+                  [attr.aria-label]="'Remover ' + chipLabel(group, item)"
+                >
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </mat-chip>
+            }
+          </mat-chip-set>
+        }
+      }
+    } @else {
+      <div class="advanced-filter__placeholder">
+        <mat-icon aria-hidden="true">tune</mat-icon>
+        <span>{{ selectionPrompt() }}</span>
+      </div>
+    }
+  </div>
+</section>

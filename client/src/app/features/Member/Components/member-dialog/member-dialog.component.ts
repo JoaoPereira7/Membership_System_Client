@@ -14,6 +14,7 @@ import { MatStepper, MatStepperModule } from '@angular/material/stepper';
 import { NgxMaskDirective } from 'ngx-mask';
 import { finalize } from 'rxjs';
 import { getApiErrorMessage } from '../../../../core/api/api.models';
+import { AppDatePickerComponent } from '../../../../core/components/date-picker/date-picker.component';
 import { ConfirmationService } from '../../../../core/services/confirmation.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { cpfValidator } from '../../../../core/validators/cpf.validator';
@@ -32,8 +33,8 @@ const nullable = (value: string): string | null => value.trim() || null;
 @Component({
   selector: 'app-member-dialog',
   imports: [
-    ReactiveFormsModule, MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule, MatFormFieldModule,
-    MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatStepperModule,
+    ReactiveFormsModule, AppDatePickerComponent, MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule,
+    MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatStepperModule,
     NgxMaskDirective,
   ],
   templateUrl: './member-dialog.component.html',

@@ -1,0 +1,142 @@
+<section class="member-relation-dialog" aria-labelledby="member-departments-title">
+  <header class="member-relation-dialog__header">
+    <div class="member-relation-dialog__icon"><mat-icon>diversity_3</mat-icon></div>
+    <div>
+      <h2 id="member-departments-title">Departamentos do membro</h2>
+      <p>Adicione ou remova departamentos e cargos de {{ data.memberName }}.</p>
+    </div>
+  </header>
+
+  <mat-dialog-content class="member-relation-dialog__content">
+    @if (loading()) {
+      <div class="member-relation-dialog__loading">
+        <mat-progress-spinner
+          diameter="42"
+          mode="indeterminate"
+          aria-label="Carregando departamentos"
+        />
+      </div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="member-relation-dialog__error" role="alert">
+          <mat-icon>error_outline</mat-icon><span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <form class="member-relation-dialog__form" [formGroup]="form" (ngSubmit)="save()">
+        <div class="member-relation-dialog__section-title">
+          <div>
+            <h3>Novo departamento</h3>
+            <p>Informe o departamento e o cargo exercido pelo membro.</p>
+          </div>
+        </div>
+
+        <div
+          class="member-relation-dialog__form-grid member-relation-dialog__form-grid--department"
+        >
+          <mat-form-field appearance="outline">
+            <mat-label>Departamento</mat-label>
+            <mat-select formControlName="churchDepartmentId">
+              @for (department of availableDepartments(); track department.id) {
+                <mat-option [value]="department.id">{{ department.departmentName }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.churchDepartmentId.hasError('required')) {
+              <mat-error>Selecione um departamento.</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cargo no departamento</mat-label>
+            <mat-select formControlName="leaderTypeId">
+              @for (leaderType of leaderTypes(); track leaderType.id) {
+                <mat-option [value]="leaderType.id">{{ leaderType.name }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.leaderTypeId.hasError('required')) {
+              <mat-error>Selecione o cargo exercido.</mat-error>
+            }
+          </mat-form-field>
+
+          <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="saving() || !!removingId() || availableDepartments().length === 0"
+          >
+            @if (saving()) {
+              <mat-progress-spinner diameter="18" mode="indeterminate" />
+            } @else {
+              <mat-icon>add</mat-icon>
+            }
+            Adicionar departamento
+          </button>
+        </div>
+
+        @if (availableDepartments().length === 0) {
+          <p class="member-relation-dialog__hint">
+            Todos os departamentos desta igreja já estão vinculados.
+          </p>
+        }
+      </form>
+
+      <section class="member-relation-dialog__current" aria-labelledby="current-departments-title">
+        <div class="member-relation-dialog__section-title">
+          <div>
+            <h3 id="current-departments-title">Departamentos atuais</h3>
+            <p>{{ currentDepartments().length }} vínculo(s) cadastrado(s).</p>
+          </div>
+        </div>
+
+        <div class="member-relation-dialog__list">
+          @for (department of currentDepartments(); track department.id ?? $index) {
+            <article class="member-relation-dialog__item">
+              <div class="member-relation-dialog__item-icon"><mat-icon>groups</mat-icon></div>
+              <div class="member-relation-dialog__item-content">
+                <strong>{{ departmentName(department.churchDepartmentId) }}</strong>
+                <span>
+                  @if (department.leadership) {
+                    {{ leaderTypeName(department.leadership.leaderTypeId) }} ·
+                  }
+                  Desde {{ formatDate(department.startDate) }}
+                </span>
+              </div>
+              <span
+                class="member-relation-dialog__status"
+                [class.member-relation-dialog__status--inactive]="!department.isActive"
+              >
+                {{ department.isActive ? 'Ativo' : 'Inativo' }}
+              </span>
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                [attr.aria-label]="'Remover ' + departmentName(department.churchDepartmentId)"
+                [disabled]="saving() || !!removingId()"
+                (click)="remove(department)"
+              >
+                @if (removingId() === department.id) {
+                  <mat-progress-spinner diameter="20" mode="indeterminate" />
+                } @else {
+                  <mat-icon>delete_outline</mat-icon>
+                }
+              </button>
+            </article>
+          } @empty {
+            <div class="member-relation-dialog__empty">
+              <mat-icon>group_off</mat-icon><span>Nenhum departamento cadastrado.</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="member-relation-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving() || !!removingId()" (click)="close()">
+      Fechar
+    </button>
+  </mat-dialog-actions>
+</section>

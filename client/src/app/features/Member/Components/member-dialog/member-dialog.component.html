@@ -10,7 +10,7 @@
             <mat-form-field class="span-2"><mat-label>Nome</mat-label><input matInput formControlName="name" maxlength="200" /><mat-error>Informe o nome.</mat-error></mat-form-field>
             <mat-form-field><mat-label>CPF</mat-label><input matInput formControlName="cpf" mask="000.000.000-00" /><mat-error>Informe um CPF válido.</mat-error></mat-form-field>
             <mat-form-field><mat-label>RG</mat-label><input matInput formControlName="rg" maxlength="20" /></mat-form-field>
-            <mat-form-field><mat-label>Data de nascimento</mat-label><input matInput type="date" formControlName="birthDate" [max]="maxDate" /><mat-error>Não pode ser futura.</mat-error></mat-form-field>
+            <app-date-picker label="Data de nascimento" formControlName="birthDate" [max]="maxDate" />
             <mat-form-field><mat-label>Gênero</mat-label><mat-select formControlName="genderId"><mat-option [value]="null">Não informado</mat-option>@for (item of lookup('genders'); track item.id) {<mat-option [value]="item.id">{{ item.name }}</mat-option>}</mat-select></mat-form-field>
             <mat-form-field><mat-label>Estado civil</mat-label><mat-select formControlName="maritalStatusId"><mat-option [value]="null">Não informado</mat-option>@for (item of lookup('maritalStatuses'); track item.id) {<mat-option [value]="item.id">{{ item.name }}</mat-option>}</mat-select></mat-form-field>
             <mat-form-field><mat-label>Nacionalidade</mat-label><input matInput formControlName="nationality" maxlength="100" /></mat-form-field>
@@ -64,7 +64,7 @@
         <mat-step [stepControl]="membershipForm" label="Membresia">
           <form [formGroup]="membershipForm" class="grid">
             <mat-form-field class="span-2"><mat-label>Igreja</mat-label><mat-select formControlName="churchId">@for(item of lookup('churches'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
-            <mat-form-field><mat-label>Data de ingresso</mat-label><input matInput type="date" formControlName="dateJoinedChurch" [max]="maxDate" /><mat-error>Informe uma data válida.</mat-error></mat-form-field>
+            <app-date-picker label="Data de ingresso" formControlName="dateJoinedChurch" [max]="maxDate" [required]="true" />
             <mat-form-field><mat-label>Situação da membresia</mat-label><mat-select formControlName="membershipStatusId">@for(item of lookup('membershipStatuses'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
             <mat-form-field><mat-label>Origem religiosa</mat-label><mat-select formControlName="religiousOriginId"><mat-option [value]="null">Não informada</mat-option>@for(item of lookup('religiousOrigins'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
             <mat-form-field><mat-label>Pastor responsável</mat-label><mat-select formControlName="pastorId"><mat-option [value]="null">Não informado</mat-option>@for(item of lookup('pastors'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select></mat-form-field>
@@ -79,8 +79,9 @@
             <div formArrayName="roles">@for(role of roles.controls; track role; let i = $index){
               <div class="row-card grid" [formGroupName]="i">
                 <mat-form-field><mat-label>Cargo</mat-label><mat-select formControlName="churchRoleId">@for(item of lookup('churchRoles'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório ou duplicado.</mat-error></mat-form-field>
-                <mat-form-field><mat-label>Data de início</mat-label><input matInput type="date" formControlName="startDate" /></mat-form-field>
-                @if(editing){<mat-form-field><mat-label>Data de término</mat-label><input matInput type="date" formControlName="endDate" /><mat-error>Anterior à data inicial.</mat-error></mat-form-field><mat-checkbox formControlName="isActive">Ativo</mat-checkbox>}
+                <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
+                @if(editing){<app-date-picker label="Data de término" formControlName="endDate" />
+                <mat-checkbox formControlName="isActive">Ativo</mat-checkbox>}
                 <button mat-icon-button type="button" aria-label="Remover cargo" (click)="remove(roles, i)"><mat-icon>delete</mat-icon></button>
               </div>
             }</div>
@@ -94,13 +95,15 @@
             <div formArrayName="departments">@for(department of departments.controls; track department; let i = $index){
               <div class="row-card grid" [formGroupName]="i">
                 <mat-form-field class="span-2"><mat-label>Departamento da igreja</mat-label><mat-select formControlName="churchDepartmentId">@for(item of availableChurchDepartments; track item.id){<mat-option [value]="item.id">{{item.departmentName}}</mat-option>}</mat-select><mat-error>Obrigatório ou duplicado.</mat-error></mat-form-field>
-                <mat-form-field><mat-label>Data de início</mat-label><input matInput type="date" formControlName="startDate" /></mat-form-field>
-                @if(editing){<mat-form-field><mat-label>Data de término</mat-label><input matInput type="date" formControlName="endDate" /></mat-form-field><mat-checkbox formControlName="isActive">Participação ativa</mat-checkbox>}
+                <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
+                @if(editing){<app-date-picker label="Data de término" formControlName="endDate" />
+                <mat-checkbox formControlName="isActive">Participação ativa</mat-checkbox>}
                 <mat-checkbox class="span-2" formControlName="isLeader">Exerce liderança neste departamento?</mat-checkbox>
                 @if(department.controls['isLeader'].value){
                   <mat-form-field><mat-label>Tipo de liderança</mat-label><mat-select formControlName="leaderTypeId">@for(item of lookup('leaderTypes'); track item.id){<mat-option [value]="item.id">{{item.name}}</mat-option>}</mat-select><mat-error>Obrigatório.</mat-error></mat-form-field>
-                  <mat-form-field><mat-label>Início da liderança</mat-label><input matInput type="date" formControlName="leadershipStartDate" /><mat-error>Obrigatório.</mat-error></mat-form-field>
-                  @if(editing){<mat-form-field><mat-label>Término da liderança</mat-label><input matInput type="date" formControlName="leadershipEndDate" /></mat-form-field><mat-checkbox formControlName="leadershipIsActive">Liderança ativa</mat-checkbox>}
+                  <app-date-picker label="Início da liderança" formControlName="leadershipStartDate" [required]="true" />
+                  @if(editing){<app-date-picker label="Término da liderança" formControlName="leadershipEndDate" />
+                  <mat-checkbox formControlName="leadershipIsActive">Liderança ativa</mat-checkbox>}
                 }
                 <button mat-icon-button type="button" aria-label="Remover departamento" (click)="remove(departments, i)"><mat-icon>delete</mat-icon></button>
               </div>

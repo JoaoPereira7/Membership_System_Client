@@ -1,0 +1,120 @@
+<section class="member-relation-dialog" aria-labelledby="member-roles-title">
+  <header class="member-relation-dialog__header">
+    <div class="member-relation-dialog__icon"><mat-icon>workspace_premium</mat-icon></div>
+    <div>
+      <h2 id="member-roles-title">Cargos eclesiásticos</h2>
+      <p>Adicione ou remova cargos de {{ data.memberName }}.</p>
+    </div>
+  </header>
+
+  <mat-dialog-content class="member-relation-dialog__content">
+    @if (loading()) {
+      <div class="member-relation-dialog__loading">
+        <mat-progress-spinner diameter="42" mode="indeterminate" aria-label="Carregando cargos" />
+      </div>
+    } @else {
+      @if (errorMessage()) {
+        <div class="member-relation-dialog__error" role="alert">
+          <mat-icon>error_outline</mat-icon><span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      <form class="member-relation-dialog__form" [formGroup]="form" (ngSubmit)="save()">
+        <div class="member-relation-dialog__section-title">
+          <div>
+            <h3>Novo cargo</h3>
+            <p>Informe o cargo exercido na igreja e a data de início.</p>
+          </div>
+        </div>
+
+        <div class="member-relation-dialog__form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Cargo eclesiástico</mat-label>
+            <mat-select formControlName="churchRoleId">
+              @for (role of availableRoles(); track role.id) {
+                <mat-option [value]="role.id">{{ role.name }}</mat-option>
+              }
+            </mat-select>
+            @if (form.controls.churchRoleId.hasError('required')) {
+              <mat-error>Selecione um cargo.</mat-error>
+            }
+          </mat-form-field>
+
+          <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
+
+          <button
+            mat-flat-button
+            color="primary"
+            type="submit"
+            [disabled]="saving() || !!removingId() || availableRoles().length === 0"
+          >
+            @if (saving()) {
+              <mat-progress-spinner diameter="18" mode="indeterminate" />
+            } @else {
+              <mat-icon>add</mat-icon>
+            }
+            Adicionar cargo
+          </button>
+        </div>
+
+        @if (availableRoles().length === 0) {
+          <p class="member-relation-dialog__hint">
+            Todos os cargos disponíveis já estão vinculados.
+          </p>
+        }
+      </form>
+
+      <section class="member-relation-dialog__current" aria-labelledby="current-roles-title">
+        <div class="member-relation-dialog__section-title">
+          <div>
+            <h3 id="current-roles-title">Cargos atuais</h3>
+            <p>{{ currentRoles().length }} vínculo(s) cadastrado(s).</p>
+          </div>
+        </div>
+
+        <div class="member-relation-dialog__list">
+          @for (role of currentRoles(); track role.id ?? $index) {
+            <article class="member-relation-dialog__item">
+              <div class="member-relation-dialog__item-icon"><mat-icon>verified</mat-icon></div>
+              <div class="member-relation-dialog__item-content">
+                <strong>{{ roleName(role.churchRoleId) }}</strong>
+                <span>Desde {{ formatDate(role.startDate) }}</span>
+              </div>
+              <span
+                class="member-relation-dialog__status"
+                [class.member-relation-dialog__status--inactive]="!role.isActive"
+              >
+                {{ role.isActive ? 'Ativo' : 'Inativo' }}
+              </span>
+              <button
+                mat-icon-button
+                type="button"
+                color="warn"
+                [attr.aria-label]="'Remover ' + roleName(role.churchRoleId)"
+                [disabled]="saving() || !!removingId()"
+                (click)="remove(role)"
+              >
+                @if (removingId() === role.id) {
+                  <mat-progress-spinner diameter="20" mode="indeterminate" />
+                } @else {
+                  <mat-icon>delete_outline</mat-icon>
+                }
+              </button>
+            </article>
+          } @empty {
+            <div class="member-relation-dialog__empty">
+              <mat-icon>workspace_premium</mat-icon
+              ><span>Nenhum cargo eclesiástico cadastrado.</span>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="member-relation-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving() || !!removingId()" (click)="close()">
+      Fechar
+    </button>
+  </mat-dialog-actions>
+</section>

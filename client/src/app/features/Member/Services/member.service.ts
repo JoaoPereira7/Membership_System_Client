@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse, unwrapApiData } from '../../../core/api/api.models';
+import { ApiResponse, ApiResponseError, unwrapApiData } from '../../../core/api/api.models';
 import {
-  ChurchDepartmentLookup, CompleteMember, FullMember, LookupItem, MemberListItem,
-  MemberListQuery, MemberPagedResult,
+  ChurchDepartmentLookup, CompleteMember, CreateMemberDepartmentRequest,
+  CreateMembershipRoleRequest, FullMember, LookupItem,
+  MemberListItem, MemberListQuery, MemberPagedResult,
 } from '../Models/member.models';
 
 @Injectable({ providedIn: 'root' })
@@ -66,4 +67,73 @@ export class MemberService {
       `${environment.apiBaseUrl}/ChurchDepartment`,
     ).pipe(map((response) => (response.data ?? []).filter((item) => item.isActive)));
   }
+
+  getChurchRoles(): Observable<readonly LookupItem[]> {
+    return this.getActiveLookup('ChurchRole');
+  }
+
+  getLeaderTypes(): Observable<readonly LookupItem[]> {
+    return this.getActiveLookup('LeaderType');
+  }
+
+  createMembershipRole(memberId: string, payload: CreateMembershipRoleRequest): Observable<void> {
+    return this.http
+      .post<ApiResponse<unknown>>(
+        `${this.endpoint}/${encodeURIComponent(memberId)}/church-roles`,
+        payload,
+      )
+      .pipe(map((response) => this.completeOperation(response, 'NÃ£o foi possÃ­vel adicionar o cargo.')));
+  }
+
+  deleteMembershipRole(id: string): Observable<void> {
+    return this.http
+      .delete<ApiResponse<unknown>>(
+        `${environment.apiBaseUrl}/MembershipRole/${encodeURIComponent(id)}`,
+      )
+      .pipe(map((response) => this.completeOperation(response, 'NÃ£o foi possÃ­vel remover o cargo.')));
+  }
+
+  createMemberDepartmentWithLeadership(
+    memberId: string,
+    payload: CreateMemberDepartmentRequest,
+  ): Observable<void> {
+    return this.http
+      .post<ApiResponse<unknown>>(
+        `${this.endpoint}/${encodeURIComponent(memberId)}/departments`,
+        payload,
+      )
+      .pipe(
+        map((response) =>
+          this.completeOperation(
+            response,
+            'NÃ£o foi possÃ­vel adicionar o departamento e seu cargo.',
+          ),
+        ),
+      );
+  }
+
+  deleteMemberDepartment(id: string): Observable<void> {
+    return this.http
+      .delete<ApiResponse<unknown>>(
+        `${environment.apiBaseUrl}/MemberDepartment/${encodeURIComponent(id)}`,
+      )
+      .pipe(
+        map((response) =>
+          this.completeOperation(response, 'NÃ£o foi possÃ­vel remover o departamento.'),
+        ),
+      );
+  }
+
+  private getActiveLookup(endpoint: string): Observable<readonly LookupItem[]> {
+    return this.http
+      .get<ApiResponse<readonly LookupItem[]>>(`${environment.apiBaseUrl}/${endpoint}`)
+      .pipe(map((response) => (response.data ?? []).filter((item) => item.isActive !== false)));
+  }
+
+  private completeOperation(response: ApiResponse<unknown>, fallbackMessage: string): void {
+    if (!response.success) {
+      throw new ApiResponseError(response.message || fallbackMessage);
+    }
+  }
+
 }

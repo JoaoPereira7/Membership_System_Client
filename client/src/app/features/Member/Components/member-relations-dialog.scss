@@ -1,0 +1,257 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.member-relation-dialog {
+  display: flex;
+  width: min(46rem, calc(100vw - 2rem));
+  max-height: min(48rem, calc(100dvh - 2rem));
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface-elevated);
+  color: var(--text-primary);
+}
+
+.member-relation-dialog__header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.member-relation-dialog__icon,
+.member-relation-dialog__item-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 11%, var(--surface-alt));
+  color: var(--color-primary);
+}
+
+.member-relation-dialog__icon {
+  width: 2.75rem;
+  height: 2.75rem;
+}
+
+.member-relation-dialog__header h2,
+.member-relation-dialog__section-title h3 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+}
+
+.member-relation-dialog__header h2 {
+  font-size: var(--font-size-h5);
+}
+
+.member-relation-dialog__header p,
+.member-relation-dialog__section-title p {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.member-relation-dialog__content {
+  display: flex;
+  min-height: 20rem;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg) !important;
+  overflow-y: auto;
+}
+
+.member-relation-dialog__loading {
+  display: grid;
+  min-height: 18rem;
+  place-items: center;
+}
+
+.member-relation-dialog__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: 0.75rem var(--spacing-md);
+  border: var(--border-width) solid color-mix(in srgb, var(--color-danger) 45%, var(--color-border));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-danger) 9%, var(--surface-color));
+  color: var(--color-danger);
+  font-size: var(--font-size-caption);
+  line-height: var(--line-height-normal);
+}
+
+.member-relation-dialog__form,
+.member-relation-dialog__current {
+  padding: var(--spacing-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-color);
+}
+
+.member-relation-dialog__section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.member-relation-dialog__section-title h3 {
+  font-size: var(--font-size-body);
+}
+
+.member-relation-dialog__form-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 0.6fr) auto;
+  align-items: start;
+  gap: var(--spacing-sm);
+}
+
+.member-relation-dialog__form-grid--department {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.member-relation-dialog__form-grid--department button {
+  justify-self: start;
+}
+
+.member-relation-dialog__form-grid button {
+  min-height: 3.5rem;
+}
+
+.member-relation-dialog__form-grid button mat-progress-spinner {
+  display: inline-flex;
+  margin-right: var(--spacing-sm);
+}
+
+.member-relation-dialog__hint {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.member-relation-dialog__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.member-relation-dialog__item {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-alt);
+}
+
+.member-relation-dialog__item-icon {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+.member-relation-dialog__item-icon mat-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  font-size: 1.25rem;
+}
+
+.member-relation-dialog__item-content {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--spacing-xxs);
+}
+
+.member-relation-dialog__item-content strong {
+  overflow: hidden;
+  font-size: var(--font-size-caption);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.member-relation-dialog__item-content span {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.member-relation-dialog__status {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-success) 12%, var(--surface-color));
+  color: var(--color-success);
+  font-size: 0.6875rem;
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+}
+
+.member-relation-dialog__status--inactive {
+  background: color-mix(in srgb, var(--text-muted) 12%, var(--surface-color));
+  color: var(--text-muted);
+}
+
+.member-relation-dialog__item button mat-progress-spinner {
+  display: inline-flex;
+}
+
+.member-relation-dialog__empty {
+  display: flex;
+  min-height: 6rem;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  color: var(--text-muted);
+  font-size: var(--font-size-caption);
+}
+
+.member-relation-dialog__actions {
+  padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-md);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+:host ::ng-deep {
+  .mat-mdc-form-field {
+    --mat-form-field-container-height: 42px;
+    --mat-form-field-container-vertical-padding: 9px;
+  }
+
+  .mdc-text-field--outlined {
+    background: var(--surface-color);
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 760px) {
+  .member-relation-dialog__header,
+  .member-relation-dialog__content {
+    padding-inline: var(--spacing-md) !important;
+  }
+
+  .member-relation-dialog__form-grid,
+  .member-relation-dialog__form-grid--department {
+    grid-template-columns: 1fr;
+  }
+
+  .member-relation-dialog__form-grid button,
+  .member-relation-dialog__form-grid--department button {
+    width: 100%;
+  }
+
+  .member-relation-dialog__item {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .member-relation-dialog__status {
+    grid-column: 2;
+    width: fit-content;
+  }
+
+  .member-relation-dialog__item > button {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}

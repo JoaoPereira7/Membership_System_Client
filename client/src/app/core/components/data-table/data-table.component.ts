@@ -109,6 +109,7 @@ export class AppDataTableComponent<T extends object> {
   readonly paginatorEnabled = input<boolean>(true);
   readonly sortingEnabled = input<boolean>(true);
   readonly selectionEnabled = input<boolean>(false);
+  readonly crudActionsEnabled = input<boolean>(true);
   readonly mode = input<DataTableMode>('server');
   readonly totalItems = input<number>(0);
   readonly pageIndex = input<number>(0);
@@ -166,7 +167,7 @@ export class AppDataTableComponent<T extends object> {
   });
 
   readonly effectiveActions = computed<readonly DataTableAction<T>[]>(() => {
-    if (!this.crudConfig()) return this.actions();
+    if (!this.crudActionsEnabled() || !this.crudConfig()) return this.actions();
 
     const standardActions: readonly DataTableAction<T>[] = [
       { id: '__view', label: 'Visualizar', icon: 'visibility', tooltip: 'Visualizar detalhes', color: 'primary' },

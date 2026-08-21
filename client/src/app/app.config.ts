@@ -1,6 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
@@ -50,6 +51,8 @@ export const appConfig: ApplicationConfig = {
     ),
     provideEnvironmentNgxMask(),
     provideClientHydration(withEventReplay()),
+    provideNativeDateAdapter(),
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: {
