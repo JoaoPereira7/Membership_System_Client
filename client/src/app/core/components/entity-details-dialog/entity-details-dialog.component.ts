@@ -19,8 +19,7 @@ interface DetailItem {
   readonly value: string;
 }
 
-const GUID_PATTERN =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const GUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const labels: Readonly<Record<string, string>> = {
   name: 'Nome',
@@ -46,6 +45,8 @@ const labels: Readonly<Record<string, string>> = {
   departmentName: 'Departamento',
   departmentNames: 'Departamentos',
   parentChurchName: 'Igreja sede',
+  churchesCategoryName: 'Categoria da igreja',
+  churchesRegionName: 'Região da igreja',
   accountProfileName: 'Perfil de acesso',
   membershipStatusName: 'Situação da membresia',
   religiousOriginName: 'Origem religiosa',
@@ -115,9 +116,7 @@ export class EntityDetailsDialogComponent {
     return Object.entries(entity)
       .filter(
         ([key, value]) =>
-          value !== null &&
-          value !== undefined &&
-          value !== '' &&
+          (key === 'parentChurchName' || (value !== null && value !== undefined && value !== '')) &&
           !this.isIdentifierField(key, value),
       )
       .map(([key, value]) => ({
@@ -127,6 +126,10 @@ export class EntityDetailsDialogComponent {
   }
 
   private formatValue(key: string, value: unknown): string {
+    if (key === 'parentChurchName' && (value === null || value === undefined || value === '')) {
+      return 'Não informada';
+    }
+
     if (/^cpf$/i.test(key) && (typeof value === 'string' || typeof value === 'number')) {
       const digits = String(value).replace(/\D/g, '');
 

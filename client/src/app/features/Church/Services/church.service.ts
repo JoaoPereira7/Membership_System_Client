@@ -47,10 +47,7 @@ export class ChurchService {
       .post<ApiResponse<ChurchApiDto>>(this.endpoint, request)
       .pipe(
         map((response) =>
-          this.toListItem(
-            unwrapApiData(response, 'Não foi possível cadastrar a igreja.'),
-            undefined,
-          ),
+          this.toListItem(unwrapApiData(response, 'Não foi possível cadastrar a igreja.')),
         ),
       );
   }
@@ -60,10 +57,7 @@ export class ChurchService {
       .put<ApiResponse<ChurchApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
         map((response) =>
-          this.toListItem(
-            unwrapApiData(response, 'Não foi possível atualizar a igreja.'),
-            undefined,
-          ),
+          this.toListItem(unwrapApiData(response, 'Não foi possível atualizar a igreja.')),
         ),
       );
   }
@@ -73,7 +67,11 @@ export class ChurchService {
       id: item.id,
       name: item.name,
       parentChurchId: item.parentChurchId ?? null,
-      parentChurchName: parentChurchName ?? '',
+      parentChurchName: parentChurchName ?? item.parentChurchName ?? '',
+      churchesCategoryId: item.churchesCategoryId ?? null,
+      churchesCategoryName: item.churchesCategoryName ?? '',
+      churchesRegionId: item.churchesRegionId ?? null,
+      churchesRegionName: item.churchesRegionName ?? '',
       isActive: item.isActive ?? true,
     };
   }
@@ -82,9 +80,12 @@ export class ChurchService {
     const search = query.search.trim().toLocaleLowerCase('pt-BR');
     const filtered = search
       ? items.filter((item) =>
-          [item.name, item.parentChurchName].some((value) =>
-            value.toLocaleLowerCase('pt-BR').includes(search),
-          ),
+          [
+            item.name,
+            item.parentChurchName,
+            item.churchesCategoryName,
+            item.churchesRegionName,
+          ].some((value) => value.toLocaleLowerCase('pt-BR').includes(search)),
         )
       : [...items];
     const sorted =

@@ -3,7 +3,7 @@
     <div class="member-relation-dialog__icon"><mat-icon>workspace_premium</mat-icon></div>
     <div>
       <h2 id="member-roles-title">Cargos eclesiásticos</h2>
-      <p>Adicione ou remova cargos de {{ data.memberName }}.</p>
+      <p>Adicione, edite ou remova cargos de {{ data.memberName }}.</p>
     </div>
   </header>
 
@@ -22,8 +22,14 @@
       <form class="member-relation-dialog__form" [formGroup]="form" (ngSubmit)="save()">
         <div class="member-relation-dialog__section-title">
           <div>
-            <h3>Novo cargo</h3>
-            <p>Informe o cargo exercido na igreja e a data de início.</p>
+            <h3>{{ editingId() ? 'Editar cargo' : 'Novo cargo' }}</h3>
+            <p>
+              {{
+                editingId()
+                  ? 'Altere o cargo exercido e sua data de início.'
+                  : 'Informe o cargo exercido na igreja e a data de início.'
+              }}
+            </p>
           </div>
         </div>
 
@@ -42,19 +48,34 @@
 
           <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
 
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="saving() || !!removingId() || availableRoles().length === 0"
-          >
-            @if (saving()) {
-              <mat-progress-spinner diameter="18" mode="indeterminate" />
-            } @else {
-              <mat-icon>add</mat-icon>
+          @if (editingId()) {
+            <app-date-picker
+              label="Data de término"
+              formControlName="endDate"
+              [min]="form.controls.startDate.value"
+            />
+          }
+
+          <div class="member-relation-dialog__form-actions">
+            @if (editingId()) {
+              <button mat-button type="button" [disabled]="saving()" (click)="cancelEdit()">
+                Cancelar edição
+              </button>
             }
-            Adicionar cargo
-          </button>
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || !!removingId() || availableRoles().length === 0"
+            >
+              @if (saving()) {
+                <mat-progress-spinner diameter="18" mode="indeterminate" />
+              } @else {
+                <mat-icon>{{ editingId() ? 'save' : 'add' }}</mat-icon>
+              }
+              {{ editingId() ? 'Salvar alterações' : 'Adicionar cargo' }}
+            </button>
+          </div>
         </div>
 
         @if (availableRoles().length === 0) {
@@ -86,20 +107,31 @@
               >
                 {{ role.isActive ? 'Ativo' : 'Inativo' }}
               </span>
-              <button
-                mat-icon-button
-                type="button"
-                color="warn"
-                [attr.aria-label]="'Remover ' + roleName(role.churchRoleId)"
-                [disabled]="saving() || !!removingId()"
-                (click)="remove(role)"
-              >
-                @if (removingId() === role.id) {
-                  <mat-progress-spinner diameter="20" mode="indeterminate" />
-                } @else {
-                  <mat-icon>delete_outline</mat-icon>
-                }
-              </button>
+              <div class="member-relation-dialog__item-actions">
+                <button
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="'Editar ' + roleName(role.churchRoleId)"
+                  [disabled]="saving() || !!removingId()"
+                  (click)="edit(role)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="warn"
+                  [attr.aria-label]="'Remover ' + roleName(role.churchRoleId)"
+                  [disabled]="saving() || !!removingId()"
+                  (click)="remove(role)"
+                >
+                  @if (removingId() === role.id) {
+                    <mat-progress-spinner diameter="20" mode="indeterminate" />
+                  } @else {
+                    <mat-icon>delete_outline</mat-icon>
+                  }
+                </button>
+              </div>
             </article>
           } @empty {
             <div class="member-relation-dialog__empty">

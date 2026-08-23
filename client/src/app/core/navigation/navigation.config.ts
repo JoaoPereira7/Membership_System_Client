@@ -56,6 +56,20 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     icon: 'tune',
     children: [
       {
+        id: 'church-categories',
+        label: 'Categorias de igreja',
+        icon: 'category',
+        route: '/auxiliary-data/church-categories',
+        permission: 'CHURCHES_CATEGORY_VIEW',
+      },
+      {
+        id: 'church-regions',
+        label: 'Regiões de igreja',
+        icon: 'map',
+        route: '/auxiliary-data/church-regions',
+        permission: 'CHURCHES_REGION_VIEW',
+      },
+      {
         id: 'genders',
         label: 'Gêneros',
         icon: 'wc',

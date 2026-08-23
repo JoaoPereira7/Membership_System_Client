@@ -1,0 +1,51 @@
+<header class="entity-details__header">
+  <div class="entity-details__icon"><mat-icon>church</mat-icon></div>
+  <div>
+    <h2>{{ data.title }}</h2>
+    <p>Informações da igreja</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content class="entity-details__content">
+  @if (loading()) {
+    <div class="entity-details__loading"><mat-spinner diameter="36" /></div>
+  } @else if (errorMessage()) {
+    <div class="entity-details__empty">
+      <div class="church-details__error">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage() }}</span>
+        <button mat-stroked-button type="button" (click)="load()">Tentar novamente</button>
+      </div>
+    </div>
+  } @else if (church(); as item) {
+    <dl class="entity-details__grid">
+      <div class="entity-details__item">
+        <dt>Nome</dt>
+        <dd>{{ item.name }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Igreja sede</dt>
+        <dd>{{ display(item.parentChurchName) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Categoria</dt>
+        <dd>{{ display(item.churchesCategoryName) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Região</dt>
+        <dd>{{ display(item.churchesRegionName) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Situação</dt>
+        <dd>{{ status(item.isActive) }}</dd>
+      </div>
+    </dl>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" color="primary" mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

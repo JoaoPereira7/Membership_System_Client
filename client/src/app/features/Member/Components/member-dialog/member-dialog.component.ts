@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxMaskDirective } from 'ngx-mask';
 import { finalize } from 'rxjs';
 import { getApiErrorMessage } from '../../../../core/api/api.models';
@@ -20,8 +21,14 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { cpfValidator } from '../../../../core/validators/cpf.validator';
 import { nonBlankValidator } from '../../../../core/validators/non-blank.validator';
 import {
-  ChurchDepartmentLookup, CompleteMember, LookupItem, MemberAddress, MemberDepartment,
-  MemberPhone, MembershipRole, ProfessionalInformation,
+  ChurchDepartmentLookup,
+  CompleteMember,
+  LookupItem,
+  MemberAddress,
+  MemberDepartment,
+  MemberPhone,
+  MembershipRole,
+  ProfessionalInformation,
 } from '../../Models/member.models';
 import { MemberService } from '../../Services/member.service';
 import { MemberDialogData, MemberDialogResult } from './member-dialog.types';
@@ -29,12 +36,29 @@ import { MemberDialogData, MemberDialogResult } from './member-dialog.types';
 const requiredText = [Validators.required, nonBlankValidator()];
 const today = (): string => new Date().toISOString().slice(0, 10);
 const nullable = (value: string): string | null => value.trim() || null;
+const normalizeLookupSearch = (value: string): string =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('pt-BR')
+    .trim();
 
 @Component({
   selector: 'app-member-dialog',
   imports: [
-    ReactiveFormsModule, AppDatePickerComponent, MatButtonModule, MatCardModule, MatCheckboxModule, MatDialogModule,
-    MatFormFieldModule, MatIconModule, MatInputModule, MatProgressSpinnerModule, MatSelectModule, MatStepperModule,
+    ReactiveFormsModule,
+    AppDatePickerComponent,
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatStepperModule,
+    MatTooltipModule,
     NgxMaskDirective,
   ],
   templateUrl: './member-dialog.component.html',
@@ -54,21 +78,64 @@ export class MemberDialogComponent {
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly lookups = signal<Record<string, readonly LookupItem[]>>({});
+  protected readonly educationLevelSearch = signal('');
+  protected readonly formationAreaSearch = signal('');
+  protected readonly professionSearch = signal('');
   protected readonly churchDepartments = signal<readonly ChurchDepartmentLookup[]>([]);
   protected readonly maxDate = today();
-  protected readonly states = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
+  protected readonly states = [
+    'AC',
+    'AL',
+    'AP',
+    'AM',
+    'BA',
+    'CE',
+    'DF',
+    'ES',
+    'GO',
+    'MA',
+    'MT',
+    'MS',
+    'MG',
+    'PA',
+    'PB',
+    'PR',
+    'PE',
+    'PI',
+    'RJ',
+    'RN',
+    'RS',
+    'RO',
+    'RR',
+    'SC',
+    'SP',
+    'SE',
+    'TO',
+  ];
 
   protected readonly generalForm = new FormGroup({
-    name: new FormControl('', { nonNullable: true, validators: [...requiredText, Validators.maxLength(200)] }),
-    cpf: new FormControl('', { nonNullable: true, validators: [Validators.required, cpfValidator()] }),
+    name: new FormControl('', {
+      nonNullable: true,
+      validators: [...requiredText, Validators.maxLength(200)],
+    }),
+    cpf: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required, cpfValidator()],
+    }),
     rg: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(20)] }),
     birthDate: new FormControl<string | null>(null),
     genderId: new FormControl<string | null>(null),
     maritalStatusId: new FormControl<string | null>(null),
-    nationality: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] }),
+    nationality: new FormControl('Brasileiro', {
+      nonNullable: true,
+      validators: [Validators.maxLength(100)],
+    }),
     motherName: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(200)] }),
     fatherName: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(200)] }),
-    email: new FormControl('', { nonNullable: true, validators: [Validators.email, Validators.maxLength(200)] }),
+    email: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.email, Validators.maxLength(200)],
+    }),
     isActive: new FormControl(true, { nonNullable: true }),
   });
   protected readonly contactForm = new FormGroup({
@@ -83,8 +150,14 @@ export class MemberDialogComponent {
   protected readonly membershipForm = new FormGroup({
     id: new FormControl<string | null>(null),
     churchId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dateJoinedChurch: new FormControl(today(), { nonNullable: true, validators: [Validators.required] }),
-    membershipStatusId: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    dateJoinedChurch: new FormControl(today(), {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    membershipStatusId: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     religiousOriginId: new FormControl<string | null>(null),
     pastorId: new FormControl<string | null>(null),
     isActive: new FormControl(true, { nonNullable: true }),
@@ -92,20 +165,36 @@ export class MemberDialogComponent {
   protected readonly rolesForm = new FormGroup({ roles: new FormArray<FormGroup>([]) });
   protected readonly departmentsForm = new FormGroup({ departments: new FormArray<FormGroup>([]) });
   private previousChurchId = '';
-  protected get phones(): FormArray<FormGroup> { return this.contactForm.controls.phones; }
-  protected get addresses(): FormArray<FormGroup> { return this.contactForm.controls.addresses; }
-  protected get roles(): FormArray<FormGroup> { return this.rolesForm.controls.roles; }
-  protected get departments(): FormArray<FormGroup> { return this.departmentsForm.controls.departments; }
+  protected get phones(): FormArray<FormGroup> {
+    return this.contactForm.controls.phones;
+  }
+  protected get addresses(): FormArray<FormGroup> {
+    return this.contactForm.controls.addresses;
+  }
+  protected get roles(): FormArray<FormGroup> {
+    return this.rolesForm.controls.roles;
+  }
+  protected get departments(): FormArray<FormGroup> {
+    return this.departmentsForm.controls.departments;
+  }
   protected get availableChurchDepartments(): readonly ChurchDepartmentLookup[] {
-    return this.churchDepartments().filter(x => x.churchId === this.membershipForm.controls.churchId.value);
+    return this.churchDepartments().filter(
+      (x) => x.churchId === this.membershipForm.controls.churchId.value,
+    );
   }
 
   constructor() {
     this.dialogRef.disableClose = true;
-    this.dialogRef.backdropClick().pipe(takeUntilDestroyed()).subscribe(() => this.cancel());
-    this.dialogRef.keydownEvents().pipe(takeUntilDestroyed()).subscribe(event => {
-      if (event.key === 'Escape') this.cancel();
-    });
+    this.dialogRef
+      .backdropClick()
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.cancel());
+    this.dialogRef
+      .keydownEvents()
+      .pipe(takeUntilDestroyed())
+      .subscribe((event) => {
+        if (event.key === 'Escape') this.cancel();
+      });
     this.membershipForm.controls.churchId.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
       if (this.loading()) return;
       const selectedChurchId = this.membershipForm.controls.churchId.value;
@@ -141,57 +230,116 @@ export class MemberDialogComponent {
   }
 
   protected addPhone(value?: MemberPhone): void {
-    this.phones.push(new FormGroup({
-      id: new FormControl(value?.id ?? null),
-      phoneTypeId: new FormControl(value?.phoneTypeId ?? '', { nonNullable: true, validators: [Validators.required] }),
-      number: new FormControl(value?.number ?? '', { nonNullable: true, validators: [Validators.required, Validators.minLength(10)] }),
-      isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
-    }));
+    this.phones.push(
+      new FormGroup({
+        id: new FormControl(value?.id ?? null),
+        phoneTypeId: new FormControl(value?.phoneTypeId ?? '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        number: new FormControl(value?.number ?? '', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.minLength(10)],
+        }),
+        isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
+      }),
+    );
   }
   protected addAddress(value?: MemberAddress): void {
-    this.addresses.push(new FormGroup({
-      id: new FormControl(value?.id ?? null),
-      addressTypeId: new FormControl(value?.addressTypeId ?? '', { nonNullable: true, validators: [Validators.required] }),
-      zipCode: new FormControl(value?.zipCode ?? '', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
-      street: new FormControl(value?.street ?? '', { nonNullable: true, validators: requiredText }),
-      number: new FormControl(value?.number ?? '', { nonNullable: true, validators: requiredText }),
-      complement: new FormControl(value?.complement ?? '', { nonNullable: true }),
-      neighborhood: new FormControl(value?.neighborhood ?? '', { nonNullable: true, validators: requiredText }),
-      city: new FormControl(value?.city ?? '', { nonNullable: true, validators: requiredText }),
-      state: new FormControl(value?.state ?? '', { nonNullable: true, validators: [Validators.required] }),
-      isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
-    }));
+    this.addresses.push(
+      new FormGroup({
+        id: new FormControl(value?.id ?? null),
+        addressTypeId: new FormControl(value?.addressTypeId ?? '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        zipCode: new FormControl(value?.zipCode ?? '', {
+          nonNullable: true,
+          validators: [Validators.required, Validators.minLength(8)],
+        }),
+        street: new FormControl(value?.street ?? '', {
+          nonNullable: true,
+          validators: requiredText,
+        }),
+        number: new FormControl(value?.number ?? '', {
+          nonNullable: true,
+          validators: requiredText,
+        }),
+        complement: new FormControl(value?.complement ?? '', { nonNullable: true }),
+        neighborhood: new FormControl(value?.neighborhood ?? '', {
+          nonNullable: true,
+          validators: requiredText,
+        }),
+        city: new FormControl(value?.city ?? '', { nonNullable: true, validators: requiredText }),
+        state: new FormControl(value?.state ?? '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
+      }),
+    );
   }
   protected addRole(value?: MembershipRole): void {
-    this.roles.push(new FormGroup({
-      id: new FormControl(value?.id ?? null),
-      churchRoleId: new FormControl(value?.churchRoleId ?? '', { nonNullable: true, validators: [Validators.required] }),
-      startDate: new FormControl(value?.startDate?.slice(0, 10) ?? today(), { nonNullable: true, validators: [Validators.required] }),
-      endDate: new FormControl(value?.endDate?.slice(0, 10) ?? null),
-      isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
-    }));
+    this.roles.push(
+      new FormGroup({
+        id: new FormControl(value?.id ?? null),
+        churchRoleId: new FormControl(value?.churchRoleId ?? '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        startDate: new FormControl(value?.startDate?.slice(0, 10) ?? today(), {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        endDate: new FormControl(value?.endDate?.slice(0, 10) ?? null),
+        isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
+      }),
+    );
   }
   protected addDepartment(value?: MemberDepartment): void {
-    this.departments.push(new FormGroup({
-      id: new FormControl(value?.id ?? null),
-      churchDepartmentId: new FormControl(value?.churchDepartmentId ?? '', { nonNullable: true, validators: [Validators.required] }),
-      startDate: new FormControl(value?.startDate?.slice(0, 10) ?? today(), { nonNullable: true, validators: [Validators.required] }),
-      endDate: new FormControl(value?.endDate?.slice(0, 10) ?? null),
-      isActive: new FormControl(value?.isActive ?? true, { nonNullable: true }),
-      isLeader: new FormControl(!!value?.leadership, { nonNullable: true }),
-      leadershipId: new FormControl(value?.leadership?.id ?? null),
-      leaderTypeId: new FormControl(value?.leadership?.leaderTypeId ?? null),
-      leadershipStartDate: new FormControl(value?.leadership?.startDate?.slice(0, 10) ?? today()),
-      leadershipEndDate: new FormControl(value?.leadership?.endDate?.slice(0, 10) ?? null),
-      leadershipIsActive: new FormControl(value?.leadership?.isActive ?? true, { nonNullable: true }),
-    }));
+    this.departments.push(
+      new FormGroup({
+        id: new FormControl(value?.id ?? null),
+        churchDepartmentId: new FormControl(value?.churchDepartmentId ?? '', {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        startDate: new FormControl(value?.startDate?.slice(0, 10) ?? today(), {
+          nonNullable: true,
+          validators: [Validators.required],
+        }),
+        endDate: new FormControl(value?.endDate?.slice(0, 10) ?? null),
+        activeParticipant: new FormControl(value?.activeParticipant ?? true, { nonNullable: true }),
+        isLeader: new FormControl(!!value?.leadership, { nonNullable: true }),
+        leadershipId: new FormControl(value?.leadership?.id ?? null),
+        leaderTypeId: new FormControl(value?.leadership?.leaderTypeId ?? null),
+        leadershipStartDate: new FormControl(value?.leadership?.startDate?.slice(0, 10) ?? today()),
+        leadershipEndDate: new FormControl(value?.leadership?.endDate?.slice(0, 10) ?? null),
+        leadershipIsActive: new FormControl(value?.leadership?.isActive ?? true, {
+          nonNullable: true,
+        }),
+      }),
+    );
   }
-  protected remove(array: FormArray<FormGroup>, index: number): void { array.removeAt(index); }
+  protected remove(array: FormArray<FormGroup>, index: number): void {
+    array.removeAt(index);
+  }
   protected lookup(name: string): readonly LookupItem[] {
     const items = this.lookups()[name] ?? [];
     return name === 'pastors' && this.memberId
       ? items.filter((item) => item.id !== this.memberId)
       : items;
+  }
+  protected filteredLookup(name: string, search: string): readonly LookupItem[] {
+    const term = normalizeLookupSearch(search);
+    const items = this.lookup(name);
+    return term ? items.filter((item) => normalizeLookupSearch(item.name).includes(term)) : items;
+  }
+  protected focusLookupSearch(input: HTMLInputElement): void {
+    setTimeout(() => input.focus());
+  }
+  protected handleLookupSearchKeydown(event: KeyboardEvent): void {
+    if (event.key !== 'Escape') event.stopPropagation();
   }
   protected cancel(): void {
     if (this.saving()) return;
@@ -215,57 +363,97 @@ export class MemberDialogComponent {
   protected save(stepper: MatStepper): void {
     if (this.saving()) return;
     this.validateCrossFields();
-    const forms = [this.generalForm, this.contactForm, this.professionalForm, this.membershipForm, this.rolesForm, this.departmentsForm];
-    const invalidIndex = forms.findIndex(form => form.invalid);
+    const forms = [
+      this.generalForm,
+      this.contactForm,
+      this.professionalForm,
+      this.membershipForm,
+      this.rolesForm,
+      this.departmentsForm,
+    ];
+    const invalidIndex = forms.findIndex((form) => form.invalid);
     if (invalidIndex >= 0) {
-      forms.forEach(form => form.markAllAsTouched()); stepper.selectedIndex = invalidIndex;
-      this.notification.error('Corrija os campos destacados antes de salvar.'); return;
+      forms.forEach((form) => form.markAllAsTouched());
+      stepper.selectedIndex = invalidIndex;
+      this.notification.error('Corrija os campos destacados antes de salvar.');
+      return;
     }
     this.saving.set(true);
     this.dialogRef.disableClose = true;
     const request = this.buildPayload();
-    const operation = this.memberId ? this.service.update(this.memberId, request) : this.service.create(request);
+    const operation = this.memberId
+      ? this.service.update(this.memberId, request)
+      : this.service.create(request);
     operation.pipe(finalize(() => this.saving.set(false))).subscribe({
       next: (response) => {
-        this.notification.success(this.editing ? 'Membro atualizado com sucesso.' : 'Membro cadastrado com sucesso.');
+        this.notification.success(
+          this.editing ? 'Membro atualizado com sucesso.' : 'Membro cadastrado com sucesso.',
+        );
         const memberId = this.memberId ?? this.extractMemberId(response);
         this.dialogRef.close({ saved: true, memberId });
       },
-      error: error => this.notification.error(getApiErrorMessage(error, 'Não foi possível salvar o membro.')),
+      error: (error) =>
+        this.notification.error(getApiErrorMessage(error, 'Não foi possível salvar o membro.')),
     });
   }
 
   private load(): void {
     this.loading.set(true);
     this.service.getLookups().subscribe({
-      next: lookups => {
+      next: (lookups) => {
         this.lookups.set(lookups);
         this.service.getChurchDepartments().subscribe({
-          next: departments => {
+          next: (departments) => {
             this.churchDepartments.set(departments);
             if (this.memberId) this.loadMember(this.memberId);
-            else { this.addPhone(); this.addAddress(); this.loading.set(false); }
+            else {
+              this.addPhone();
+              this.addAddress();
+              this.loading.set(false);
+            }
           },
-          error: error => this.loadError(error),
+          error: (error) => this.loadError(error),
         });
       },
-      error: error => this.loadError(error),
+      error: (error) => this.loadError(error),
     });
   }
   private loadMember(id: string): void {
-    this.service.getById(id).pipe(finalize(() => this.loading.set(false))).subscribe({
-      next: data => {
-        this.generalForm.patchValue({ ...data.member, birthDate: data.member.birthDate?.slice(0, 10) ?? null, rg: data.member.rg ?? '', nationality: data.member.nationality ?? '', motherName: data.member.motherName ?? '', fatherName: data.member.fatherName ?? '', email: data.member.email ?? '' });
-        data.phones.forEach(x => this.addPhone(x)); data.addresses.forEach(x => this.addAddress(x));
-        if (data.professionalInformation) this.professionalForm.patchValue(data.professionalInformation);
-        this.membershipForm.patchValue({ ...data.membership, dateJoinedChurch: data.membership.dateJoinedChurch.slice(0, 10) }, { emitEvent: false });
-        this.previousChurchId = data.membership.churchId;
-        data.membershipRoles.forEach(x => this.addRole(x)); data.memberDepartments.forEach(x => this.addDepartment(x));
-      },
-      error: error => this.loadError(error),
-    });
+    this.service
+      .getById(id)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (data) => {
+          this.generalForm.patchValue({
+            ...data.member,
+            birthDate: data.member.birthDate?.slice(0, 10) ?? null,
+            rg: data.member.rg ?? '',
+            nationality: data.member.nationality ?? 'Brasileiro',
+            motherName: data.member.motherName ?? '',
+            fatherName: data.member.fatherName ?? '',
+            email: data.member.email ?? '',
+          });
+          data.phones.forEach((x) => this.addPhone(x));
+          data.addresses.forEach((x) => this.addAddress(x));
+          if (data.professionalInformation)
+            this.professionalForm.patchValue(data.professionalInformation);
+          this.membershipForm.patchValue(
+            { ...data.membership, dateJoinedChurch: data.membership.dateJoinedChurch.slice(0, 10) },
+            { emitEvent: false },
+          );
+          this.previousChurchId = data.membership.churchId;
+          data.membershipRoles.forEach((x) => this.addRole(x));
+          data.memberDepartments.forEach((x) => this.addDepartment(x));
+        },
+        error: (error) => this.loadError(error),
+      });
   }
-  private loadError(error: unknown): void { this.loading.set(false); this.notification.error(getApiErrorMessage(error, 'Não foi possível carregar os dados da tela.')); }
+  private loadError(error: unknown): void {
+    this.loading.set(false);
+    this.notification.error(
+      getApiErrorMessage(error, 'Não foi possível carregar os dados da tela.'),
+    );
+  }
   private clearChurchRelations(): void {
     this.roles.clear();
     this.departments.clear();
@@ -275,57 +463,114 @@ export class MemberDialogComponent {
     const future = (control: FormControl<string | null> | FormControl<string>) => {
       control.setErrors(control.value && control.value > today() ? { future: true } : null);
     };
-    future(this.generalForm.controls.birthDate); future(this.membershipForm.controls.dateJoinedChurch);
-    const phoneValues = this.phones.controls.map(x => String(x.controls['number'].value).replace(/\D/g, ''));
+    future(this.generalForm.controls.birthDate);
+    future(this.membershipForm.controls.dateJoinedChurch);
+    const phoneValues = this.phones.controls.map((x) =>
+      String(x.controls['number'].value).replace(/\D/g, ''),
+    );
     this.phones.controls.forEach((x, i) => {
-      if (phoneValues.indexOf(phoneValues[i]) !== i) x.controls['number'].setErrors({ duplicate: true });
+      if (phoneValues.indexOf(phoneValues[i]) !== i)
+        x.controls['number'].setErrors({ duplicate: true });
     });
-    const validateRows = (array: FormArray<FormGroup>, key: string) => {
+    const validateRows = (array: FormArray<FormGroup>, key: string, activeKey = 'isActive') => {
       const active = new Set<string>();
-      array.controls.forEach(group => {
+      array.controls.forEach((group) => {
         const start = String(group.controls['startDate'].value ?? '');
         const end = String(group.controls['endDate'].value ?? '');
         if (end && end < start) group.controls['endDate'].setErrors({ beforeStart: true });
         const value = String(group.controls[key].value ?? '');
-        if (group.controls['isActive'].value && active.has(value)) group.controls[key].setErrors({ duplicate: true });
-        active.add(value);
+        const isActive = !!group.controls[activeKey].value && !end;
+        if (isActive && active.has(value)) group.controls[key].setErrors({ duplicate: true });
+        if (isActive) active.add(value);
       });
     };
-    validateRows(this.roles, 'churchRoleId'); validateRows(this.departments, 'churchDepartmentId');
-    this.departments.controls.forEach(group => {
+    validateRows(this.roles, 'churchRoleId');
+    validateRows(this.departments, 'churchDepartmentId', 'activeParticipant');
+    this.departments.controls.forEach((group) => {
       if (group.controls['isLeader'].value) {
-        if (!group.controls['leaderTypeId'].value) group.controls['leaderTypeId'].setErrors({ required: true });
-        if (!group.controls['leadershipStartDate'].value) group.controls['leadershipStartDate'].setErrors({ required: true });
+        if (!group.controls['leaderTypeId'].value)
+          group.controls['leaderTypeId'].setErrors({ required: true });
+        if (!group.controls['leadershipStartDate'].value)
+          group.controls['leadershipStartDate'].setErrors({ required: true });
       }
     });
   }
   private buildPayload(): CompleteMember {
-    const g = this.generalForm.getRawValue(); const m = this.membershipForm.getRawValue();
+    const g = this.generalForm.getRawValue();
+    const m = this.membershipForm.getRawValue();
     const professional = this.professionalForm.getRawValue();
     const hasProfessional = Object.values(professional).some(Boolean);
     return {
       id: this.memberId ?? undefined,
-      member: { name: g.name.trim(), cpf: g.cpf.replace(/\D/g, ''), rg: nullable(g.rg), birthDate: g.birthDate, genderId: g.genderId, maritalStatusId: g.maritalStatusId, nationality: nullable(g.nationality), motherName: nullable(g.motherName), fatherName: nullable(g.fatherName), email: nullable(g.email), isActive: g.isActive },
-      phones: this.phones.getRawValue().map(x => ({ ...x, number: String(x['number']).replace(/\D/g, '') })) as MemberPhone[],
-      addresses: this.addresses.getRawValue().map(x => ({ ...x, zipCode: String(x['zipCode']).replace(/\D/g, ''), street: String(x['street']).trim(), number: String(x['number']).trim(), complement: nullable(String(x['complement'])), neighborhood: String(x['neighborhood']).trim(), city: String(x['city']).trim() })) as MemberAddress[],
-      professionalInformation: hasProfessional ? professional as ProfessionalInformation : null,
-      membership: { ...m, id: m.id ?? undefined, religiousOriginId: m.religiousOriginId, pastorId: m.pastorId },
+      member: {
+        name: g.name.trim(),
+        cpf: g.cpf.replace(/\D/g, ''),
+        rg: nullable(g.rg),
+        birthDate: g.birthDate,
+        genderId: g.genderId,
+        maritalStatusId: g.maritalStatusId,
+        nationality: this.editing ? nullable(g.nationality) : 'Brasileiro',
+        motherName: nullable(g.motherName),
+        fatherName: nullable(g.fatherName),
+        email: nullable(g.email),
+        isActive: g.isActive,
+      },
+      phones: this.phones
+        .getRawValue()
+        .map((x) => ({ ...x, number: String(x['number']).replace(/\D/g, '') })) as MemberPhone[],
+      addresses: this.addresses.getRawValue().map((x) => ({
+        ...x,
+        zipCode: String(x['zipCode']).replace(/\D/g, ''),
+        street: String(x['street']).trim(),
+        number: String(x['number']).trim(),
+        complement: nullable(String(x['complement'])),
+        neighborhood: String(x['neighborhood']).trim(),
+        city: String(x['city']).trim(),
+      })) as MemberAddress[],
+      professionalInformation: hasProfessional ? (professional as ProfessionalInformation) : null,
+      membership: {
+        ...m,
+        id: m.id ?? undefined,
+        religiousOriginId: m.religiousOriginId,
+        pastorId: m.pastorId,
+      },
       membershipRoles: this.roles.getRawValue() as MembershipRole[],
-      memberDepartments: this.departments.getRawValue().map(x => ({
-        id: x['id'] ?? undefined, churchDepartmentId: x['churchDepartmentId'], startDate: x['startDate'],
-        endDate: x['endDate'], isActive: x['isActive'],
-        leadership: !x['isLeader'] ? null : { id: x['leadershipId'] ?? undefined, leaderTypeId: x['leaderTypeId'], startDate: x['leadershipStartDate'], endDate: x['leadershipEndDate'], isActive: x['leadershipIsActive'] },
+      memberDepartments: this.departments.getRawValue().map((x) => ({
+        id: x['id'] ?? undefined,
+        churchDepartmentId: x['churchDepartmentId'],
+        startDate: x['startDate'],
+        endDate: x['endDate'],
+        activeParticipant: !x['endDate'] && x['activeParticipant'],
+        leadership: !x['isLeader']
+          ? null
+          : {
+              id: x['leadershipId'] ?? undefined,
+              leaderTypeId: x['leaderTypeId'],
+              startDate: x['leadershipStartDate'],
+              endDate: x['leadershipEndDate'],
+              isActive: x['leadershipIsActive'],
+            },
       })) as MemberDepartment[],
     };
   }
   private isDirty(): boolean {
-    return [this.generalForm, this.contactForm, this.professionalForm, this.membershipForm, this.rolesForm, this.departmentsForm]
-      .some(form => form.dirty);
+    return [
+      this.generalForm,
+      this.contactForm,
+      this.professionalForm,
+      this.membershipForm,
+      this.rolesForm,
+      this.departmentsForm,
+    ].some((form) => form.dirty);
   }
   private extractMemberId(response: unknown): string | undefined {
     if (!response || typeof response !== 'object' || !('data' in response)) return undefined;
     const data = response.data;
-    return data && typeof data === 'object' && 'memberId' in data && typeof data.memberId === 'string'
-      ? data.memberId : undefined;
+    return data &&
+      typeof data === 'object' &&
+      'memberId' in data &&
+      typeof data.memberId === 'string'
+      ? data.memberId
+      : undefined;
   }
 }

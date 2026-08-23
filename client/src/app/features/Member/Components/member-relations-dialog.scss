@@ -116,6 +116,32 @@
   justify-self: start;
 }
 
+.member-relation-dialog__checkbox-row,
+.member-relation-dialog__form-actions {
+  grid-column: 1 / -1;
+}
+
+.member-relation-dialog__checkbox-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.member-relation-dialog__form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--spacing-sm);
+}
+
+.member-relation-dialog__form-grid .member-relation-dialog__form-actions button {
+  height: 2.25rem;
+  min-height: 2.25rem;
+  padding-inline: 0.75rem;
+  font-size: var(--font-size-caption);
+}
+
 .member-relation-dialog__form-grid button {
   min-height: 3.5rem;
 }
@@ -197,6 +223,11 @@
   display: inline-flex;
 }
 
+.member-relation-dialog__item-actions {
+  display: flex;
+  align-items: center;
+}
+
 .member-relation-dialog__empty {
   display: flex;
   min-height: 6rem;
@@ -236,6 +267,10 @@
     grid-template-columns: 1fr;
   }
 
+  .member-relation-dialog__checkbox-row {
+    grid-template-columns: 1fr;
+  }
+
   .member-relation-dialog__form-grid button,
   .member-relation-dialog__form-grid--department button {
     width: 100%;
@@ -250,7 +285,7 @@
     width: fit-content;
   }
 
-  .member-relation-dialog__item > button {
+  .member-relation-dialog__item-actions {
     grid-column: 3;
     grid-row: 1 / span 2;
   }

@@ -104,6 +104,32 @@ export const adminRoutes: Routes = [
     },
   },
   {
+    path: 'auxiliary-data/church-categories',
+    canMatch: [permissionGuard],
+    loadChildren: () =>
+      import('./features/ChurchesCategory/churches-category.routes').then(
+        (routes) => routes.CHURCHES_CATEGORY_ROUTES,
+      ),
+    data: {
+      title: 'Categorias de igreja',
+      breadcrumb: ['Cadastros Auxiliares', 'Categorias de igreja'],
+      permission: 'CHURCHES_CATEGORY_VIEW',
+    },
+  },
+  {
+    path: 'auxiliary-data/church-regions',
+    canMatch: [permissionGuard],
+    loadChildren: () =>
+      import('./features/ChurchesRegion/churches-region.routes').then(
+        (routes) => routes.CHURCHES_REGION_ROUTES,
+      ),
+    data: {
+      title: 'Regiões de igreja',
+      breadcrumb: ['Cadastros Auxiliares', 'Regiões de igreja'],
+      permission: 'CHURCHES_REGION_VIEW',
+    },
+  },
+  {
     path: 'auxiliary-data/genders',
     canMatch: [permissionGuard],
     loadChildren: () =>

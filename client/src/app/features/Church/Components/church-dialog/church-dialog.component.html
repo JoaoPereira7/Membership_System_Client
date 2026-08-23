@@ -23,20 +23,46 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Congregação</mat-label>
+      <mat-label>Igreja/Congregação</mat-label>
       <mat-select formControlName="parentChurchId">
-        <mat-option [value]="null">Sede</mat-option>
+        <mat-option [value]="null">Não informada</mat-option>
         @for (church of availableChurches(); track church.id) {
           <mat-option [value]="church.id">{{ church.name }}</mat-option>
         }
       </mat-select>
-      @if (loadingChurches()) {
+      @if (loadingReferences()) {
         <mat-hint>Carregando igrejas...</mat-hint>
       } @else {
         <mat-hint>Selecione somente se esta igreja estiver subordinada a outra.</mat-hint>
       }
       @if (form.controls.parentChurchId.hasError('selfReference')) {
         <mat-error>Uma igreja não pode ser vinculada a ela mesma.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Categoria</mat-label>
+      <mat-select formControlName="churchesCategoryId">
+        <mat-option [value]="null">Não informada</mat-option>
+        @for (category of availableCategories(); track category.id) {
+          <mat-option [value]="category.id">{{ category.name }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingReferences()) {
+        <mat-hint>Carregando categorias...</mat-hint>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Região</mat-label>
+      <mat-select formControlName="churchesRegionId">
+        <mat-option [value]="null">Não informada</mat-option>
+        @for (region of availableRegions(); track region.id) {
+          <mat-option [value]="region.id">{{ region.name }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingReferences()) {
+        <mat-hint>Carregando regiões...</mat-hint>
       }
     </mat-form-field>
 
@@ -57,7 +83,7 @@
       mat-flat-button
       color="primary"
       type="submit"
-      [disabled]="saving() || loadingChurches()"
+      [disabled]="saving() || loadingReferences()"
     >
       @if (saving()) {
         <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />

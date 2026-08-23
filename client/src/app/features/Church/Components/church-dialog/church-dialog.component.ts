@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { finalize } from 'rxjs';
+import { finalize, forkJoin } from 'rxjs';
 
 import { getApiErrorMessage } from '../../../../core/api/api.models';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -22,6 +22,10 @@ import {
 } from '../../Models/church.models';
 import { ChurchService } from '../../Services/church.service';
 import { ChurchDialogData, ChurchDialogResult } from './church-dialog.types';
+import { ChurchesCategoryListItem } from '../../../ChurchesCategory/Models/churches-category.models';
+import { ChurchesCategoryService } from '../../../ChurchesCategory/Services/churches-category.service';
+import { ChurchesRegionListItem } from '../../../ChurchesRegion/Models/churches-region.models';
+import { ChurchesRegionService } from '../../../ChurchesRegion/Services/churches-region.service';
 
 @Component({
   selector: 'app-church-dialog',
@@ -47,6 +51,8 @@ export class ChurchDialogComponent {
     inject<MatDialogRef<ChurchDialogComponent, ChurchDialogResult>>(MatDialogRef);
   private readonly formBuilder = inject(FormBuilder).nonNullable;
   private readonly service = inject(ChurchService);
+  private readonly categoryService = inject(ChurchesCategoryService);
+  private readonly regionService = inject(ChurchesRegionService);
   private readonly notification = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -54,8 +60,10 @@ export class ChurchDialogComponent {
   protected readonly isEdit = this.data.mode === 'edit';
   protected readonly title = this.isEdit ? 'Editar igreja' : 'Nova igreja';
   protected readonly saving = signal(false);
-  protected readonly loadingChurches = signal(true);
+  protected readonly loadingReferences = signal(true);
   protected readonly availableChurches = signal<readonly ChurchListItem[]>([]);
+  protected readonly availableCategories = signal<readonly ChurchesCategoryListItem[]>([]);
+  protected readonly availableRegions = signal<readonly ChurchesRegionListItem[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly form = this.formBuilder.group({
     name: [
@@ -63,25 +71,35 @@ export class ChurchDialogComponent {
       [Validators.required, Validators.maxLength(150), nonBlankValidator()],
     ],
     parentChurchId: this.formBuilder.control<string | null>(this.item?.parentChurchId ?? null),
+    churchesCategoryId: this.formBuilder.control<string | null>(
+      this.item?.churchesCategoryId ?? null,
+    ),
+    churchesRegionId: this.formBuilder.control<string | null>(this.item?.churchesRegionId ?? null),
     isActive: this.item?.isActive ?? true,
   });
 
   constructor() {
-    this.service
-      .getAll()
+    forkJoin({
+      churches: this.service.getAll(),
+      categories: this.categoryService.getAll(),
+      regions: this.regionService.getAll(),
+    })
       .pipe(
-        finalize(() => this.loadingChurches.set(false)),
+        finalize(() => this.loadingReferences.set(false)),
         takeUntilDestroyed(),
       )
       .subscribe({
-        next: (churches) =>
+        next: ({ churches, categories, regions }) => {
           this.availableChurches.set(
             churches.filter((church) => !this.item || church.id !== this.item.id),
-          ),
+          );
+          this.availableCategories.set(categories);
+          this.availableRegions.set(regions);
+        },
         error: (error: unknown) => {
           const message = getApiErrorMessage(
             error,
-            'Não foi possível carregar as igrejas disponíveis.',
+            'Não foi possível carregar as opções de igreja, categoria e região.',
           );
           this.errorMessage.set(message);
           this.notification.error(message);
@@ -109,7 +127,12 @@ export class ChurchDialogComponent {
 
     if (this.form.invalid) return;
 
-    const commonRequest = { name, parentChurchId };
+    const commonRequest = {
+      name,
+      parentChurchId,
+      churchesCategoryId: this.form.controls.churchesCategoryId.value,
+      churchesRegionId: this.form.controls.churchesRegionId.value,
+    };
     const operation = this.isEdit
       ? this.service.update(this.item!.id, {
           ...commonRequest,

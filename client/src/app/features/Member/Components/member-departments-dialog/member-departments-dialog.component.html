@@ -3,7 +3,7 @@
     <div class="member-relation-dialog__icon"><mat-icon>diversity_3</mat-icon></div>
     <div>
       <h2 id="member-departments-title">Departamentos do membro</h2>
-      <p>Adicione ou remova departamentos e cargos de {{ data.memberName }}.</p>
+      <p>Adicione, edite ou remova departamentos e lideranças de {{ data.memberName }}.</p>
     </div>
   </header>
 
@@ -26,8 +26,14 @@
       <form class="member-relation-dialog__form" [formGroup]="form" (ngSubmit)="save()">
         <div class="member-relation-dialog__section-title">
           <div>
-            <h3>Novo departamento</h3>
-            <p>Informe o departamento e o cargo exercido pelo membro.</p>
+            <h3>{{ editingId() ? 'Editar departamento' : 'Novo departamento' }}</h3>
+            <p>
+              {{
+                editingId()
+                  ? 'Altere o departamento, a data e a liderança exercida.'
+                  : 'Informe o departamento e, se houver, a liderança exercida.'
+              }}
+            </p>
           </div>
         </div>
 
@@ -46,33 +52,77 @@
             }
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Cargo no departamento</mat-label>
-            <mat-select formControlName="leaderTypeId">
-              @for (leaderType of leaderTypes(); track leaderType.id) {
-                <mat-option [value]="leaderType.id">{{ leaderType.name }}</mat-option>
-              }
-            </mat-select>
-            @if (form.controls.leaderTypeId.hasError('required')) {
-              <mat-error>Selecione o cargo exercido.</mat-error>
-            }
-          </mat-form-field>
-
           <app-date-picker label="Data de início" formControlName="startDate" [required]="true" />
 
-          <button
-            mat-flat-button
-            color="primary"
-            type="submit"
-            [disabled]="saving() || !!removingId() || availableDepartments().length === 0"
-          >
-            @if (saving()) {
-              <mat-progress-spinner diameter="18" mode="indeterminate" />
-            } @else {
-              <mat-icon>add</mat-icon>
+          @if (editingId()) {
+            <app-date-picker
+              label="Data de término"
+              formControlName="endDate"
+              [min]="form.controls.startDate.value"
+            />
+          }
+
+          <div class="member-relation-dialog__checkbox-row">
+            @if (editingId()) {
+              <mat-checkbox formControlName="activeParticipant"> Participação ativa </mat-checkbox>
             }
-            Adicionar departamento
-          </button>
+            <mat-checkbox formControlName="isLeader">
+              Exerce liderança neste departamento?
+            </mat-checkbox>
+          </div>
+
+          @if (form.controls.isLeader.value) {
+            <mat-form-field appearance="outline">
+              <mat-label>Cargo no departamento</mat-label>
+              <mat-select formControlName="leaderTypeId">
+                @for (leaderType of leaderTypes(); track leaderType.id) {
+                  <mat-option [value]="leaderType.id">{{ leaderType.name }}</mat-option>
+                }
+              </mat-select>
+              @if (form.controls.leaderTypeId.hasError('required')) {
+                <mat-error>Selecione o cargo exercido.</mat-error>
+              }
+            </mat-form-field>
+
+            <app-date-picker
+              label="Início da liderança"
+              formControlName="leadershipStartDate"
+              [required]="true"
+            />
+
+            @if (editingId()) {
+              <app-date-picker
+                label="Término da liderança"
+                formControlName="leadershipEndDate"
+                [min]="form.controls.leadershipStartDate.value"
+                [max]="form.controls.endDate.value"
+                [errorMessages]="{
+                  afterDepartmentEnd: 'Deve ser anterior ou igual ao término do departamento.',
+                }"
+              />
+            }
+          }
+
+          <div class="member-relation-dialog__form-actions">
+            @if (editingId()) {
+              <button mat-button type="button" [disabled]="saving()" (click)="cancelEdit()">
+                Cancelar edição
+              </button>
+            }
+            <button
+              mat-flat-button
+              color="primary"
+              type="submit"
+              [disabled]="saving() || !!removingId() || availableDepartments().length === 0"
+            >
+              @if (saving()) {
+                <mat-progress-spinner diameter="18" mode="indeterminate" />
+              } @else {
+                <mat-icon>{{ editingId() ? 'save' : 'add' }}</mat-icon>
+              }
+              {{ editingId() ? 'Salvar alterações' : 'Adicionar departamento' }}
+            </button>
+          </div>
         </div>
 
         @if (availableDepartments().length === 0) {
@@ -105,24 +155,35 @@
               </div>
               <span
                 class="member-relation-dialog__status"
-                [class.member-relation-dialog__status--inactive]="!department.isActive"
+                [class.member-relation-dialog__status--inactive]="!department.activeParticipant"
               >
-                {{ department.isActive ? 'Ativo' : 'Inativo' }}
+                {{ department.activeParticipant ? 'Ativo' : 'Inativo' }}
               </span>
-              <button
-                mat-icon-button
-                type="button"
-                color="warn"
-                [attr.aria-label]="'Remover ' + departmentName(department.churchDepartmentId)"
-                [disabled]="saving() || !!removingId()"
-                (click)="remove(department)"
-              >
-                @if (removingId() === department.id) {
-                  <mat-progress-spinner diameter="20" mode="indeterminate" />
-                } @else {
-                  <mat-icon>delete_outline</mat-icon>
-                }
-              </button>
+              <div class="member-relation-dialog__item-actions">
+                <button
+                  mat-icon-button
+                  type="button"
+                  [attr.aria-label]="'Editar ' + departmentName(department.churchDepartmentId)"
+                  [disabled]="saving() || !!removingId()"
+                  (click)="edit(department)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  type="button"
+                  color="warn"
+                  [attr.aria-label]="'Remover ' + departmentName(department.churchDepartmentId)"
+                  [disabled]="saving() || !!removingId()"
+                  (click)="remove(department)"
+                >
+                  @if (removingId() === department.id) {
+                    <mat-progress-spinner diameter="20" mode="indeterminate" />
+                  } @else {
+                    <mat-icon>delete_outline</mat-icon>
+                  }
+                </button>
+              </div>
             </article>
           } @empty {
             <div class="member-relation-dialog__empty">

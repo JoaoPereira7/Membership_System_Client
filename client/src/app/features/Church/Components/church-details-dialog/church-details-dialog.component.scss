@@ -1,0 +1,8 @@
+@use '../../../../core/components/entity-details-dialog/entity-details-dialog.component';
+
+.church-details__error {
+  display: grid;
+  justify-items: center;
+  gap: var(--spacing-sm);
+  text-align: center;
+}

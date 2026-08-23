@@ -1,0 +1,52 @@
+<form class="auxiliary-dialog" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <header class="auxiliary-dialog__header">
+    <span class="auxiliary-dialog__icon" aria-hidden="true"><mat-icon>map</mat-icon></span>
+    <h2 class="auxiliary-dialog__title" mat-dialog-title>{{ title }}</h2>
+  </header>
+
+  <mat-dialog-content class="auxiliary-dialog__content">
+    @if (errorMessage()) {
+      <div class="auxiliary-dialog__error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon><span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" maxlength="100" autocomplete="off" cdkFocusInitial />
+      <mat-hint align="end">{{ form.controls.name.value.length }}/100</mat-hint>
+      @if (form.controls.name.hasError('required') || form.controls.name.hasError('blank')) {
+        <mat-error>Informe um nome válido.</mat-error>
+      } @else if (form.controls.name.hasError('maxlength')) {
+        <mat-error>O nome deve possuir no máximo 100 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    @if (isEdit) {
+      <div class="auxiliary-dialog__status">
+        <mat-slide-toggle formControlName="isActive">Ativa</mat-slide-toggle>
+        <span class="auxiliary-dialog__status-hint">
+          Define se a região está disponível para utilização.
+        </span>
+      </div>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="auxiliary-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving()" (click)="cancel()">Cancelar</button>
+    <button
+      class="auxiliary-dialog__save"
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="saving()"
+    >
+      @if (saving()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+        <span>Salvando</span>
+      } @else {
+        <span>Salvar</span>
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

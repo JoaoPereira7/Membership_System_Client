@@ -16,18 +16,19 @@ import {
 } from '../../../../core/components/data-table/data-table.types';
 import { AppListPageShellComponent } from '../../../../core/components/list-page-shell/list-page-shell.component';
 import { PageBreadcrumb } from '../../../../core/components/page-header/page-header.types';
-import { ChurchDialogComponent } from '../../Components/church-dialog/church-dialog.component';
+import { AuxiliaryListQuery } from '../../../../core/models/auxiliary-data.models';
+import { ChurchesRegionDeleteDialogComponent } from '../../Components/churches-region-delete-dialog/churches-region-delete-dialog.component';
+import { ChurchesRegionDetailsDialogComponent } from '../../Components/churches-region-details-dialog/churches-region-details-dialog.component';
+import { ChurchesRegionDialogComponent } from '../../Components/churches-region-dialog/churches-region-dialog.component';
 import {
-  ChurchDialogData,
-  ChurchDialogResult,
-} from '../../Components/church-dialog/church-dialog.types';
-import { ChurchListItem, ChurchListQuery } from '../../Models/church.models';
-import { ChurchService } from '../../Services/church.service';
-import { ChurchDetailsDialogComponent } from '../../Components/church-details-dialog/church-details-dialog.component';
-import { ChurchDeleteDialogComponent } from '../../Components/church-delete-dialog/church-delete-dialog.component';
+  ChurchesRegionDialogData,
+  ChurchesRegionDialogResult,
+} from '../../Components/churches-region-dialog/churches-region-dialog.types';
+import { ChurchesRegionListItem } from '../../Models/churches-region.models';
+import { ChurchesRegionService } from '../../Services/churches-region.service';
 
 @Component({
-  selector: 'app-church-list',
+  selector: 'app-churches-region-list',
   imports: [
     MatButtonModule,
     MatDialogModule,
@@ -36,19 +37,19 @@ import { ChurchDeleteDialogComponent } from '../../Components/church-delete-dial
     AppDataTableComponent,
     AppListPageShellComponent,
   ],
-  templateUrl: './church-list.component.html',
-  styleUrl: './church-list.component.scss',
+  templateUrl: './churches-region-list.component.html',
+  styleUrl: './churches-region-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChurchListComponent {
-  protected readonly detailsDialogComponent = ChurchDetailsDialogComponent;
-  protected readonly deleteDialogComponent = ChurchDeleteDialogComponent;
-  private readonly service = inject(ChurchService);
+export class ChurchesRegionListComponent {
+  protected readonly detailsDialogComponent = ChurchesRegionDetailsDialogComponent;
+  protected readonly deleteDialogComponent = ChurchesRegionDeleteDialogComponent;
+  private readonly service = inject(ChurchesRegionService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   private readonly loadRequests = new Subject<void>();
 
-  protected readonly data = signal<readonly ChurchListItem[]>([]);
+  protected readonly data = signal<readonly ChurchesRegionListItem[]>([]);
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly totalItems = signal(0);
@@ -58,35 +59,11 @@ export class ChurchListComponent {
   protected readonly sortActive = signal<string | null>('name');
   protected readonly sortDirection = signal<'asc' | 'desc' | ''>('asc');
   protected readonly breadcrumbs: readonly PageBreadcrumb[] = [
-    { label: 'Organização' },
-    { label: 'Igrejas' },
+    { label: 'Cadastros Auxiliares' },
+    { label: 'Regiões de igreja' },
   ];
-  protected readonly columns: readonly DataTableColumn<ChurchListItem>[] = [
+  protected readonly columns: readonly DataTableColumn<ChurchesRegionListItem>[] = [
     { key: 'name', label: 'Nome', type: 'text', sortable: true, minWidth: '220px' },
-    {
-      key: 'churchesCategoryName',
-      label: 'Categoria',
-      type: 'text',
-      sortable: true,
-      minWidth: '180px',
-      emptyValue: '-',
-    },
-    {
-      key: 'parentChurchName',
-      label: 'Igreja sede',
-      type: 'text',
-      sortable: true,
-      minWidth: '220px',
-      emptyValue: '-',
-    },
-    {
-      key: 'churchesRegionName',
-      label: 'Região',
-      type: 'text',
-      sortable: true,
-      minWidth: '180px',
-      emptyValue: '-',
-    },
     {
       key: 'isActive',
       label: 'Situação',
@@ -94,12 +71,12 @@ export class ChurchListComponent {
       sortable: true,
       width: '140px',
       align: 'center',
-      formatter: (_value, row) => (row.isActive ? 'Ativo' : 'Inativo'),
+      formatter: (_value, row) => (row.isActive ? 'Ativa' : 'Inativa'),
     },
     { key: 'actions', label: 'Ações', type: 'actions', width: '80px', align: 'center' },
   ];
-  protected readonly actions: readonly DataTableAction<ChurchListItem>[] = [
-    { id: 'edit', label: 'Editar', icon: 'edit', tooltip: 'Editar igreja', color: 'primary' },
+  protected readonly actions: readonly DataTableAction<ChurchesRegionListItem>[] = [
+    { id: 'edit', label: 'Editar', icon: 'edit', tooltip: 'Editar região', color: 'primary' },
   ];
 
   constructor() {
@@ -114,7 +91,7 @@ export class ChurchListComponent {
                 this.data.set([]);
                 this.totalItems.set(0);
                 this.errorMessage.set(
-                  getApiErrorMessage(error, 'Não foi possível carregar as igrejas.'),
+                  getApiErrorMessage(error, 'Não foi possível carregar as regiões de igreja.'),
                 );
                 return EMPTY;
               }),
@@ -147,10 +124,8 @@ export class ChurchListComponent {
     this.reload();
   }
 
-  protected onAction(event: DataTableActionEvent<ChurchListItem>): void {
-    if (event.actionId === 'edit') {
-      this.openDialog({ mode: 'edit', item: { ...event.row } });
-    }
+  protected onAction(event: DataTableActionEvent<ChurchesRegionListItem>): void {
+    if (event.actionId === 'edit') this.openDialog({ mode: 'edit', item: { ...event.row } });
   }
 
   protected openCreateDialog(): void {
@@ -161,15 +136,12 @@ export class ChurchListComponent {
     this.loadRequests.next();
   }
 
-  private openDialog(data: ChurchDialogData): void {
+  private openDialog(data: ChurchesRegionDialogData): void {
     this.dialog
-      .open<ChurchDialogComponent, ChurchDialogData, ChurchDialogResult>(ChurchDialogComponent, {
-        width: '560px',
-        maxWidth: '95vw',
-        autoFocus: false,
-        restoreFocus: true,
-        data,
-      })
+      .open<ChurchesRegionDialogComponent, ChurchesRegionDialogData, ChurchesRegionDialogResult>(
+        ChurchesRegionDialogComponent,
+        { width: '520px', maxWidth: '95vw', autoFocus: false, restoreFocus: true, data },
+      )
       .afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result) => {
@@ -182,7 +154,7 @@ export class ChurchListComponent {
       });
   }
 
-  private currentQuery(): ChurchListQuery {
+  private currentQuery(): AuxiliaryListQuery {
     return {
       search: this.search(),
       pageIndex: this.pageIndex(),
