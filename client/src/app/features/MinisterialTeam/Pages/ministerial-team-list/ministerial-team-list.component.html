@@ -1,0 +1,39 @@
+<app-list-page-shell
+  title="Equipe Ministerial"
+  subtitle="Visualize os pastores e seus vínculos ministeriais com a igreja."
+  icon="workspace_premium"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar membro"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="searchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Equipe ministerial"
+    emptyMessage="Nenhum integrante da equipe ministerial encontrado."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [crudActionsEnabled]="false"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="queryChanged($event)"
+    (actionTriggered)="action($event)"
+  />
+</app-list-page-shell>

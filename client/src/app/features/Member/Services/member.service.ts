@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { forkJoin, map, Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
@@ -23,34 +23,16 @@ export class MemberService {
   private readonly endpoint = `${environment.apiBaseUrl}/Member`;
 
   getPaged(query: MemberListQuery): Observable<MemberPagedResult> {
-    return this.http.get<ApiResponse<readonly MemberListItem[]>>(`${this.endpoint}/complete`).pipe(
-      map((response) => {
-        const term = query.search.trim().toLocaleLowerCase('pt-BR');
-        const filtered = (response.data ?? []).filter(
-          (item) =>
-            !term ||
-            [
-              item.name,
-              item.cpf,
-              item.churchName,
-              item.departmentNames,
-              item.membershipStatusName,
-            ].some((value) => value.toLocaleLowerCase('pt-BR').includes(term)),
-        );
-        const sorted =
-          !query.sortActive || !query.sortDirection
-            ? filtered
-            : [...filtered].sort((a, b) => {
-                const key = query.sortActive as keyof MemberListItem;
-                const result = String(a[key]).localeCompare(String(b[key]), 'pt-BR', {
-                  numeric: true,
-                });
-                return query.sortDirection === 'asc' ? result : -result;
-              });
-        const start = query.pageIndex * query.pageSize;
-        return { items: sorted.slice(start, start + query.pageSize), totalItems: sorted.length };
-      }),
-    );
+    const params = new HttpParams()
+      .set('search', query.search)
+      .set('page', query.pageIndex + 1)
+      .set('pageSize', query.pageSize)
+      .set('sortActive', query.sortActive ?? 'name')
+      .set('sortDirection', query.sortDirection || 'asc');
+
+    return this.http
+      .get<ApiResponse<MemberPagedResult>>(`${this.endpoint}/list`, { params })
+      .pipe(map((response) => unwrapApiData(response, 'Não foi possível carregar os membros.')));
   }
   getById(id: string): Observable<CompleteMember> {
     return this.http

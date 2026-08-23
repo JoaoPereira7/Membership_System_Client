@@ -1,6 +1,7 @@
 export type DataTableAlign = 'start' | 'center' | 'end';
 
-export type DataTableColumnType = 'text' | 'number' | 'currency' | 'date' | 'datetime' | 'boolean' | 'status' | 'actions';
+export type DataTableColumnType =
+  'text' | 'number' | 'currency' | 'date' | 'datetime' | 'boolean' | 'status' | 'chips' | 'actions';
 
 export type DataTableMode = 'client' | 'server';
 

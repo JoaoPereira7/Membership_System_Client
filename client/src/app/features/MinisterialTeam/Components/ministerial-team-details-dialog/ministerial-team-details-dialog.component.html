@@ -1,0 +1,43 @@
+<header class="entity-details__header">
+  <div class="entity-details__icon"><mat-icon>workspace_premium</mat-icon></div>
+  <div>
+    <h2>Detalhes da equipe ministerial</h2>
+    <p>Informações do vínculo ministerial</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content class="entity-details__content">
+  <dl class="entity-details__grid">
+    <div class="entity-details__item">
+      <dt>Nome do pastor</dt>
+      <dd>{{ display(member.memberName) }}</dd>
+    </div>
+    <div class="entity-details__item">
+      <dt>Cargo eclesiástico</dt>
+      <dd>{{ roles() }}</dd>
+    </div>
+    <div class="entity-details__item">
+      <dt>Igreja</dt>
+      <dd>{{ display(member.churchName) }}</dd>
+    </div>
+    <div class="entity-details__item">
+      <dt>Região</dt>
+      <dd>{{ display(member.churchRegionName) }}</dd>
+    </div>
+    <div class="entity-details__item">
+      <dt>Igreja sede</dt>
+      <dd>{{ display(member.parentChurchName) }}</dd>
+    </div>
+    <div class="entity-details__item">
+      <dt>Ativo</dt>
+      <dd>{{ member.isActive ? 'Sim' : 'Não' }}</dd>
+    </div>
+  </dl>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" color="primary" mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

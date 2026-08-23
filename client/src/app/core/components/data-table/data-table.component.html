@@ -122,6 +122,18 @@
                       formatCellValue(row, column)
                     }}</mat-chip>
                   }
+                  @case ('chips') {
+                    <mat-chip-set class="data-table__chips" [attr.aria-label]="column.label">
+                      @for (chip of visibleChipValues(row, column); track chip) {
+                        <mat-chip>{{ chip }}</mat-chip>
+                      }
+                      @if (hiddenChipCount(row, column) > 0) {
+                        <span class="data-table__chips-more">
+                          +{{ hiddenChipCount(row, column) }}
+                        </span>
+                      }
+                    </mat-chip-set>
+                  }
                   @case ('actions') {
                     <ng-container
                       [ngTemplateOutlet]="actionsTemplate"

@@ -30,6 +30,13 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     permission: 'CHURCH_DEPARTMENT_VIEW',
   },
   {
+    id: 'ministerial-team',
+    label: 'Equipe Ministerial',
+    icon: 'workspace_premium',
+    route: '/ministerial-team',
+    permission: 'MEMBER_VIEW',
+  },
+  {
     id: 'administration',
     label: 'Administração',
     icon: 'admin_panel_settings',

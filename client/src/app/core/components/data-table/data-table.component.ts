@@ -438,10 +438,28 @@ export class AppDataTableComponent<T extends object> {
       case 'boolean':
         return value === true ? 'Sim' : 'Nao';
       case 'status':
+      case 'chips':
       case 'text':
       case 'actions':
         return String(value);
     }
+  }
+
+  chipValues(row: T, column: DataTableColumn<T>): readonly string[] {
+    const value = this.getCellValue(row, column);
+    return Array.isArray(value)
+      ? value.filter((item) => item !== null && item !== undefined).map(String)
+      : value === null || value === undefined || value === ''
+        ? []
+        : [String(value)];
+  }
+
+  visibleChipValues(row: T, column: DataTableColumn<T>): readonly string[] {
+    return this.chipValues(row, column).slice(0, 3);
+  }
+
+  hiddenChipCount(row: T, column: DataTableColumn<T>): number {
+    return Math.max(0, this.chipValues(row, column).length - 3);
   }
 
   rowActions(row: T): readonly DataTableAction<T>[] {

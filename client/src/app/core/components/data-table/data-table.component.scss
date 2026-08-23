@@ -106,6 +106,25 @@ td {
   color: var(--text-primary);
 }
 
+.data-table__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.data-table__chips mat-chip {
+  --mdc-chip-container-shape-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--color-primary) 8%, var(--surface-color));
+}
+
+.data-table__chips-more {
+  align-self: center;
+  color: var(--text-secondary);
+  font-size: var(--font-size-caption);
+  font-weight: var(--font-weight-semibold);
+  white-space: nowrap;
+}
+
 .data-table__row--selected .mat-mdc-cell {
   background: color-mix(in srgb, var(--color-primary) 8%, var(--surface-color));
 }
