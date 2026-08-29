@@ -124,8 +124,8 @@ export class MemberDialogComponent {
     }),
     rg: new FormControl('', { nonNullable: true, validators: [Validators.maxLength(20)] }),
     birthDate: new FormControl<string | null>(null),
-    genderId: new FormControl<string | null>(null),
-    maritalStatusId: new FormControl<string | null>(null),
+    genderId: new FormControl<number | null>(null),
+    maritalStatusId: new FormControl<number | null>(null),
     nationality: new FormControl('Brasileiro', {
       nonNullable: true,
       validators: [Validators.maxLength(100)],
@@ -143,9 +143,9 @@ export class MemberDialogComponent {
     addresses: new FormArray<FormGroup>([]),
   });
   protected readonly professionalForm = new FormGroup({
-    educationLevelId: new FormControl<string | null>(null),
-    formationAreaId: new FormControl<string | null>(null),
-    professionId: new FormControl<string | null>(null),
+    educationLevelId: new FormControl<number | null>(null),
+    formationAreaId: new FormControl<number | null>(null),
+    professionId: new FormControl<number | null>(null),
   });
   protected readonly membershipForm = new FormGroup({
     id: new FormControl<string | null>(null),
@@ -154,11 +154,11 @@ export class MemberDialogComponent {
       nonNullable: true,
       validators: [Validators.required],
     }),
-    membershipStatusId: new FormControl('', {
+    membershipStatusId: new FormControl(0, {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.min(1)],
     }),
-    religiousOriginId: new FormControl<string | null>(null),
+    religiousOriginId: new FormControl<number | null>(null),
     pastorId: new FormControl<string | null>(null),
     isActive: new FormControl(true, { nonNullable: true }),
   });
@@ -233,9 +233,9 @@ export class MemberDialogComponent {
     this.phones.push(
       new FormGroup({
         id: new FormControl(value?.id ?? null),
-        phoneTypeId: new FormControl(value?.phoneTypeId ?? '', {
+        phoneTypeId: new FormControl(value?.phoneTypeId ?? 0, {
           nonNullable: true,
-          validators: [Validators.required],
+          validators: [Validators.required, Validators.min(1)],
         }),
         number: new FormControl(value?.number ?? '', {
           nonNullable: true,
@@ -249,9 +249,9 @@ export class MemberDialogComponent {
     this.addresses.push(
       new FormGroup({
         id: new FormControl(value?.id ?? null),
-        addressTypeId: new FormControl(value?.addressTypeId ?? '', {
+        addressTypeId: new FormControl(value?.addressTypeId ?? 0, {
           nonNullable: true,
-          validators: [Validators.required],
+          validators: [Validators.required, Validators.min(1)],
         }),
         zipCode: new FormControl(value?.zipCode ?? '', {
           nonNullable: true,
@@ -283,9 +283,9 @@ export class MemberDialogComponent {
     this.roles.push(
       new FormGroup({
         id: new FormControl(value?.id ?? null),
-        churchRoleId: new FormControl(value?.churchRoleId ?? '', {
+        churchRoleId: new FormControl(value?.churchRoleId ?? 0, {
           nonNullable: true,
-          validators: [Validators.required],
+          validators: [Validators.required, Validators.min(1)],
         }),
         startDate: new FormControl(value?.startDate?.slice(0, 10) ?? today(), {
           nonNullable: true,
@@ -312,7 +312,7 @@ export class MemberDialogComponent {
         activeParticipant: new FormControl(value?.activeParticipant ?? true, { nonNullable: true }),
         isLeader: new FormControl(!!value?.leadership, { nonNullable: true }),
         leadershipId: new FormControl(value?.leadership?.id ?? null),
-        leaderTypeId: new FormControl(value?.leadership?.leaderTypeId ?? null),
+        leaderTypeId: new FormControl<number | null>(value?.leadership?.leaderTypeId ?? null),
         leadershipStartDate: new FormControl(value?.leadership?.startDate?.slice(0, 10) ?? today()),
         leadershipEndDate: new FormControl(value?.leadership?.endDate?.slice(0, 10) ?? null),
         leadershipIsActive: new FormControl(value?.leadership?.isActive ?? true, {
@@ -473,12 +473,14 @@ export class MemberDialogComponent {
         x.controls['number'].setErrors({ duplicate: true });
     });
     const validateRows = (array: FormArray<FormGroup>, key: string, activeKey = 'isActive') => {
-      const active = new Set<string>();
+      const active = new Set<string | number>();
       array.controls.forEach((group) => {
         const start = String(group.controls['startDate'].value ?? '');
         const end = String(group.controls['endDate'].value ?? '');
         if (end && end < start) group.controls['endDate'].setErrors({ beforeStart: true });
-        const value = String(group.controls[key].value ?? '');
+        const rawValue: unknown = group.controls[key].value;
+        const value =
+          typeof rawValue === 'string' || typeof rawValue === 'number' ? rawValue : '';
         const isActive = !!group.controls[activeKey].value && !end;
         if (isActive && active.has(value)) group.controls[key].setErrors({ duplicate: true });
         if (isActive) active.add(value);

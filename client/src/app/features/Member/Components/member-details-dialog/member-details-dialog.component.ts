@@ -33,7 +33,7 @@ import { MemberService } from '../../Services/member.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MemberDetailsDialogComponent {
-  protected readonly data = inject<EntityDetailsDialogData>(MAT_DIALOG_DATA);
+  protected readonly data = inject<EntityDetailsDialogData<string>>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject<MatDialogRef<MemberDetailsDialogComponent>>(MatDialogRef);
   private readonly service = inject(MemberService);
   private readonly destroyRef = inject(DestroyRef);

@@ -32,7 +32,7 @@ export class EducationLevelService {
     );
   }
 
-  getById(id: string): Observable<EducationLevelListItem> {
+  getById(id: number): Observable<EducationLevelListItem> {
     return this.http
       .get<ApiResponse<EducationLevelApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -50,7 +50,7 @@ export class EducationLevelService {
       );
   }
 
-  update(id: string, request: UpdateEducationLevelRequest): Observable<EducationLevelListItem> {
+  update(id: number, request: UpdateEducationLevelRequest): Observable<EducationLevelListItem> {
     return this.http
       .put<ApiResponse<EducationLevelApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -63,7 +63,6 @@ export class EducationLevelService {
   private toListItem(item: EducationLevelApiDto): EducationLevelListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

@@ -4,7 +4,7 @@ export interface ChurchDepartmentApiDto {
   readonly id: string;
   readonly churchId: string;
   readonly churchName: string;
-  readonly departmentId: string;
+  readonly departmentId: number;
   readonly departmentName: string;
   readonly startDate: string;
   readonly isActive: boolean;
@@ -14,13 +14,13 @@ export interface ChurchDepartmentListItem extends ChurchDepartmentApiDto {}
 
 export interface CreateChurchDepartmentRequest {
   readonly churchId: string;
-  readonly departmentId: string;
+  readonly departmentId: number;
   readonly startDate: string;
 }
 
 export interface UpdateChurchDepartmentRequest {
   readonly churchId: string;
-  readonly departmentId: string;
+  readonly departmentId: number;
   readonly startDate: string;
   readonly isActive: boolean;
 }

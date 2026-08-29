@@ -1,7 +1,7 @@
 import { AuxiliaryListQuery, PagedResult } from '../../../core/models/auxiliary-data.models';
 
-export interface LookupItem {
-  readonly id: string;
+export interface LookupItem<TId extends string | number = string | number> {
+  readonly id: TId;
   readonly name: string;
   readonly isActive: boolean;
 }
@@ -21,8 +21,8 @@ export interface MemberData {
   readonly cpf: string;
   readonly rg: string | null;
   readonly birthDate: string | null;
-  readonly genderId: string | null;
-  readonly maritalStatusId: string | null;
+  readonly genderId: number | null;
+  readonly maritalStatusId: number | null;
   readonly nationality: string | null;
   readonly motherName: string | null;
   readonly fatherName: string | null;
@@ -31,13 +31,13 @@ export interface MemberData {
 }
 export interface MemberPhone {
   readonly id?: string;
-  readonly phoneTypeId: string;
+  readonly phoneTypeId: number;
   readonly number: string;
   readonly isActive: boolean;
 }
 export interface MemberAddress {
   readonly id?: string;
-  readonly addressTypeId: string;
+  readonly addressTypeId: number;
   readonly zipCode: string;
   readonly street: string;
   readonly number: string;
@@ -48,29 +48,29 @@ export interface MemberAddress {
   readonly isActive: boolean;
 }
 export interface ProfessionalInformation {
-  readonly educationLevelId: string | null;
-  readonly formationAreaId: string | null;
-  readonly professionId: string | null;
+  readonly educationLevelId: number | null;
+  readonly formationAreaId: number | null;
+  readonly professionId: number | null;
 }
 export interface MemberMembership {
   readonly id?: string;
   readonly churchId: string;
   readonly dateJoinedChurch: string;
-  readonly membershipStatusId: string;
-  readonly religiousOriginId: string | null;
+  readonly membershipStatusId: number;
+  readonly religiousOriginId: number | null;
   readonly pastorId: string | null;
   readonly isActive: boolean;
 }
 export interface MembershipRole {
   readonly id?: string;
-  readonly churchRoleId: string;
+  readonly churchRoleId: number;
   readonly startDate: string;
   readonly endDate: string | null;
   readonly isActive: boolean;
 }
 export interface DepartmentLeadership {
   readonly id?: string;
-  readonly leaderTypeId: string;
+  readonly leaderTypeId: number;
   readonly startDate: string;
   readonly endDate: string | null;
   readonly isActive: boolean;
@@ -101,7 +101,7 @@ export interface ChurchDepartmentLookup {
 }
 
 export interface CreateMembershipRoleRequest {
-  readonly churchRoleId: string;
+  readonly churchRoleId: number;
   readonly startDate: string;
 }
 
@@ -112,7 +112,7 @@ export interface UpdateMembershipRoleRequest extends CreateMembershipRoleRequest
 export interface CreateMemberDepartmentRequest {
   readonly churchDepartmentId: string;
   readonly startDate: string;
-  readonly leaderTypeId: string | null;
+  readonly leaderTypeId: number | null;
   readonly leadershipStartDate: string | null;
 }
 

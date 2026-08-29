@@ -31,7 +31,7 @@ export class ChurchesRegionService {
     return this.getAll().pipe(map((items) => paginateAuxiliaryItems(items, query)));
   }
 
-  getById(id: string): Observable<ChurchesRegionListItem> {
+  getById(id: number): Observable<ChurchesRegionListItem> {
     return this.http
       .get<ApiResponse<ChurchesRegionApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -53,7 +53,7 @@ export class ChurchesRegionService {
       );
   }
 
-  update(id: string, request: UpdateChurchesRegionRequest): Observable<ChurchesRegionListItem> {
+  update(id: number, request: UpdateChurchesRegionRequest): Observable<ChurchesRegionListItem> {
     return this.http
       .put<ApiResponse<ChurchesRegionApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -68,7 +68,6 @@ export class ChurchesRegionService {
   private toListItem(item: ChurchesRegionApiDto): ChurchesRegionListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

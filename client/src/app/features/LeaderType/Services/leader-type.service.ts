@@ -32,7 +32,7 @@ export class LeaderTypeService {
     );
   }
 
-  getById(id: string): Observable<LeaderTypeListItem> {
+  getById(id: number): Observable<LeaderTypeListItem> {
     return this.http
       .get<ApiResponse<LeaderTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class LeaderTypeService {
       );
   }
 
-  update(id: string, request: UpdateLeaderTypeRequest): Observable<LeaderTypeListItem> {
+  update(id: number, request: UpdateLeaderTypeRequest): Observable<LeaderTypeListItem> {
     return this.http
       .put<ApiResponse<LeaderTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -69,7 +69,6 @@ export class LeaderTypeService {
   private toListItem(item: LeaderTypeApiDto): LeaderTypeListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

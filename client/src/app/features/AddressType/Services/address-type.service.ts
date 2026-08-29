@@ -32,7 +32,7 @@ export class AddressTypeService {
     );
   }
 
-  getById(id: string): Observable<AddressTypeListItem> {
+  getById(id: number): Observable<AddressTypeListItem> {
     return this.http
       .get<ApiResponse<AddressTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class AddressTypeService {
       );
   }
 
-  update(id: string, request: UpdateAddressTypeRequest): Observable<AddressTypeListItem> {
+  update(id: number, request: UpdateAddressTypeRequest): Observable<AddressTypeListItem> {
     return this.http
       .put<ApiResponse<AddressTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -69,7 +69,6 @@ export class AddressTypeService {
   private toListItem(item: AddressTypeApiDto): AddressTypeListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

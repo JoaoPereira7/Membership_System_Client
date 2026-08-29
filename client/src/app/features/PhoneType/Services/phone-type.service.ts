@@ -32,7 +32,7 @@ export class PhoneTypeService {
     );
   }
 
-  getById(id: string): Observable<PhoneTypeListItem> {
+  getById(id: number): Observable<PhoneTypeListItem> {
     return this.http
       .get<ApiResponse<PhoneTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class PhoneTypeService {
       );
   }
 
-  update(id: string, request: UpdatePhoneTypeRequest): Observable<PhoneTypeListItem> {
+  update(id: number, request: UpdatePhoneTypeRequest): Observable<PhoneTypeListItem> {
     return this.http
       .put<ApiResponse<PhoneTypeApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -69,7 +69,6 @@ export class PhoneTypeService {
   private toListItem(item: PhoneTypeApiDto): PhoneTypeListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

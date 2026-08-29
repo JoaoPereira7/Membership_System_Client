@@ -32,7 +32,7 @@ export class FormationAreaService {
     );
   }
 
-  getById(id: string): Observable<FormationAreaListItem> {
+  getById(id: number): Observable<FormationAreaListItem> {
     return this.http
       .get<ApiResponse<FormationAreaApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class FormationAreaService {
       );
   }
 
-  update(id: string, request: UpdateFormationAreaRequest): Observable<FormationAreaListItem> {
+  update(id: number, request: UpdateFormationAreaRequest): Observable<FormationAreaListItem> {
     return this.http
       .put<ApiResponse<FormationAreaApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -69,7 +69,6 @@ export class FormationAreaService {
   private toListItem(item: FormationAreaApiDto): FormationAreaListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

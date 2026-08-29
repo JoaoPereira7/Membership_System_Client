@@ -71,10 +71,10 @@ export class ChurchDialogComponent {
       [Validators.required, Validators.maxLength(150), nonBlankValidator()],
     ],
     parentChurchId: this.formBuilder.control<string | null>(this.item?.parentChurchId ?? null),
-    churchesCategoryId: this.formBuilder.control<string | null>(
+    churchesCategoryId: this.formBuilder.control<number | null>(
       this.item?.churchesCategoryId ?? null,
     ),
-    churchesRegionId: this.formBuilder.control<string | null>(this.item?.churchesRegionId ?? null),
+    churchesRegionId: this.formBuilder.control<number | null>(this.item?.churchesRegionId ?? null),
     isActive: this.item?.isActive ?? true,
   });
 

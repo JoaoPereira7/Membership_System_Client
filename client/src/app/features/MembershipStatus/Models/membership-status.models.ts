@@ -1,8 +1,7 @@
 import { AuxiliaryListItemBase } from '../../../core/models/auxiliary-data.models';
 
 export interface MembershipStatusApiDto {
-  readonly id: string;
-  readonly code: number;
+  readonly id: number;
   readonly name: string;
   readonly normalizedName?: string;
   readonly isActive?: boolean;

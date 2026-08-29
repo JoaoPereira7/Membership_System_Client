@@ -11,26 +11,21 @@ export interface PagedResult<T> {
   readonly totalItems: number;
 }
 
-export interface AuxiliaryListItemBase {
-  readonly id: string;
-  readonly code: number;
+export interface AuxiliaryListItemBase<TId extends string | number = number> {
+  readonly id: TId;
   readonly name: string;
   readonly isActive: boolean;
   readonly createdDate: string;
   readonly updateDate: string;
 }
 
-export function paginateAuxiliaryItems<T extends AuxiliaryListItemBase>(
+export function paginateAuxiliaryItems<T extends AuxiliaryListItemBase<string | number>>(
   items: readonly T[],
   query: AuxiliaryListQuery,
 ): PagedResult<T> {
   const normalizedSearch = query.search.trim().toLocaleLowerCase('pt-BR');
   const filteredItems = normalizedSearch
-    ? items.filter(
-        (item) =>
-          item.name.toLocaleLowerCase('pt-BR').includes(normalizedSearch) ||
-          String(item.code).includes(normalizedSearch),
-      )
+    ? items.filter((item) => item.name.toLocaleLowerCase('pt-BR').includes(normalizedSearch))
     : [...items];
   const sortedItems = sortAuxiliaryItems(filteredItems, query);
   const start = query.pageIndex * query.pageSize;
@@ -41,7 +36,7 @@ export function paginateAuxiliaryItems<T extends AuxiliaryListItemBase>(
   };
 }
 
-function sortAuxiliaryItems<T extends AuxiliaryListItemBase>(
+function sortAuxiliaryItems<T extends AuxiliaryListItemBase<string | number>>(
   items: readonly T[],
   query: AuxiliaryListQuery,
 ): readonly T[] {

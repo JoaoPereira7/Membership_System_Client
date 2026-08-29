@@ -6,9 +6,9 @@ export interface ChurchApiDto {
   readonly normalizedName?: string;
   readonly parentChurchId?: string | null;
   readonly parentChurchName?: string | null;
-  readonly churchesCategoryId?: string | null;
+  readonly churchesCategoryId?: number | null;
   readonly churchesCategoryName?: string | null;
-  readonly churchesRegionId?: string | null;
+  readonly churchesRegionId?: number | null;
   readonly churchesRegionName?: string | null;
   readonly isActive?: boolean;
 }
@@ -18,9 +18,9 @@ export interface ChurchListItem {
   readonly name: string;
   readonly parentChurchId: string | null;
   readonly parentChurchName: string;
-  readonly churchesCategoryId: string | null;
+  readonly churchesCategoryId: number | null;
   readonly churchesCategoryName: string;
-  readonly churchesRegionId: string | null;
+  readonly churchesRegionId: number | null;
   readonly churchesRegionName: string;
   readonly isActive: boolean;
 }
@@ -28,15 +28,15 @@ export interface ChurchListItem {
 export interface CreateChurchRequest {
   readonly name: string;
   readonly parentChurchId: string | null;
-  readonly churchesCategoryId: string | null;
-  readonly churchesRegionId: string | null;
+  readonly churchesCategoryId: number | null;
+  readonly churchesRegionId: number | null;
 }
 
 export interface UpdateChurchRequest {
   readonly name: string;
   readonly parentChurchId: string | null;
-  readonly churchesCategoryId: string | null;
-  readonly churchesRegionId: string | null;
+  readonly churchesCategoryId: number | null;
+  readonly churchesRegionId: number | null;
   readonly isActive: boolean;
 }
 

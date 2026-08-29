@@ -1,7 +1,7 @@
 import { AuxiliaryListQuery, PagedResult } from '../../../core/models/auxiliary-data.models';
 
 export interface MinisterialTeamRole {
-  readonly churchRoleId: string;
+  readonly churchRoleId: number;
   readonly churchRoleName: string;
 }
 

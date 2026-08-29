@@ -31,7 +31,7 @@ export class DepartmentService {
     return this.getAll().pipe(map((items) => paginateAuxiliaryItems(items, query)));
   }
 
-  getById(id: string): Observable<DepartmentListItem> {
+  getById(id: number): Observable<DepartmentListItem> {
     return this.http
       .get<ApiResponse<DepartmentApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -49,7 +49,7 @@ export class DepartmentService {
       );
   }
 
-  update(id: string, request: UpdateDepartmentRequest): Observable<DepartmentListItem> {
+  update(id: number, request: UpdateDepartmentRequest): Observable<DepartmentListItem> {
     return this.http
       .put<ApiResponse<DepartmentApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -62,7 +62,6 @@ export class DepartmentService {
   private toListItem(item: DepartmentApiDto): DepartmentListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

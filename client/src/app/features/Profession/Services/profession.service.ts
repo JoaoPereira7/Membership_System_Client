@@ -32,7 +32,7 @@ export class ProfessionService {
     );
   }
 
-  getById(id: string): Observable<ProfessionListItem> {
+  getById(id: number): Observable<ProfessionListItem> {
     return this.http
       .get<ApiResponse<ProfessionApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -50,7 +50,7 @@ export class ProfessionService {
       );
   }
 
-  update(id: string, request: UpdateProfessionRequest): Observable<ProfessionListItem> {
+  update(id: number, request: UpdateProfessionRequest): Observable<ProfessionListItem> {
     return this.http
       .put<ApiResponse<ProfessionApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -63,7 +63,6 @@ export class ProfessionService {
   private toListItem(item: ProfessionApiDto): ProfessionListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

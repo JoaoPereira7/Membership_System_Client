@@ -8,9 +8,9 @@ import { finalize, map } from 'rxjs';
 import { ApiResponse, getApiErrorMessage, unwrapApiData } from '../../api/api.models';
 import { NotificationService } from '../../services/notification.service';
 
-export interface EntityDeleteDialogData {
+export interface EntityDeleteDialogData<TId extends string | number = string | number> {
   readonly endpoint: string;
-  readonly id: string;
+  readonly id: TId;
   readonly entityLabel: string;
   readonly recordName: string;
 }

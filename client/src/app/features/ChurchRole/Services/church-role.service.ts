@@ -32,7 +32,7 @@ export class ChurchRoleService {
     );
   }
 
-  getById(id: string): Observable<ChurchRoleListItem> {
+  getById(id: number): Observable<ChurchRoleListItem> {
     return this.http
       .get<ApiResponse<ChurchRoleApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class ChurchRoleService {
       );
   }
 
-  update(id: string, request: UpdateChurchRoleRequest): Observable<ChurchRoleListItem> {
+  update(id: number, request: UpdateChurchRoleRequest): Observable<ChurchRoleListItem> {
     return this.http
       .put<ApiResponse<ChurchRoleApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -69,7 +69,6 @@ export class ChurchRoleService {
   private toListItem(item: ChurchRoleApiDto): ChurchRoleListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

@@ -32,7 +32,7 @@ export class ReligiousOriginService {
     );
   }
 
-  getById(id: string): Observable<ReligiousOriginListItem> {
+  getById(id: number): Observable<ReligiousOriginListItem> {
     return this.http
       .get<ApiResponse<ReligiousOriginApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -54,7 +54,7 @@ export class ReligiousOriginService {
       );
   }
 
-  update(id: string, request: UpdateReligiousOriginRequest): Observable<ReligiousOriginListItem> {
+  update(id: number, request: UpdateReligiousOriginRequest): Observable<ReligiousOriginListItem> {
     return this.http
       .put<ApiResponse<ReligiousOriginApiDto>>(
         `${this.endpoint}/${encodeURIComponent(id)}`,
@@ -72,7 +72,6 @@ export class ReligiousOriginService {
   private toListItem(item: ReligiousOriginApiDto): ReligiousOriginListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

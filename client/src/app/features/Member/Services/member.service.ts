@@ -82,12 +82,12 @@ export class MemberService {
       .pipe(map((response) => (response.data ?? []).filter((item) => item.isActive)));
   }
 
-  getChurchRoles(): Observable<readonly LookupItem[]> {
-    return this.getActiveLookup('ChurchRole');
+  getChurchRoles(): Observable<readonly LookupItem<number>[]> {
+    return this.getActiveLookup<number>('ChurchRole');
   }
 
-  getLeaderTypes(): Observable<readonly LookupItem[]> {
-    return this.getActiveLookup('LeaderType');
+  getLeaderTypes(): Observable<readonly LookupItem<number>[]> {
+    return this.getActiveLookup<number>('LeaderType');
   }
 
   createMembershipRole(memberId: string, payload: CreateMembershipRoleRequest): Observable<void> {
@@ -176,9 +176,11 @@ export class MemberService {
       );
   }
 
-  private getActiveLookup(endpoint: string): Observable<readonly LookupItem[]> {
+  private getActiveLookup<TId extends string | number>(
+    endpoint: string,
+  ): Observable<readonly LookupItem<TId>[]> {
     return this.http
-      .get<ApiResponse<readonly LookupItem[]>>(`${environment.apiBaseUrl}/${endpoint}`)
+      .get<ApiResponse<readonly LookupItem<TId>[]>>(`${environment.apiBaseUrl}/${endpoint}`)
       .pipe(map((response) => (response.data ?? []).filter((item) => item.isActive !== false)));
   }
 

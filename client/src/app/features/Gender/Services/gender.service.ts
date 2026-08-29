@@ -33,7 +33,7 @@ export class GenderService {
     );
   }
 
-  getById(id: string): Observable<GenderListItem> {
+  getById(id: number): Observable<GenderListItem> {
     return this.http
       .get<ApiResponse<GenderApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(map((response) => this.toListItem(unwrapApiData(response, 'Gênero não encontrado.'))));
@@ -49,7 +49,7 @@ export class GenderService {
       );
   }
 
-  update(id: string, request: UpdateGenderRequest): Observable<GenderListItem> {
+  update(id: number, request: UpdateGenderRequest): Observable<GenderListItem> {
     return this.http
       .put<ApiResponse<GenderApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -62,7 +62,6 @@ export class GenderService {
   private toListItem(item: GenderApiDto): GenderListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

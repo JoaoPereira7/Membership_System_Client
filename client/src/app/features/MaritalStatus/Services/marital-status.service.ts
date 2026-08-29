@@ -32,7 +32,7 @@ export class MaritalStatusService {
     );
   }
 
-  getById(id: string): Observable<MaritalStatusListItem> {
+  getById(id: number): Observable<MaritalStatusListItem> {
     return this.http
       .get<ApiResponse<MaritalStatusApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`)
       .pipe(
@@ -50,7 +50,7 @@ export class MaritalStatusService {
       );
   }
 
-  update(id: string, request: UpdateMaritalStatusRequest): Observable<MaritalStatusListItem> {
+  update(id: number, request: UpdateMaritalStatusRequest): Observable<MaritalStatusListItem> {
     return this.http
       .put<ApiResponse<MaritalStatusApiDto>>(`${this.endpoint}/${encodeURIComponent(id)}`, request)
       .pipe(
@@ -63,7 +63,6 @@ export class MaritalStatusService {
   private toListItem(item: MaritalStatusApiDto): MaritalStatusListItem {
     return {
       id: item.id,
-      code: item.code,
       name: item.name,
       isActive: item.isActive ?? true,
       createdDate: item.createdDate ?? '',

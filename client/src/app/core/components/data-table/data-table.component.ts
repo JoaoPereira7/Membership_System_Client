@@ -540,8 +540,8 @@ export class AppDataTableComponent<T extends object> {
   private handleCrudAction(actionId: '__view' | '__delete', row: T): void {
     const config = this.crudConfig();
     const record = row as Record<string, unknown>;
-    const id = String(record['id'] ?? '');
-    if (!config || !id) return;
+    const id = record['id'];
+    if (!config || !this.isEntityId(id)) return;
 
     const recordName = String(
       record['name'] ??
@@ -570,6 +570,13 @@ export class AppDataTableComponent<T extends object> {
       .subscribe((deleted) => {
         if (deleted) this.emitQuery(this.pageIndex(), this.pageSize());
       });
+  }
+
+  private isEntityId(value: unknown): value is string | number {
+    return (
+      (typeof value === 'string' && value.trim().length > 0) ||
+      (typeof value === 'number' && Number.isInteger(value) && value > 0)
+    );
   }
 
   private compareValues(first: unknown, second: unknown): number {

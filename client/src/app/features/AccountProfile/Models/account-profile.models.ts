@@ -13,7 +13,8 @@ export interface AccountProfileApiDto {
   readonly isActive?: boolean;
 }
 
-export interface AccountProfileListItem extends AuxiliaryListItemBase {
+export interface AccountProfileListItem extends AuxiliaryListItemBase<string> {
+  readonly code: number;
   readonly description: string;
 }
 

@@ -13,7 +13,7 @@ import {
 
 export interface EntityDialogOptions {
   readonly endpoint: string;
-  readonly id: string;
+  readonly id: string | number;
   readonly title: string;
   readonly entityLabel: string;
   readonly recordName: string;

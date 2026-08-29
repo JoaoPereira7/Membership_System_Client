@@ -75,7 +75,7 @@ export class MemberDepartmentsDialogComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly member = signal<CompleteMember | null>(null);
   protected readonly departments = signal<readonly ChurchDepartmentLookup[]>([]);
-  protected readonly leaderTypes = signal<readonly LookupItem[]>([]);
+  protected readonly leaderTypes = signal<readonly LookupItem<number>[]>([]);
 
   protected readonly currentDepartments = computed<readonly MemberDepartment[]>(() =>
     (this.member()?.memberDepartments ?? []).filter((department) => department.activeParticipant),
@@ -106,7 +106,7 @@ export class MemberDepartmentsDialogComponent {
     endDate: new FormControl<string | null>(null),
     activeParticipant: new FormControl(true, { nonNullable: true }),
     isLeader: new FormControl(false, { nonNullable: true }),
-    leaderTypeId: new FormControl<string | null>(null),
+    leaderTypeId: new FormControl<number | null>(null),
     leadershipStartDate: new FormControl<string | null>(null),
     leadershipEndDate: new FormControl<string | null>(null),
   });
@@ -128,14 +128,15 @@ export class MemberDepartmentsDialogComponent {
     this.load();
   }
 
-  protected departmentName(departmentId: string): string {
+  protected departmentName(churchDepartmentId: string): string {
     return (
-      this.departments().find((department) => department.id === departmentId)?.departmentName ??
+      this.departments().find((department) => department.id === churchDepartmentId)
+        ?.departmentName ??
       'Departamento não encontrado'
     );
   }
 
-  protected leaderTypeName(leaderTypeId: string): string {
+  protected leaderTypeName(leaderTypeId: number): string {
     return (
       this.leaderTypes().find((leaderType) => leaderType.id === leaderTypeId)?.name ??
       'Cargo não encontrado'
@@ -333,7 +334,7 @@ export class MemberDepartmentsDialogComponent {
     const leadershipStartDate = this.form.controls.leadershipStartDate;
     const leadershipEndDate = this.form.controls.leadershipEndDate;
     if (isLeader) {
-      leaderType.setValidators(Validators.required);
+      leaderType.setValidators([Validators.required, Validators.min(1)]);
       leadershipStartDate.setValidators(Validators.required);
       if (!leadershipStartDate.value) leadershipStartDate.setValue(today());
     } else {
@@ -368,7 +369,7 @@ export class MemberDepartmentsDialogComponent {
     endDate: string | null;
     activeParticipant: boolean;
     isLeader: boolean;
-    leaderTypeId: string | null;
+    leaderTypeId: number | null;
     leadershipStartDate: string | null;
     leadershipEndDate: string | null;
   }): void {

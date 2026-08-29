@@ -68,12 +68,12 @@ export class MemberRolesDialogComponent {
   protected readonly editingId = signal<string | null>(null);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly member = signal<CompleteMember | null>(null);
-  protected readonly roles = signal<readonly LookupItem[]>([]);
+  protected readonly roles = signal<readonly LookupItem<number>[]>([]);
 
   protected readonly currentRoles = computed<readonly MembershipRole[]>(() =>
     (this.member()?.membershipRoles ?? []).filter((role) => role.isActive),
   );
-  protected readonly availableRoles = computed<readonly LookupItem[]>(() => {
+  protected readonly availableRoles = computed<readonly LookupItem<number>[]>(() => {
     const editingId = this.editingId();
     const assignedIds = new Set(
       this.currentRoles()
@@ -84,9 +84,9 @@ export class MemberRolesDialogComponent {
   });
 
   protected readonly form = new FormGroup({
-    churchRoleId: new FormControl('', {
+    churchRoleId: new FormControl(0, {
       nonNullable: true,
-      validators: [Validators.required],
+      validators: [Validators.required, Validators.min(1)],
     }),
     startDate: new FormControl(today(), {
       nonNullable: true,
@@ -107,7 +107,7 @@ export class MemberRolesDialogComponent {
     this.load();
   }
 
-  protected roleName(roleId: string): string {
+  protected roleName(roleId: number): string {
     return this.roles().find((role) => role.id === roleId)?.name ?? 'Cargo não encontrado';
   }
 
@@ -272,11 +272,11 @@ export class MemberRolesDialogComponent {
 
   private resetForm(): void {
     this.editingId.set(null);
-    this.resetFormState({ churchRoleId: '', startDate: today(), endDate: null });
+    this.resetFormState({ churchRoleId: 0, startDate: today(), endDate: null });
   }
 
   private resetFormState(value: {
-    churchRoleId: string;
+    churchRoleId: number;
     startDate: string;
     endDate: string | null;
   }): void {

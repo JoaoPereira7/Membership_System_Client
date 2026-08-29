@@ -74,7 +74,10 @@ export class ChurchDepartmentDialogComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly form = this.formBuilder.group({
     churchId: [this.item?.churchId ?? '', Validators.required],
-    departmentId: [this.item?.departmentId ?? '', Validators.required],
+    departmentId: [
+      this.item?.departmentId ?? 0,
+      [Validators.required, Validators.min(1)],
+    ],
     startDate: [this.item?.startDate.slice(0, 10) ?? this.today(), Validators.required],
     isActive: this.item?.isActive ?? true,
   });
