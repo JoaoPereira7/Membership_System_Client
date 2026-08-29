@@ -41,15 +41,24 @@
       </div>
 
       <div class="permissions-dialog__grid">
-        @for (permission of permissions(); track permission.id) {
+        @for (group of groups(); track group.resource) {
+          <div class="permissions-dialog__group">
+            <strong>{{ group.label }}</strong>
+            <div class="permissions-dialog__actions">
+            @for (action of actions; track action) {
+              @if (permissionFor(group.resource, action)) {
           <mat-checkbox
             class="permissions-dialog__option"
-            [checked]="selectedPermissionIds().has(permission.id)"
+            [checked]="selectedPermissionIds().has(permissionFor(group.resource, action)!.id)"
             [disabled]="saving()"
-            (change)="togglePermission(permission.id, $event.checked)"
+            (change)="togglePermission(permissionFor(group.resource, action)!.id, $event.checked)"
           >
-            {{ permissionLabel(permission) }}
+            {{ actionLabel(action) }}
           </mat-checkbox>
+              }
+            }
+            </div>
+          </div>
         } @empty {
           <p class="permissions-dialog__empty">Nenhuma tela disponível para configuração.</p>
         }

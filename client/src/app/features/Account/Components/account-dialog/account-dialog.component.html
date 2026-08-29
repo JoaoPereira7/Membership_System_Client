@@ -23,6 +23,19 @@
       </mat-form-field>
 
       <mat-form-field class="account-dialog__full-width" appearance="outline">
+        <mat-label>Igreja</mat-label>
+        <mat-select formControlName="churchId">
+          <mat-option [value]="null">Todas as igrejas (acesso global)</mat-option>
+          @for (church of churches(); track church.id) {
+            <mat-option [value]="church.id">{{ church.name }}</mat-option>
+          }
+        </mat-select>
+        @if (loadingChurches()) {
+          <mat-hint>Carregando igrejas...</mat-hint>
+        }
+      </mat-form-field>
+
+      <mat-form-field class="account-dialog__full-width" appearance="outline">
         <mat-label>E-mail</mat-label>
         <input matInput type="email" formControlName="email" autocomplete="email" />
         @if (form.controls.email.hasError('required')) {
@@ -102,7 +115,7 @@
       mat-flat-button
       color="primary"
       type="submit"
-      [disabled]="saving() || loadingProfiles()"
+      [disabled]="saving() || loadingProfiles() || loadingChurches()"
     >
       @if (saving()) {
         <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />

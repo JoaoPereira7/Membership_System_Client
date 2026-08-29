@@ -9,6 +9,7 @@ export interface AuthenticatedUser {
   readonly name: string;
   readonly email: string;
   readonly accountProfileId: string;
+  readonly churchId?: string | null;
 }
 
 export interface LoginResponse {

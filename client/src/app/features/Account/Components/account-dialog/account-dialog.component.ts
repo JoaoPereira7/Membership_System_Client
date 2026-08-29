@@ -21,6 +21,8 @@ import { AccountProfileListItem } from '../../../AccountProfile/Models/account-p
 import { AccountProfileService } from '../../../AccountProfile/Services/account-profile.service';
 import { CreateAccountRequest, UpdateAccountRequest } from '../../Models/account.models';
 import { AccountService } from '../../Services/account.service';
+import { ChurchListItem } from '../../../Church/Models/church.models';
+import { ChurchService } from '../../../Church/Services/church.service';
 import { AccountDialogData, AccountDialogResult } from './account-dialog.types';
 
 @Component({
@@ -49,6 +51,7 @@ export class AccountDialogComponent {
   private readonly formBuilder = inject(FormBuilder).nonNullable;
   private readonly service = inject(AccountService);
   private readonly accountProfileService = inject(AccountProfileService);
+  private readonly churchService = inject(ChurchService);
   private readonly notification = inject(NotificationService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -57,7 +60,9 @@ export class AccountDialogComponent {
   protected readonly title = this.isEdit ? 'Editar usuário' : 'Novo usuário';
   protected readonly saving = signal(false);
   protected readonly loadingProfiles = signal(true);
+  protected readonly loadingChurches = signal(true);
   protected readonly profiles = signal<readonly AccountProfileListItem[]>([]);
+  protected readonly churches = signal<readonly ChurchListItem[]>([]);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly form = this.formBuilder.group({
     name: [this.item?.name ?? '', [Validators.required, nonBlankValidator()]],
@@ -71,6 +76,7 @@ export class AccountDialogComponent {
       this.isEdit ? [Validators.minLength(6)] : [Validators.required, Validators.minLength(6)],
     ],
     accountProfileId: [this.item?.accountProfileId ?? '', Validators.required],
+    churchId: [this.item?.churchId ?? null],
     isActive: this.item?.isActive ?? true,
   });
 
@@ -88,6 +94,21 @@ export class AccountDialogComponent {
             error,
             'Não foi possível carregar os perfis de acesso.',
           );
+          this.errorMessage.set(message);
+          this.notification.error(message);
+        },
+      });
+
+    this.churchService
+      .getAll()
+      .pipe(
+        finalize(() => this.loadingChurches.set(false)),
+        takeUntilDestroyed(),
+      )
+      .subscribe({
+        next: (churches) => this.churches.set(churches),
+        error: (error: unknown) => {
+          const message = getApiErrorMessage(error, 'Não foi possível carregar as igrejas.');
           this.errorMessage.set(message);
           this.notification.error(message);
         },
@@ -121,6 +142,7 @@ export class AccountDialogComponent {
       email,
       cpf,
       accountProfileId: this.form.controls.accountProfileId.value,
+      churchId: this.form.controls.churchId.value,
     };
     const operation = this.isEdit
       ? this.service.update(this.item!.id, {

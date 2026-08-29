@@ -63,6 +63,19 @@
   border-radius: var(--radius-sm);
 }
 
+.permissions-dialog__group {
+  display: grid;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--color-border, #e0e0e0);
+}
+
+.permissions-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
 .permissions-dialog__option:hover {
   background: color-mix(in srgb, var(--color-primary) 6%, transparent);
 }

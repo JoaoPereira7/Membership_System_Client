@@ -441,7 +441,7 @@
             >
             <mat-form-field
               ><mat-label>Pastor responsável</mat-label
-              ><mat-select formControlName="pastorId"
+              ><mat-select formControlName="pastorId" [disabled]="!membershipForm.controls.churchId.value || pastorsLoading()"
                 ><mat-option [value]="null">Não informado</mat-option>
                 @for (item of lookup('pastors'); track item.id) {
                   <mat-option [value]="item.id">{{ item.name }}</mat-option>

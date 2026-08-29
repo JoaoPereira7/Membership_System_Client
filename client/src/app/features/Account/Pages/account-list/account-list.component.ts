@@ -73,6 +73,13 @@ export class AccountListComponent {
       formatter: (value) => this.formatCpf(String(value)),
     },
     {
+      key: 'churchName',
+      label: 'Igreja',
+      type: 'text',
+      sortable: true,
+      minWidth: '190px',
+    },
+    {
       key: 'accountProfileName',
       label: 'Perfil de acesso',
       type: 'text',

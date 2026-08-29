@@ -83,7 +83,7 @@ export class AccountProfileService {
         map((response) =>
           (response.data ?? []).filter(
             (permission) =>
-              permission.isActive && permission.normalizedName.toUpperCase().endsWith('_VIEW'),
+              permission.isActive && /_(VIEW|CREATE|UPDATE|DELETE)$/i.test(permission.normalizedName),
           ),
         ),
       );

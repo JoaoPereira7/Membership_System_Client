@@ -64,7 +64,6 @@ export class MemberService {
       religiousOrigins: 'ReligiousOrigin',
       churchRoles: 'ChurchRole',
       leaderTypes: 'LeaderType',
-      pastors: 'Member/pastors',
     };
     const requests: Record<string, Observable<readonly LookupItem[]>> = {};
     Object.entries(endpoints).forEach(([key, endpoint]) => {
@@ -86,6 +85,14 @@ export class MemberService {
     return this.getActiveLookup<number>('ChurchRole');
   }
 
+  getPastorsByChurch(churchId: string): Observable<readonly LookupItem[]> {
+    return this.http
+      .get<ApiResponse<readonly LookupItem[]>>(`${environment.apiBaseUrl}/Member/pastors`, {
+        params: new HttpParams().set('churchId', churchId),
+      })
+      .pipe(map((response) => (response.data ?? []).filter((item) => item.isActive !== false)));
+  }
+
   getLeaderTypes(): Observable<readonly LookupItem<number>[]> {
     return this.getActiveLookup<number>('LeaderType');
   }
@@ -98,7 +105,7 @@ export class MemberService {
       )
       .pipe(
         map((response) =>
-          this.completeOperation(response, 'NÃ£o foi possÃ­vel adicionar o cargo.'),
+          this.completeOperation(response, 'Não foi possível adicionar o cargo.'),
         ),
       );
   }
@@ -124,7 +131,7 @@ export class MemberService {
         `${environment.apiBaseUrl}/MembershipRole/${encodeURIComponent(id)}`,
       )
       .pipe(
-        map((response) => this.completeOperation(response, 'NÃ£o foi possÃ­vel remover o cargo.')),
+        map((response) => this.completeOperation(response, 'Não foi possível remover o cargo.')),
       );
   }
 
@@ -141,7 +148,7 @@ export class MemberService {
         map((response) =>
           this.completeOperation(
             response,
-            'NÃ£o foi possÃ­vel adicionar o departamento e seu cargo.',
+            'Não foi possível adicionar o departamento e seu cargo.',
           ),
         ),
       );
@@ -171,7 +178,7 @@ export class MemberService {
       )
       .pipe(
         map((response) =>
-          this.completeOperation(response, 'NÃ£o foi possÃ­vel remover o departamento.'),
+          this.completeOperation(response, 'Não foi possível remover o departamento.'),
         ),
       );
   }

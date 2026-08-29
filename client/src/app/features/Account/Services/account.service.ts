@@ -85,6 +85,8 @@ export class AccountService {
       email: item.email,
       cpf: item.cpf,
       accountProfileId: item.accountProfileId,
+      churchId: item.churchId ?? null,
+      churchName: item.churchName ?? 'Todas as igrejas',
       accountProfileName: accountProfileName ?? 'Perfil não encontrado',
       isActive: item.isActive ?? true,
     };

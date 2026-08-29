@@ -34,7 +34,7 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     label: 'Equipe Ministerial',
     icon: 'workspace_premium',
     route: '/ministerial-team',
-    permission: 'MEMBER_VIEW',
+    permission: 'MINISTERIAL_TEAM_VIEW',
   },
   {
     id: 'administration',

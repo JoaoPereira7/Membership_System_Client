@@ -19,8 +19,11 @@ import {
 const SCREEN_LABELS: Readonly<Record<string, string>> = {
   DASHBOARD_VIEW: 'Início / Dashboard',
   MEMBER_VIEW: 'Membros',
+  MINISTERIAL_TEAM_VIEW: 'Equipe Ministerial',
   CHURCH_VIEW: 'Igrejas',
   CHURCH_DEPARTMENT_VIEW: 'Departamentos por Igreja',
+  CHURCHES_CATEGORY_VIEW: 'Categorias de Igrejas',
+  CHURCHES_REGION_VIEW: 'Regiões de Igrejas',
   ACCOUNT_VIEW: 'Usuários',
   ACCOUNT_PROFILE_VIEW: 'Perfis de acesso',
   GENDER_VIEW: 'Gêneros',
@@ -38,6 +41,8 @@ const SCREEN_LABELS: Readonly<Record<string, string>> = {
 };
 
 const SCREEN_ORDER = Object.keys(SCREEN_LABELS);
+const ACTIONS = ['VIEW', 'CREATE', 'UPDATE', 'DELETE'] as const;
+type PermissionAction = (typeof ACTIONS)[number];
 
 @Component({
   selector: 'app-account-profile-permissions-dialog',
@@ -65,10 +70,31 @@ export class AccountProfilePermissionsDialogComponent {
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly profile = this.data.profile;
+  protected readonly actions = ACTIONS;
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly permissions = signal<readonly PermissionApiDto[]>([]);
+  protected readonly groups = computed(() => {
+    const byResource = new Map<string, PermissionApiDto[]>();
+    for (const permission of this.permissions()) {
+      const resource = permission.normalizedName.replace(/_(VIEW|CREATE|UPDATE|DELETE)$/i, '');
+      const group = byResource.get(resource) ?? [];
+      group.push(permission);
+      byResource.set(resource, group);
+    }
+    return [...byResource.entries()]
+      .sort(([left], [right]) => {
+        const leftIndex = SCREEN_ORDER.indexOf(`${left}_VIEW`);
+        const rightIndex = SCREEN_ORDER.indexOf(`${right}_VIEW`);
+        return (leftIndex < 0 ? SCREEN_ORDER.length : leftIndex) - (rightIndex < 0 ? SCREEN_ORDER.length : rightIndex);
+      })
+      .map(([resource, permissions]) => ({
+        resource,
+        label: SCREEN_LABELS[`${resource}_VIEW`] ?? resource,
+        permissions,
+      }));
+  });
   protected readonly selectedPermissionIds = signal<ReadonlySet<string>>(new Set());
   protected readonly selectedCount = computed(() => this.selectedPermissionIds().size);
   protected readonly allSelected = computed(
@@ -108,6 +134,16 @@ export class AccountProfilePermissionsDialogComponent {
 
   protected permissionLabel(permission: PermissionApiDto): string {
     return SCREEN_LABELS[permission.normalizedName.toUpperCase()] ?? permission.name;
+  }
+
+  protected permissionFor(resource: string, action: PermissionAction): PermissionApiDto | undefined {
+    return this.permissions().find(
+      (permission) => permission.normalizedName.toUpperCase() === `${resource}_${action}`,
+    );
+  }
+
+  protected actionLabel(action: PermissionAction): string {
+    return { VIEW: 'Visualizar', CREATE: 'Inserir', UPDATE: 'Atualizar', DELETE: 'Deletar' }[action];
   }
 
   protected togglePermission(permissionId: string, checked: boolean): void {

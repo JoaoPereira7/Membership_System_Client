@@ -77,6 +77,7 @@ export class MemberDialogComponent {
   protected readonly editing = this.data.mode === 'edit';
   protected readonly loading = signal(true);
   protected readonly saving = signal(false);
+  protected readonly pastorsLoading = signal(false);
   protected readonly lookups = signal<Record<string, readonly LookupItem[]>>({});
   protected readonly educationLevelSearch = signal('');
   protected readonly formationAreaSearch = signal('');
@@ -219,12 +220,14 @@ export class MemberDialogComponent {
 
             this.previousChurchId = selectedChurchId;
             this.clearChurchRelations();
+            this.loadPastors(selectedChurchId);
           });
         return;
       }
 
       this.previousChurchId = selectedChurchId;
       this.clearChurchRelations();
+      this.loadPastors(selectedChurchId);
     });
     this.load();
   }
@@ -329,6 +332,31 @@ export class MemberDialogComponent {
     return name === 'pastors' && this.memberId
       ? items.filter((item) => item.id !== this.memberId)
       : items;
+  }
+  private loadPastors(churchId: string, preserveSelection = false): void {
+    if (!churchId) {
+      this.lookups.update((current) => ({ ...current, pastors: [] }));
+      if (!preserveSelection) this.membershipForm.controls.pastorId.setValue(null);
+      return;
+    }
+
+    this.pastorsLoading.set(true);
+    this.service
+      .getPastorsByChurch(churchId)
+      .pipe(finalize(() => this.pastorsLoading.set(false)))
+      .subscribe({
+        next: (pastors) => {
+          this.lookups.update((current) => ({ ...current, pastors }));
+          if (!preserveSelection) this.membershipForm.controls.pastorId.setValue(null);
+        },
+        error: (error) => {
+          this.lookups.update((current) => ({ ...current, pastors: [] }));
+          if (!preserveSelection) this.membershipForm.controls.pastorId.setValue(null);
+          this.notification.error(
+            getApiErrorMessage(error, 'Não foi possível carregar os pastores da igreja.'),
+          );
+        },
+      });
   }
   protected filteredLookup(name: string, search: string): readonly LookupItem[] {
     const term = normalizeLookupSearch(search);
@@ -442,6 +470,7 @@ export class MemberDialogComponent {
             { emitEvent: false },
           );
           this.previousChurchId = data.membership.churchId;
+          this.loadPastors(data.membership.churchId, true);
           data.membershipRoles.forEach((x) => this.addRole(x));
           data.memberDepartments.forEach((x) => this.addDepartment(x));
         },

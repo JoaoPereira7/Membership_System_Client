@@ -7,6 +7,8 @@ export interface AccountApiDto {
   readonly cpf: string;
   readonly isActive?: boolean;
   readonly accountProfileId: string;
+  readonly churchId?: string | null;
+  readonly churchName?: string;
 }
 
 export interface AccountListItem {
@@ -17,6 +19,8 @@ export interface AccountListItem {
   readonly accountProfileId: string;
   readonly accountProfileName: string;
   readonly isActive: boolean;
+  readonly churchId?: string | null;
+  readonly churchName: string;
 }
 
 export interface CreateAccountRequest {
@@ -25,6 +29,7 @@ export interface CreateAccountRequest {
   readonly cpf: string;
   readonly password: string;
   readonly accountProfileId: string;
+  readonly churchId?: string | null;
 }
 
 export interface UpdateAccountRequest {
@@ -34,6 +39,7 @@ export interface UpdateAccountRequest {
   readonly accountProfileId: string;
   readonly isActive: boolean;
   readonly password?: string;
+  readonly churchId?: string | null;
 }
 
 export type AccountListQuery = AuxiliaryListQuery;

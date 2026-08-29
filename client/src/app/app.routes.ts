@@ -41,7 +41,7 @@ export const adminRoutes: Routes = [
     data: {
       title: 'Equipe Ministerial',
       breadcrumb: ['Membros', 'Equipe Ministerial'],
-      permission: 'MEMBER_VIEW',
+      permission: 'MINISTERIAL_TEAM_VIEW',
     },
   },
   {
