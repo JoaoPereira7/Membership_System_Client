@@ -16,18 +16,17 @@ import {
 } from '../../../../core/components/data-table/data-table.types';
 import { AppListPageShellComponent } from '../../../../core/components/list-page-shell/list-page-shell.component';
 import { PageBreadcrumb } from '../../../../core/components/page-header/page-header.types';
-import { AccountDialogComponent } from '../../Components/account-dialog/account-dialog.component';
+import { VisitorDetailsDialogComponent } from '../../Components/visitor-details-dialog/visitor-details-dialog.component';
+import { VisitorDialogComponent } from '../../Components/visitor-dialog/visitor-dialog.component';
 import {
-  AccountDialogData,
-  AccountDialogResult,
-} from '../../Components/account-dialog/account-dialog.types';
-import { AccountListItem, AccountListQuery } from '../../Models/account.models';
-import { AccountService } from '../../Services/account.service';
-import { AccountDetailsDialogComponent } from '../../Components/account-details-dialog/account-details-dialog.component';
-import { AccountDeleteDialogComponent } from '../../Components/account-delete-dialog/account-delete-dialog.component';
+  VisitorDialogData,
+  VisitorDialogResult,
+} from '../../Components/visitor-dialog/visitor-dialog.types';
+import { VisitorListItem, VisitorListQuery } from '../../Models/visitor.models';
+import { VisitorService } from '../../Services/visitor.service';
 
 @Component({
-  selector: 'app-account-list',
+  selector: 'app-visitor-list',
   imports: [
     MatButtonModule,
     MatDialogModule,
@@ -36,19 +35,17 @@ import { AccountDeleteDialogComponent } from '../../Components/account-delete-di
     AppDataTableComponent,
     AppListPageShellComponent,
   ],
-  templateUrl: './account-list.component.html',
-  styleUrl: './account-list.component.scss',
+  templateUrl: './visitor-list.component.html',
+  styleUrl: './visitor-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountListComponent {
-  protected readonly detailsDialogComponent = AccountDetailsDialogComponent;
-  protected readonly deleteDialogComponent = AccountDeleteDialogComponent;
-  private readonly service = inject(AccountService);
+export class VisitorListComponent {
+  private readonly service = inject(VisitorService);
   private readonly dialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
   private readonly loadRequests = new Subject<void>();
 
-  protected readonly data = signal<readonly AccountListItem[]>([]);
+  protected readonly data = signal<readonly VisitorListItem[]>([]);
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly totalItems = signal(0);
@@ -57,52 +54,28 @@ export class AccountListComponent {
   protected readonly search = signal('');
   protected readonly sortActive = signal<string | null>('normalizedName');
   protected readonly sortDirection = signal<'asc' | 'desc' | ''>('asc');
-  protected readonly breadcrumbs: readonly PageBreadcrumb[] = [
-    { label: 'Administração' },
-    { label: 'Usuários' },
-  ];
-  protected readonly columns: readonly DataTableColumn<AccountListItem>[] = [
-    { key: 'normalizedName', label: 'Nome', type: 'text', sortable: true, minWidth: '190px' },
-    { key: 'email', label: 'E-mail', type: 'text', sortable: true, minWidth: '220px' },
-    {
-      key: 'cpf',
-      label: 'CPF',
-      type: 'text',
-      sortable: true,
-      width: '150px',
-      formatter: (value) => this.formatCpf(String(value)),
-    },
-    {
-      key: 'churchName',
-      label: 'Igreja',
-      type: 'text',
-      sortable: true,
-      minWidth: '190px',
-    },
-    {
-      key: 'accountProfileName',
-      label: 'Perfil de acesso',
-      type: 'text',
-      sortable: true,
-      minWidth: '180px',
-    },
-    {
-      key: 'isActive',
-      label: 'Situação',
-      type: 'status',
-      sortable: true,
-      width: '140px',
-      align: 'center',
-      formatter: (_value, row) => (row.isActive ? 'Ativo' : 'Inativo'),
-    },
+  protected readonly breadcrumbs: readonly PageBreadcrumb[] = [{ label: 'Visitantes' }];
+  protected readonly columns: readonly DataTableColumn<VisitorListItem>[] = [
+    { key: 'normalizedName', label: 'Nome', type: 'text', sortable: true, minWidth: '220px' },
+    { key: 'visitDate', label: 'Data da visita', type: 'date', sortable: true, width: '160px' },
+    { key: 'phone', label: 'Telefone', type: 'text', sortable: true, width: '170px' },
+    { key: 'normalizedEmail', label: 'E-mail', type: 'text', sortable: true, minWidth: '220px' },
+    { key: 'churchName', label: 'Igreja', type: 'text', sortable: true, minWidth: '200px' },
     { key: 'actions', label: 'Ações', type: 'actions', width: '80px', align: 'center' },
   ];
-  protected readonly actions: readonly DataTableAction<AccountListItem>[] = [
+  protected readonly actions: readonly DataTableAction<VisitorListItem>[] = [
+    {
+      id: 'details',
+      label: 'Visualizar/Detalhes',
+      icon: 'visibility',
+      tooltip: 'Visualizar detalhes do visitante',
+      color: 'primary',
+    },
     {
       id: 'edit',
       label: 'Editar',
       icon: 'edit',
-      tooltip: 'Editar usuário',
+      tooltip: 'Editar visitante',
       color: 'primary',
     },
   ];
@@ -119,7 +92,7 @@ export class AccountListComponent {
                 this.data.set([]);
                 this.totalItems.set(0);
                 this.errorMessage.set(
-                  getApiErrorMessage(error, 'Não foi possível carregar os usuários.'),
+                  getApiErrorMessage(error, 'Não foi possível carregar os visitantes.'),
                 );
                 return EMPTY;
               }),
@@ -137,13 +110,13 @@ export class AccountListComponent {
     this.reload();
   }
 
-  protected onSearchChanged(search: string): void {
+  protected searchChanged(search: string): void {
     this.search.set(search);
     this.pageIndex.set(0);
     this.reload();
   }
 
-  protected onQueryChanged(query: DataTableQuery): void {
+  protected queryChanged(query: DataTableQuery): void {
     this.pageIndex.set(query.pageIndex);
     this.pageSize.set(query.pageSize);
     if (query.sortActive) {
@@ -153,13 +126,29 @@ export class AccountListComponent {
     this.reload();
   }
 
-  protected onAction(event: DataTableActionEvent<AccountListItem>): void {
+  protected action(event: DataTableActionEvent<VisitorListItem>): void {
+    if (event.actionId === 'details') {
+      this.dialog.open<VisitorDetailsDialogComponent, VisitorListItem>(
+        VisitorDetailsDialogComponent,
+        {
+          data: event.row,
+          width: '680px',
+          maxWidth: 'calc(100vw - 2rem)',
+          maxHeight: 'calc(100dvh - 2rem)',
+          autoFocus: false,
+          restoreFocus: true,
+          panelClass: 'entity-details-dialog-panel',
+        },
+      );
+      return;
+    }
+
     if (event.actionId === 'edit') {
       this.openDialog({ mode: 'edit', item: { ...event.row } });
     }
   }
 
-  protected openCreateDialog(): void {
+  protected create(): void {
     this.openDialog({ mode: 'create' });
   }
 
@@ -167,12 +156,12 @@ export class AccountListComponent {
     this.loadRequests.next();
   }
 
-  private openDialog(data: AccountDialogData): void {
+  private openDialog(data: VisitorDialogData): void {
     this.dialog
-      .open<AccountDialogComponent, AccountDialogData, AccountDialogResult>(
-        AccountDialogComponent,
+      .open<VisitorDialogComponent, VisitorDialogData, VisitorDialogResult>(
+        VisitorDialogComponent,
         {
-          width: '720px',
+          width: '620px',
           maxWidth: '95vw',
           autoFocus: false,
           restoreFocus: true,
@@ -191,7 +180,7 @@ export class AccountListComponent {
       });
   }
 
-  private currentQuery(): AccountListQuery {
+  private currentQuery(): VisitorListQuery {
     return {
       search: this.search(),
       pageIndex: this.pageIndex(),
@@ -199,12 +188,5 @@ export class AccountListComponent {
       sortActive: this.sortActive(),
       sortDirection: this.sortDirection(),
     };
-  }
-
-  private formatCpf(value: string): string {
-    const digits = value.replace(/\D/g, '');
-    return digits.length === 11
-      ? digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-      : value;
   }
 }

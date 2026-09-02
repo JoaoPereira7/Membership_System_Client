@@ -16,6 +16,13 @@ export const NAVIGATION_ITEMS: readonly NavigationItem[] = [
     permission: 'MEMBER_VIEW',
   },
   {
+    id: 'visitors',
+    label: 'Visitantes',
+    icon: 'person_add',
+    route: '/visitors',
+    permission: 'VISITOR_VIEW',
+  },
+  {
     id: 'churches',
     label: 'Igrejas',
     icon: 'church',

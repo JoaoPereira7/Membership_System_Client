@@ -1,0 +1,50 @@
+<app-list-page-shell
+  title="Visitantes"
+  subtitle="Cadastre e acompanhe os visitantes recebidos pelas igrejas."
+  icon="person_add"
+  [breadcrumbs]="breadcrumbs"
+  contentPadding="compact"
+>
+  <button
+    class="auxiliary-list__new-button"
+    page-primary-action
+    mat-flat-button
+    color="primary"
+    type="button"
+    (click)="create()"
+  >
+    <mat-icon>add</mat-icon><span>Novo Visitante</span>
+  </button>
+
+  <app-data-table-toolbar
+    list-toolbar
+    searchPlaceholder="Pesquisar nome, telefone, e-mail ou igreja"
+    [searchValue]="search()"
+    [filterEnabled]="false"
+    [exportEnabled]="false"
+    [refreshEnabled]="true"
+    [loading]="loading()"
+    [totalItems]="totalItems()"
+    (searchChanged)="searchChanged($event)"
+    (refreshRequested)="reload()"
+  />
+
+  <app-data-table
+    list-content
+    mode="server"
+    ariaLabel="Lista de visitantes"
+    emptyMessage="Nenhum visitante encontrado."
+    [data]="data()"
+    [columns]="columns"
+    [actions]="actions"
+    [crudActionsEnabled]="false"
+    [loading]="loading()"
+    [errorMessage]="errorMessage()"
+    [toolbarEnabled]="false"
+    [totalItems]="totalItems()"
+    [pageIndex]="pageIndex()"
+    [pageSize]="pageSize()"
+    (queryChanged)="queryChanged($event)"
+    (actionTriggered)="action($event)"
+  />
+</app-list-page-shell>

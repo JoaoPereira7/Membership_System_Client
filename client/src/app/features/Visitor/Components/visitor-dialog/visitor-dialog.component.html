@@ -1,0 +1,91 @@
+<form class="auxiliary-dialog" [formGroup]="form" (ngSubmit)="save()" novalidate>
+  <header class="auxiliary-dialog__header">
+    <span class="auxiliary-dialog__icon" aria-hidden="true"><mat-icon>person_add</mat-icon></span>
+    <h2 class="auxiliary-dialog__title" mat-dialog-title>{{ title }}</h2>
+  </header>
+
+  <mat-dialog-content class="auxiliary-dialog__content">
+    @if (errorMessage()) {
+      <div class="auxiliary-dialog__error" role="alert">
+        <mat-icon aria-hidden="true">error</mat-icon><span>{{ errorMessage() }}</span>
+      </div>
+    }
+
+    <mat-form-field appearance="outline">
+      <mat-label>Nome</mat-label>
+      <input matInput formControlName="name" maxlength="150" autocomplete="name" cdkFocusInitial />
+      <mat-hint align="end">{{ form.controls.name.value.length }}/150</mat-hint>
+      @if (form.controls.name.hasError('required') || form.controls.name.hasError('blank')) {
+        <mat-error>Informe o nome do visitante.</mat-error>
+      } @else if (form.controls.name.hasError('maxlength')) {
+        <mat-error>O nome deve possuir no máximo 150 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <app-date-picker
+      label="Data da visita"
+      formControlName="visitDate"
+      [required]="true"
+    />
+
+    <mat-form-field appearance="outline">
+      <mat-label>Telefone</mat-label>
+      <input
+        matInput
+        formControlName="phone"
+        inputmode="tel"
+        autocomplete="tel"
+        mask="(00) 0000-0000||(00) 00000-0000"
+        [dropSpecialCharacters]="false"
+      />
+      @if (form.controls.phone.hasError('required') || form.controls.phone.hasError('blank')) {
+        <mat-error>Informe o telefone do visitante.</mat-error>
+      } @else if (form.controls.phone.hasError('maxlength')) {
+        <mat-error>O telefone deve possuir no máximo 20 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>E-mail</mat-label>
+      <input matInput formControlName="email" type="email" maxlength="254" autocomplete="email" />
+      @if (form.controls.email.hasError('email')) {
+        <mat-error>Informe um e-mail válido.</mat-error>
+      } @else if (form.controls.email.hasError('maxlength')) {
+        <mat-error>O e-mail deve possuir no máximo 254 caracteres.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Igreja</mat-label>
+      <mat-select formControlName="churchId">
+        @for (church of churches(); track church.id) {
+          <mat-option [value]="church.id">{{ church.name }}</mat-option>
+        }
+      </mat-select>
+      @if (loadingChurches()) {
+        <mat-hint>Carregando igrejas...</mat-hint>
+      }
+      @if (form.controls.churchId.hasError('required')) {
+        <mat-error>Selecione uma igreja.</mat-error>
+      }
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="auxiliary-dialog__actions" align="end">
+    <button mat-button type="button" [disabled]="saving()" (click)="cancel()">Cancelar</button>
+    <button
+      class="auxiliary-dialog__save"
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="saving() || loadingChurches()"
+    >
+      @if (saving()) {
+        <mat-progress-spinner diameter="18" mode="indeterminate" aria-label="Salvando" />
+        <span>Salvando</span>
+      } @else {
+        <span>Salvar</span>
+      }
+    </button>
+  </mat-dialog-actions>
+</form>

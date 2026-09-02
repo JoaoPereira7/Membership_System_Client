@@ -32,6 +32,13 @@ export const adminRoutes: Routes = [
     data: { title: 'Membros', breadcrumb: ['Membros'], permission: 'MEMBER_VIEW' },
   },
   {
+    path: 'visitors',
+    canMatch: [permissionGuard],
+    loadChildren: () =>
+      import('./features/Visitor/visitor.routes').then((routes) => routes.VISITOR_ROUTES),
+    data: { title: 'Visitantes', breadcrumb: ['Visitantes'], permission: 'VISITOR_VIEW' },
+  },
+  {
     path: 'ministerial-team',
     canMatch: [permissionGuard],
     loadChildren: () =>

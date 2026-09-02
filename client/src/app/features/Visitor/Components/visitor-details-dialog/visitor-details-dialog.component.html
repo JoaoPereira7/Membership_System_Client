@@ -1,0 +1,43 @@
+<header class="entity-details__header">
+  <div class="entity-details__icon"><mat-icon>person_search</mat-icon></div>
+  <div>
+    <h2>Detalhes do visitante</h2>
+    <p>Informações do registro</p>
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content class="entity-details__content">
+  @if (loading()) {
+    <div class="entity-details__loading"><mat-spinner diameter="36" /></div>
+  } @else {
+    <dl class="entity-details__grid">
+      <div class="entity-details__item">
+        <dt>Nome normalizado</dt>
+        <dd>{{ display(visitor().normalizedName) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Data da visita</dt>
+        <dd>{{ visitor().visitDate | date: 'dd/MM/yyyy' : 'UTC' }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Telefone</dt>
+        <dd>{{ display(visitor().phone) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>E-mail normalizado</dt>
+        <dd>{{ display(visitor().normalizedEmail) }}</dd>
+      </div>
+      <div class="entity-details__item">
+        <dt>Igreja</dt>
+        <dd>{{ display(visitor().churchName) }}</dd>
+      </div>
+    </dl>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" color="primary" mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

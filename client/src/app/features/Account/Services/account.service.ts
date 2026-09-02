@@ -82,6 +82,7 @@ export class AccountService {
     return {
       id: item.id,
       name: item.name,
+      normalizedName: item.normalizedName || item.name,
       email: item.email,
       cpf: item.cpf,
       accountProfileId: item.accountProfileId,
@@ -96,7 +97,7 @@ export class AccountService {
     const search = query.search.trim().toLocaleLowerCase('pt-BR');
     const filtered = search
       ? items.filter((item) =>
-          [item.name, item.email, item.cpf, item.accountProfileName].some((value) =>
+          [item.normalizedName, item.email, item.cpf, item.accountProfileName].some((value) =>
             value.toLocaleLowerCase('pt-BR').includes(search),
           ),
         )

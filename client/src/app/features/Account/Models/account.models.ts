@@ -3,6 +3,7 @@ import { AuxiliaryListQuery, PagedResult } from '../../../core/models/auxiliary-
 export interface AccountApiDto {
   readonly id: string;
   readonly name: string;
+  readonly normalizedName: string;
   readonly email: string;
   readonly cpf: string;
   readonly isActive?: boolean;
@@ -14,6 +15,7 @@ export interface AccountApiDto {
 export interface AccountListItem {
   readonly id: string;
   readonly name: string;
+  readonly normalizedName: string;
   readonly email: string;
   readonly cpf: string;
   readonly accountProfileId: string;
