@@ -1,0 +1,64 @@
+<article
+  [class]="
+    'dashboard-card dashboard-card--' + tone() + (compact() ? ' dashboard-card--compact' : '')
+  "
+  [attr.aria-busy]="loading()"
+>
+  <header class="dashboard-card__header">
+    <span class="dashboard-card__icon" aria-hidden="true"
+      ><mat-icon>{{ icon() }}</mat-icon></span
+    >
+    <div>
+      <h3>{{ title() }}</h3>
+      @if (subtitle()) {
+        <p>{{ subtitle() }}</p>
+      }
+    </div>
+  </header>
+
+  <div class="dashboard-card__body">
+    @if (loading()) {
+      <div class="dashboard-card__skeleton" aria-label="Carregando indicador">
+        <span></span><span></span><span></span>
+      </div>
+    } @else if (error()) {
+      <div class="dashboard-card__error" role="alert">
+        <span>{{ error() }}</span>
+        <button mat-button type="button" (click)="retryRequested.emit()">
+          <mat-icon>refresh</mat-icon>
+          Tentar novamente
+        </button>
+      </div>
+    } @else if (value() !== null) {
+      <strong class="dashboard-card__value">{{ value() }}</strong>
+    } @else if (visibleItems().length) {
+      <dl class="dashboard-card__list">
+        @for (item of visibleItems(); track item.label) {
+          <div>
+            <dt>{{ item.label }}</dt>
+            <dd>{{ item.value }}</dd>
+          </div>
+        }
+      </dl>
+      @if (remainingItems() > 0) {
+        <span class="dashboard-card__remaining">+ {{ remainingItems() }} outros itens</span>
+      }
+    } @else {
+      <div class="dashboard-card__empty">Não há dados para exibir.</div>
+    }
+  </div>
+
+  @if (detailsEnabled()) {
+    <footer class="dashboard-card__footer">
+      <button
+        mat-button
+        type="button"
+        [disabled]="loading() || !!error() || (value() === null && !items().length)"
+        (click)="detailsRequested.emit()"
+      >
+        Ver detalhes
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </footer>
+  }
+</article>

@@ -1,0 +1,221 @@
+<section class="dashboard-page">
+  <app-page-header
+    title="Dashboard"
+    subtitle="Visão geral da sua igreja"
+    icon="dashboard"
+    [showBreadcrumbs]="false"
+  >
+    <div page-secondary-actions class="dashboard-toolbar">
+      <div class="church-context" title="Escopo dos indicadores">
+        <mat-icon aria-hidden="true">church</mat-icon>
+        <span>{{ currentChurchName() }}</span>
+      </div>
+
+      <mat-button-toggle-group
+        class="view-toggle"
+        name="dashboardViewMode"
+        aria-label="Modo de visualização do Dashboard"
+        [value]="viewMode()"
+        [hideSingleSelectionIndicator]="true"
+        (change)="setViewMode($event.value)"
+      >
+        <mat-button-toggle value="cards">
+          <mat-icon aria-hidden="true">grid_view</mat-icon>
+          Cards
+        </mat-button-toggle>
+        <mat-button-toggle value="charts">
+          <mat-icon aria-hidden="true">bar_chart</mat-icon>
+          Gráficos
+        </mat-button-toggle>
+      </mat-button-toggle-group>
+    </div>
+  </app-page-header>
+
+  @if (viewMode() === 'cards') {
+    <section class="cards-view" aria-label="Indicadores do Dashboard em cards">
+      @for (card of cards(); track card.key) {
+        <app-dashboard-card
+          [title]="card.title"
+          [icon]="card.icon"
+          [tone]="card.tone"
+          [value]="card.value"
+          [items]="card.items"
+          [subtitle]="card.subtitle"
+          [loading]="card.loading"
+          [error]="card.error"
+          (retryRequested)="reload(card.key)"
+          (detailsRequested)="openDetails(card)"
+        />
+      }
+    </section>
+  } @else {
+    <section class="metric-grid" aria-label="Indicadores principais">
+      @for (card of primaryMetricCards(); track card.key) {
+        <app-dashboard-card
+          [title]="card.title"
+          [icon]="card.icon"
+          [tone]="card.tone"
+          [value]="card.value"
+          [subtitle]="card.subtitle"
+          [loading]="card.loading"
+          [error]="card.error"
+          [detailsEnabled]="false"
+          [compact]="true"
+          (retryRequested)="reload(card.key)"
+        />
+      }
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="distribution-title">
+      <div class="section-heading">
+        <span>Composição</span>
+        <h2 id="distribution-title">Distribuição da membresia</h2>
+      </div>
+
+      <div class="chart-grid">
+        @for (chart of distributionCharts; track chart.key) {
+          @let state = chartState(chart.key);
+          <article class="chart-card" [attr.aria-busy]="state.loading">
+            <header>
+              <h3>{{ chart.title }}</h3>
+              <p>{{ chart.subtitle }}</p>
+            </header>
+
+            <div class="chart-card__body">
+              @if (state.loading) {
+                <div class="chart-skeleton" aria-label="Carregando gráfico"></div>
+              } @else if (state.error) {
+                <div class="chart-state chart-state--error" role="alert">
+                  <mat-icon aria-hidden="true">cloud_off</mat-icon>
+                  <span>{{ state.error }}</span>
+                  <button mat-stroked-button type="button" (click)="reload(chart.key)">
+                    Tentar novamente
+                  </button>
+                </div>
+              } @else if (!state.data?.length) {
+                <div class="chart-state">
+                  <mat-icon aria-hidden="true">insert_chart_outlined</mat-icon>
+                  <span>Não há dados para exibir.</span>
+                </div>
+              } @else {
+                <app-dashboard-chart
+                  [options]="chartOption(chart.key)"
+                  [height]="chart.key === 'membersByStatus' ? 330 : chartHeight(state.data ?? [])"
+                  [ariaLabel]="chart.title"
+                />
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="leadership-title">
+      <div class="section-heading">
+        <span>Serviço</span>
+        <h2 id="leadership-title">Cargos e lideranças</h2>
+      </div>
+
+      <div class="chart-grid">
+        @for (chart of leadershipCharts; track chart.key) {
+          @let state = chartState(chart.key);
+          <article class="chart-card" [attr.aria-busy]="state.loading">
+            <header>
+              <h3>{{ chart.title }}</h3>
+              <p>{{ chart.subtitle }}</p>
+            </header>
+
+            <div class="chart-card__body">
+              @if (state.loading) {
+                <div class="chart-skeleton" aria-label="Carregando gráfico"></div>
+              } @else if (state.error) {
+                <div class="chart-state chart-state--error" role="alert">
+                  <mat-icon aria-hidden="true">cloud_off</mat-icon>
+                  <span>{{ state.error }}</span>
+                  <button mat-stroked-button type="button" (click)="reload(chart.key)">
+                    Tentar novamente
+                  </button>
+                </div>
+              } @else if (!state.data?.length) {
+                <div class="chart-state">
+                  <mat-icon aria-hidden="true">insert_chart_outlined</mat-icon>
+                  <span>Não há dados para exibir.</span>
+                </div>
+              } @else {
+                <app-dashboard-chart
+                  [options]="chartOption(chart.key)"
+                  [height]="chartHeight(state.data ?? [])"
+                  [ariaLabel]="chart.title"
+                />
+              }
+            </div>
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="complementary-title">
+      <div class="section-heading">
+        <span>Acompanhamento</span>
+        <h2 id="complementary-title">Indicadores complementares</h2>
+      </div>
+
+      <div class="metric-grid metric-grid--complementary">
+        @for (card of complementaryMetricCards(); track card.key) {
+          <app-dashboard-card
+            [title]="card.title"
+            [icon]="card.icon"
+            [tone]="card.tone"
+            [value]="card.value"
+            [subtitle]="card.subtitle"
+            [loading]="card.loading"
+            [error]="card.error"
+            [detailsEnabled]="false"
+            [compact]="true"
+            (retryRequested)="reload(card.key)"
+          />
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="churches-title">
+      <div class="section-heading">
+        <span>Abrangência</span>
+        <h2 id="churches-title">Membros por igreja</h2>
+      </div>
+
+      @let churchState = chartState('membersByChurch');
+      <article class="chart-card" [attr.aria-busy]="churchState.loading">
+        <header>
+          <h3>Quantidade de membros por igreja</h3>
+          <p>Somente igrejas disponíveis no seu escopo de acesso</p>
+        </header>
+
+        <div class="chart-card__body">
+          @if (churchState.loading) {
+            <div class="chart-skeleton" aria-label="Carregando gráfico"></div>
+          } @else if (churchState.error) {
+            <div class="chart-state chart-state--error" role="alert">
+              <mat-icon aria-hidden="true">cloud_off</mat-icon>
+              <span>{{ churchState.error }}</span>
+              <button mat-stroked-button type="button" (click)="reload('membersByChurch')">
+                Tentar novamente
+              </button>
+            </div>
+          } @else if (!churchState.data?.length) {
+            <div class="chart-state">
+              <mat-icon aria-hidden="true">church</mat-icon>
+              <span>Não há igrejas disponíveis para exibir.</span>
+            </div>
+          } @else {
+            <app-dashboard-chart
+              [options]="chartOption('membersByChurch')"
+              [height]="chartHeight(churchState.data ?? [])"
+              ariaLabel="Quantidade de membros por igreja"
+            />
+          }
+        </div>
+      </article>
+    </section>
+  }
+</section>

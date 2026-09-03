@@ -1,0 +1,24 @@
+<header class="chart-dialog__header">
+  <span class="chart-dialog__icon" aria-hidden="true"><mat-icon>query_stats</mat-icon></span>
+  <div>
+    <h2 mat-dialog-title>{{ data.title }}</h2>
+    @if (data.subtitle) {
+      <p>{{ data.subtitle }}</p>
+    }
+  </div>
+  <button mat-icon-button type="button" aria-label="Fechar" mat-dialog-close>
+    <mat-icon>close</mat-icon>
+  </button>
+</header>
+
+<mat-dialog-content class="chart-dialog__content">
+  <app-dashboard-chart
+    [options]="data.chartOptions"
+    [height]="data.chartHeight ?? 380"
+    [ariaLabel]="data.ariaLabel ?? data.title"
+  />
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-flat-button type="button" color="primary" mat-dialog-close>Fechar</button>
+</mat-dialog-actions>

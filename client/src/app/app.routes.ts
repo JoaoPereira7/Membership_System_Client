@@ -21,8 +21,10 @@ export const adminRoutes: Routes = [
     path: 'dashboard',
     canMatch: [permissionGuard],
     loadComponent: () =>
-      import('./features/home/home.component').then((component) => component.HomeComponent),
-    data: { title: 'Home', breadcrumb: ['Home'], permission: 'DASHBOARD_VIEW' },
+      import('./features/Dashboard/Pages/dashboard/dashboard.component').then(
+        (component) => component.DashboardComponent,
+      ),
+    data: { title: 'Dashboard', breadcrumb: ['Dashboard'], permission: 'DASHBOARD_VIEW' },
   },
   {
     path: 'members',
