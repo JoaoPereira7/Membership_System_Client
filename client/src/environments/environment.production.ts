@@ -1,3 +1,3 @@
 export const environment = {
-  apiBaseUrl: 'https://api.membership.example/api',
+  apiBaseUrl: 'https://p01--membership-system-api--z9ftpxnvs66s.code.run/api',
 } as const;
