@@ -1,0 +1,240 @@
+:host {
+  display: block;
+}
+
+.membership-form-page__container {
+  display: grid;
+  gap: 1rem;
+}
+
+.membership-form-page__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: min(210mm, 100%);
+  margin-inline: auto;
+}
+
+.membership-form-page__state {
+  display: grid;
+  min-height: 18rem;
+  place-items: center;
+  align-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background: var(--surface-color);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.membership-form-page__state--error mat-icon {
+  color: var(--color-error);
+}
+
+.membership-form {
+  box-sizing: border-box;
+  width: min(210mm, 100%);
+  margin-inline: auto;
+  padding: 10mm;
+  border: 1px solid #b7c3d0;
+  border-radius: 0.5rem;
+  background: #fff;
+  box-shadow: var(--shadow-md);
+  color: #162333;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.membership-form__header {
+  display: grid;
+  grid-template-columns: 24mm minmax(0, 1fr);
+  align-items: center;
+  gap: 6mm;
+  padding-bottom: 5mm;
+  border-bottom: 2px solid #0b4a85;
+  text-align: center;
+}
+
+.membership-form__header img {
+  width: 24mm;
+  height: 24mm;
+  object-fit: contain;
+}
+
+.membership-form__header p,
+.membership-form__header h1,
+.membership-form__header span {
+  margin: 0;
+}
+
+.membership-form__header p {
+  color: #0b4a85;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.membership-form__header h1 {
+  margin-block: 0.2rem;
+  color: #092f57;
+  font-size: clamp(1.35rem, 3vw, 2rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.membership-form__header span {
+  color: #40566d;
+  font-size: 0.86rem;
+}
+
+.membership-form__section {
+  margin-top: 4mm;
+  border: 1px solid #8ca2b8;
+  break-inside: avoid;
+}
+
+.membership-form__section h2 {
+  margin: 0;
+  padding: 0.4rem 0.65rem;
+  background: #0b4a85;
+  color: #fff;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.membership-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.membership-form__grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.membership-form__grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.membership-form__field {
+  min-width: 0;
+  padding: 0.42rem 0.58rem;
+  border-right: 1px solid #c5d0dc;
+  border-bottom: 1px solid #c5d0dc;
+}
+
+.membership-form__field--full {
+  grid-column: 1 / -1;
+}
+
+.membership-form__field--half {
+  grid-column: span 2;
+}
+
+.membership-form__field dt {
+  margin-bottom: 0.16rem;
+  color: #4b6279;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.membership-form__field dd {
+  min-height: 1rem;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #111d2a;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.membership-form__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.75rem;
+}
+
+.membership-form__empty {
+  margin: 0;
+  padding: 0.75rem;
+  color: #596f84;
+  font-size: 0.78rem;
+}
+
+.membership-form__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 5mm;
+  padding-top: 2mm;
+  border-top: 1px solid #aebdcb;
+  color: #607488;
+  font-size: 0.6rem;
+}
+
+@media (max-width: 699.98px) {
+  .membership-form-page__actions {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+
+  .membership-form {
+    padding: 1rem;
+  }
+
+  .membership-form__header {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .membership-form__header img {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .membership-form__grid,
+  .membership-form__grid--three,
+  .membership-form__grid--four {
+    grid-template-columns: 1fr;
+  }
+
+  .membership-form__field--half,
+  .membership-form__field--full {
+    grid-column: auto;
+  }
+
+  .membership-form__footer {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  :host {
+    display: block;
+  }
+
+  .membership-form-page__actions,
+  .membership-form-page__state {
+    display: none !important;
+  }
+
+  .membership-form-page__container {
+    display: block;
+  }
+
+  .membership-form {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}

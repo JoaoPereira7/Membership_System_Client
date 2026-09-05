@@ -1,0 +1,197 @@
+<section class="membership-form-page__container">
+  <nav class="membership-form-page__actions" aria-label="Ações da ficha">
+    <button mat-stroked-button type="button" (click)="back()">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar para membros
+    </button>
+    <button mat-flat-button color="primary" type="button" [disabled]="!form()" (click)="print()">
+      <mat-icon>print</mat-icon>
+      Imprimir / Salvar PDF
+    </button>
+  </nav>
+
+  @if (loading()) {
+    <div class="membership-form-page__state" role="status" aria-live="polite">
+      <mat-progress-spinner diameter="42" mode="indeterminate" />
+      <strong>Carregando ficha de membresia...</strong>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="membership-form-page__state membership-form-page__state--error" role="alert">
+      <mat-icon>error_outline</mat-icon>
+      <strong>Não foi possível exibir a ficha</strong>
+      <span>{{ errorMessage() }}</span>
+      <button mat-stroked-button type="button" (click)="load()">Tentar novamente</button>
+    </div>
+  } @else if (form(); as member) {
+    <article class="membership-form" aria-labelledby="membership-form-title">
+      <header class="membership-form__header">
+        <img
+          src="/membership-ieq-logo-transparent.png"
+          alt="Logotipo da Igreja do Evangelho Quadrangular"
+        />
+        <div>
+          <p>Igreja do Evangelho Quadrangular</p>
+          <h1 id="membership-form-title">Ficha de Membresia</h1>
+          <span>{{ display(member.membership?.church) }}</span>
+        </div>
+      </header>
+
+      <section class="membership-form__section">
+        <h2>Identificação pessoal</h2>
+        <dl class="membership-form__grid membership-form__grid--four">
+          <div class="membership-form__field membership-form__field--full">
+            <dt>Nome completo</dt>
+            <dd>{{ member.name }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Data de nascimento</dt>
+            <dd>{{ formatDate(member.birthDate) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Gênero</dt>
+            <dd>{{ display(member.gender) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Nacionalidade</dt>
+            <dd>{{ display(member.nationality) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Estado civil</dt>
+            <dd>{{ display(member.maritalStatus) }}</dd>
+          </div>
+          <div class="membership-form__field membership-form__field--half">
+            <dt>RG</dt>
+            <dd>{{ display(member.rg) }}</dd>
+          </div>
+          <div class="membership-form__field membership-form__field--half">
+            <dt>CPF</dt>
+            <dd>{{ formatCpf(member.cpf) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="membership-form__section">
+        <h2>Filiação e contato</h2>
+        <dl class="membership-form__grid">
+          <div class="membership-form__field">
+            <dt>Nome do pai</dt>
+            <dd>{{ display(member.fatherName) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Nome da mãe</dt>
+            <dd>{{ display(member.motherName) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>E-mail</dt>
+            <dd>{{ display(member.email) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Telefones</dt>
+            <dd class="membership-form__list">
+              @for (phone of member.phones; track phone.number) {
+                <span>{{ display(phone.type) }}: {{ formatPhone(phone.number) }}</span>
+              } @empty {
+                <span>Não informado</span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="membership-form__section">
+        <h2>Endereço principal</h2>
+        @if (member.mainAddress; as address) {
+          <dl class="membership-form__grid membership-form__grid--four">
+            <div class="membership-form__field membership-form__field--full">
+              <dt>Logradouro</dt>
+              <dd>{{ addressLine(address) }}</dd>
+            </div>
+            <div class="membership-form__field membership-form__field--half">
+              <dt>Bairro</dt>
+              <dd>{{ display(address.neighborhood) }}</dd>
+            </div>
+            <div class="membership-form__field membership-form__field--half">
+              <dt>Município</dt>
+              <dd>{{ display(address.city) }}</dd>
+            </div>
+            <div class="membership-form__field membership-form__field--half">
+              <dt>UF</dt>
+              <dd>{{ display(address.state) }}</dd>
+            </div>
+            <div class="membership-form__field membership-form__field--half">
+              <dt>CEP</dt>
+              <dd>{{ formatZipCode(address.zipCode) }}</dd>
+            </div>
+          </dl>
+        } @else {
+          <p class="membership-form__empty">Nenhum endereço ativo cadastrado.</p>
+        }
+      </section>
+
+      <section class="membership-form__section">
+        <h2>Formação e profissão</h2>
+        <dl class="membership-form__grid membership-form__grid--three">
+          <div class="membership-form__field">
+            <dt>Grau de instrução</dt>
+            <dd>{{ display(member.educationLevel) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Área de formação</dt>
+            <dd>{{ display(member.formationArea) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Profissão</dt>
+            <dd>{{ display(member.profession) }}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="membership-form__section">
+        <h2>Dados Religiosos</h2>
+        <dl class="membership-form__grid">
+          <div class="membership-form__field">
+            <dt>Igreja atual</dt>
+            <dd>{{ display(member.membership?.church) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Data de ingresso</dt>
+            <dd>{{ formatDate(member.membership?.dateJoinedChurch) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Pastor atual</dt>
+            <dd>{{ display(member.membership?.pastor) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Origem religiosa</dt>
+            <dd>{{ display(member.membership?.religiousOrigin) }}</dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Departamento(s)</dt>
+            <dd class="membership-form__list">
+              @for (department of member.membership?.departments ?? []; track department) {
+                <span>{{ department }}</span>
+              } @empty {
+                <span>Não informado</span>
+              }
+            </dd>
+          </div>
+          <div class="membership-form__field">
+            <dt>Cargo(s) exercido(s)</dt>
+            <dd class="membership-form__list">
+              @for (role of member.membership?.roles ?? []; track role) {
+                <span>{{ role }}</span>
+              } @empty {
+                <span>Não informado</span>
+              }
+            </dd>
+          </div>
+        </dl>
+      </section>
+
+      <footer class="membership-form__footer">
+        <span>Ficha gerada pelo Sistema de Membresia IEQ</span>
+        <span>Documento para visualização e impressão</span>
+      </footer>
+    </article>
+  }
+</section>

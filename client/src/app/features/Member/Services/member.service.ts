@@ -12,6 +12,7 @@ import {
   LookupItem,
   MemberListItem,
   MemberListQuery,
+  MemberMembershipForm,
   MemberPagedResult,
   UpdateMemberDepartmentRequest,
   UpdateMembershipRoleRequest,
@@ -43,6 +44,17 @@ export class MemberService {
     return this.http
       .get<ApiResponse<FullMember>>(`${this.endpoint}/${encodeURIComponent(id)}/full`)
       .pipe(map((response) => unwrapApiData(response, 'Membro não encontrado.')));
+  }
+  getMembershipForm(id: string): Observable<MemberMembershipForm> {
+    return this.http
+      .get<ApiResponse<MemberMembershipForm>>(
+        `${environment.apiBaseUrl}/members/${encodeURIComponent(id)}/membership-form`,
+      )
+      .pipe(
+        map((response) =>
+          unwrapApiData(response, 'Não foi possível carregar a ficha de membresia.'),
+        ),
+      );
   }
   create(payload: CompleteMember): Observable<unknown> {
     return this.http.post<ApiResponse<unknown>>(`${this.endpoint}/complete`, payload);
@@ -104,9 +116,7 @@ export class MemberService {
         payload,
       )
       .pipe(
-        map((response) =>
-          this.completeOperation(response, 'Não foi possível adicionar o cargo.'),
-        ),
+        map((response) => this.completeOperation(response, 'Não foi possível adicionar o cargo.')),
       );
   }
 

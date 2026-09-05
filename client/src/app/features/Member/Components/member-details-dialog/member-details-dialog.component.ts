@@ -12,12 +12,19 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { getApiErrorMessage } from '../../../../core/api/api.models';
 import { EntityDetailsDialogData } from '../../../../core/components/entity-details-dialog/entity-details-dialog.component';
 import { FullMember } from '../../Models/member.models';
 import { MemberService } from '../../Services/member.service';
+import {
+  formatMemberCpf,
+  formatMemberDate,
+  formatMemberPhone,
+  formatMemberZipCode,
+} from '../../Utils/member-display-formatters';
 
 @Component({
   selector: 'app-member-details-dialog',
@@ -36,6 +43,7 @@ export class MemberDetailsDialogComponent {
   protected readonly data = inject<EntityDetailsDialogData<string>>(MAT_DIALOG_DATA);
   private readonly dialogRef = inject<MatDialogRef<MemberDetailsDialogComponent>>(MatDialogRef);
   private readonly service = inject(MemberService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly loading = signal(true);
@@ -77,6 +85,11 @@ export class MemberDetailsDialogComponent {
     this.stepper().next();
   }
 
+  protected openMembershipForm(): void {
+    this.dialogRef.close();
+    void this.router.navigate(['/members', this.data.id, 'membership-form']);
+  }
+
   protected display(value: string | null | undefined): string {
     return value?.trim() || 'Não informado';
   }
@@ -85,30 +98,8 @@ export class MemberDetailsDialogComponent {
     return active ? 'Ativo' : 'Inativo';
   }
 
-  protected formatDate(value: string | null | undefined): string {
-    if (!value) return 'Não informada';
-
-    const datePart = value.slice(0, 10);
-    const [year, month, day] = datePart.split('-');
-    return year && month && day ? `${day}/${month}/${year}` : value;
-  }
-
-  protected formatCpf(value: string): string {
-    const digits = value.replace(/\D/g, '');
-    return digits.length === 11
-      ? digits.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4')
-      : value;
-  }
-
-  protected formatPhone(value: string): string {
-    const digits = value.replace(/\D/g, '');
-    if (digits.length === 11) return digits.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
-    if (digits.length === 10) return digits.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
-    return value;
-  }
-
-  protected formatZipCode(value: string): string {
-    const digits = value.replace(/\D/g, '');
-    return digits.length === 8 ? digits.replace(/^(\d{5})(\d{3})$/, '$1-$2') : value;
-  }
+  protected readonly formatDate = formatMemberDate;
+  protected readonly formatCpf = formatMemberCpf;
+  protected readonly formatPhone = formatMemberPhone;
+  protected readonly formatZipCode = formatMemberZipCode;
 }

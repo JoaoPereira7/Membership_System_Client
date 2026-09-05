@@ -17,3 +17,33 @@
 @use './styles/utilities/spacing';
 @use './styles/utilities/text';
 @use './styles/utilities/overflow';
+
+@page {
+  size: A4 portrait;
+  margin: 10mm;
+}
+
+@media print {
+  body.membership-form-page {
+    background: #fff !important;
+  }
+
+  body.membership-form-page .admin-shell__sidebar,
+  body.membership-form-page .admin-shell__backdrop,
+  body.membership-form-page .admin-shell__header,
+  body.membership-form-page .admin-shell__footer {
+    display: none !important;
+  }
+
+  body.membership-form-page .admin-shell,
+  body.membership-form-page .admin-shell__main,
+  body.membership-form-page .admin-shell__content {
+    display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+}

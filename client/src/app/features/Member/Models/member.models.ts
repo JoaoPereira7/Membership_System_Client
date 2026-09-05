@@ -201,5 +201,49 @@ export interface FullMember {
   readonly memberDepartments: readonly FullMemberDepartment[];
 }
 
+export interface MemberMembershipFormAddress {
+  readonly street: string;
+  readonly number: string;
+  readonly complement: string | null;
+  readonly neighborhood: string;
+  readonly city: string;
+  readonly state: string;
+  readonly zipCode: string;
+}
+
+export interface MemberMembershipFormPhone {
+  readonly type: string;
+  readonly number: string;
+}
+
+export interface MemberMembershipFormChurch {
+  readonly church: string;
+  readonly dateJoinedChurch: string;
+  readonly pastor: string | null;
+  readonly religiousOrigin: string | null;
+  readonly departments: readonly string[];
+  readonly roles: readonly string[];
+}
+
+export interface MemberMembershipForm {
+  readonly memberId: string;
+  readonly name: string;
+  readonly birthDate: string | null;
+  readonly gender: string | null;
+  readonly email: string | null;
+  readonly fatherName: string | null;
+  readonly motherName: string | null;
+  readonly nationality: string | null;
+  readonly maritalStatus: string | null;
+  readonly rg: string | null;
+  readonly cpf: string;
+  readonly educationLevel: string | null;
+  readonly formationArea: string | null;
+  readonly profession: string | null;
+  readonly mainAddress: MemberMembershipFormAddress | null;
+  readonly phones: readonly MemberMembershipFormPhone[];
+  readonly membership: MemberMembershipFormChurch | null;
+}
+
 export type MemberListQuery = AuxiliaryListQuery;
 export type MemberPagedResult = PagedResult<MemberListItem>;

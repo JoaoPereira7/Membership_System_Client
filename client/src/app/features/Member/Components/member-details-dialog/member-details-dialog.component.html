@@ -348,8 +348,11 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="member-details__actions" align="end">
-    <button mat-button type="button" mat-dialog-close>Fechar</button>
+    <button mat-stroked-button type="button" (click)="openMembershipForm()">
+      <mat-icon>description</mat-icon>Ficha de Membresia
+    </button>
     <span></span>
+    <button mat-button type="button" mat-dialog-close>Fechar</button>
     @if (!loading() && !errorMessage() && details()) {
       <button mat-stroked-button type="button" [disabled]="stepIndex() === 0" (click)="previous()">
         <mat-icon>arrow_back</mat-icon>Voltar
